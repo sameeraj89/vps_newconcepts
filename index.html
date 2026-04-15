@@ -3,569 +3,1855 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VPS Lakeshore | New Centre Concepts — Executive Dashboard</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230072BC'/><rect x='14' y='6' width='4' height='20' rx='2' fill='white'/><rect x='6' y='14' width='20' height='4' rx='2' fill='white'/></svg>">
+<title>VPS Lakeshore — Outpost Site Intelligence</title>
+<meta name="description" content="Interactive outpost site selection tool for VPS Lakeshore Hospital, Kochi. Town-level mapping, patient flow corridors, and weighted scoring across 32 Ernakulam district towns.">
+<link rel="icon" href="logo.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
-:root{
-  --blue:#0072BC;--blue-d:#005a96;--blue-l:#e8f4fb;
-  --crimson:#C8103E;--gold:#b87800;--green:#1a8a5a;--purple:#7B4FC8;
-  --bg:#f0f6fb;--surf:#ffffff;--text:#0d2535;--muted:#5a7a8a;
-  --border:#cddeed;
+:root {
+  /* VPS Lakeshore brand — extracted from logo */
+  --vps-blue: #2B7CBE;       /* primary blue from "lakeshore" text */
+  --vps-blue-d: #1A5C8F;     /* darker shade */
+  --vps-blue-l: #EAF3FB;     /* light tint */
+  --vps-blue-ll: #F4F8FD;    /* very light tint */
+  --vps-maroon: #8B1A4A;     /* maroon from "vps" letterforms */
+  --vps-maroon-l: #F9EDF2;   /* light maroon tint */
+  --vps-gray: #7F8C9B;       /* "Global Lifecare" gray */
+  --accent: #C8922A;         /* gold accent for warnings */
+  --accent-l: #FEF8EC;
+  --red: #C0392B;            /* danger/leakage red */
+  --red-l: #FDEDEB;
+  --teal: #1D9E75;           /* success/ok green */
+  --teal-l: #E9F7F1;
+
+  --bg: #FFFFFF;
+  --bg2: #F6F8FA;
+  --bg3: #EDF0F4;
+  --bg4: #DFE3EA;
+  --tx: #1B2028;
+  --tx2: #505864;
+  --tx3: #8B919B;
+  --bd: #E2E6EC;
+  --bd2: #CDD3DC;
+  --sh: 0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.03);
+  --shl: 0 4px 14px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.04);
+  --r: 8px;
+  --rl: 12px;
+  --f: 'DM Sans', system-ui, -apple-system, sans-serif;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{color:var(--blue);text-decoration:none}
 
-/* Header */
-.hdr{background:#fff;border-bottom:none;padding:0;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.hdr-row{display:flex;align-items:center;gap:14px;padding:10px 24px;max-width:1600px;margin:0 auto}
-.vps-logo-wrap{background:#fff;border-radius:7px;padding:4px 10px;display:flex;align-items:center;flex-shrink:0;border:1.5px solid #cddeed}
-.vps-logo-img{height:34px;width:auto;display:block}
-.hdr-divider{width:1px;height:36px;background:rgba(0,114,188,.2);flex-shrink:0}
-.hdr-txt h1{font-size:15px;font-weight:700;color:var(--blue);letter-spacing:-.3px;white-space:nowrap}
-.hdr-txt .sub{font-size:10px;color:var(--muted);margin-top:1px;white-space:nowrap}
-
-/* Tab Bar */
-.tab-bar{display:flex;align-items:stretch;gap:0;padding:0 24px;background:#fff;border-top:1px solid #e8f0f6;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-.tab-bar::-webkit-scrollbar{display:none}
-.tab-btn{position:relative;padding:10px 20px;font-family:'Inter',system-ui,sans-serif;font-size:12.5px;font-weight:500;color:var(--muted);
-  background:none;border:none;cursor:pointer;white-space:nowrap;transition:all .15s;border-bottom:3px solid transparent;letter-spacing:-.1px}
-.tab-btn:hover{color:var(--blue);background:rgba(0,114,188,.03)}
-.tab-btn.active{color:var(--blue);font-weight:700;border-bottom-color:var(--blue);background:var(--blue-l)}
-.tab-btn.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:3px;background:var(--blue);border-radius:3px 3px 0 0}
-.tab-btn .tab-dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle;position:relative;top:-1px}
-.tab-dot-blue{background:var(--blue)}
-.tab-dot-red{background:var(--crimson)}
-.tab-dot-amber{background:var(--gold)}
-.tab-dot-gray{background:var(--muted)}
-.tab-dot-green{background:var(--green)}
-
-.hdr-gradient{height:4px;background:linear-gradient(90deg,#C8103E 0%,#5BB8E8 100%)}
-.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.hdr-badge{font-family:'JetBrains Mono',monospace;font-size:8px;padding:3px 8px;border-radius:3px;background:var(--blue-l);border:1px solid #aad4ef;color:var(--blue-d);text-transform:uppercase;letter-spacing:.5px}
-.hdr-ts{font-size:9px;color:var(--muted)}
-
-/* Tab content */
-.tab-content{display:none}
-.tab-content.active{display:block}
-
-/* Main */
-.main{max-width:1400px;margin:0 auto;padding:20px 24px 40px}
-
-/* KPI Strip */
-.kpi-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:24px}
-.kpi{background:#fff;border:1px solid var(--border);border-radius:8px;padding:14px 16px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.kpi .label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.kpi .value{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--blue)}
-.kpi .detail{font-size:10px;color:var(--muted);margin-top:2px}
-.kpi.warn .value{color:var(--gold)}
-.kpi.danger .value{color:var(--crimson)}
-.kpi.good .value{color:var(--green)}
-
-/* Section */
-.section-title{font-size:11px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:1.2px;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.section-title::after{content:'';flex:1;height:1px;background:var(--border)}
-
-/* Centre Cards */
-.centres-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:32px}
-.centre-card{background:#fff;border:1.5px solid var(--border);border-radius:12px;overflow:hidden;transition:all .2s;cursor:pointer;position:relative}
-.centre-card:hover{border-color:var(--blue);box-shadow:0 4px 20px rgba(0,114,188,.12);transform:translateY(-2px)}
-.centre-card.decision-made{border-left:4px solid var(--crimson)}
-.centre-card.priority-1{border-left:4px solid var(--blue)}
-.centre-card.under-eval{border-left:4px solid var(--gold)}
-.centre-card.hold{border-left:4px solid var(--muted)}
-
-.cc-header{padding:16px 18px 12px;border-bottom:1px solid #e8f0f6}
-.cc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.cc-name{font-size:16px;font-weight:700;color:var(--text)}
-.cc-location{font-size:10px;color:var(--muted);margin-top:2px}
-.cc-status{font-size:8px;font-weight:700;padding:3px 8px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
-.status-not-recommended{background:#fff0f3;color:var(--crimson);border:1px solid #f0c0c8}
-.status-priority{background:var(--blue-l);color:var(--blue);border:1px solid #aad4ef}
-.status-evaluating{background:#fffbee;color:var(--gold);border:1px solid #f0e0a0}
-.status-hold{background:#f0f4f8;color:var(--muted);border:1px solid #d0dae4}
-
-.cc-body{padding:14px 18px}
-.cc-desc{font-size:11px;color:#4a6070;line-height:1.6;margin-bottom:12px}
-
-.cc-metrics{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.cc-metric{background:#f8fafb;border:1px solid #e8f0f6;border-radius:6px;padding:8px;text-align:center}
-.cc-metric .mv{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:var(--blue)}
-.cc-metric .mv.red{color:var(--crimson)}
-.cc-metric .mv.amber{color:var(--gold)}
-.cc-metric .mv.green{color:var(--green)}
-.cc-metric .ml{font-size:7.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
-
-.cc-risks{margin-top:8px}
-.cc-risk{display:flex;align-items:center;gap:6px;font-size:9.5px;color:#4a6070;padding:3px 0}
-.risk-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.risk-high{background:var(--crimson)}
-.risk-med{background:var(--gold)}
-.risk-low{background:var(--green)}
-
-.cc-footer{padding:10px 18px;background:#f8fafb;border-top:1px solid #e8f0f6;display:flex;align-items:center;justify-content:space-between}
-.cc-link{font-size:10px;font-weight:600;color:var(--blue);display:flex;align-items:center;gap:4px}
-.cc-link:hover{text-decoration:underline}
-.cc-phase{font-size:8px;color:var(--muted);font-family:'JetBrains Mono',monospace;text-transform:uppercase}
-
-/* Comparison Table */
-.comp-table-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:32px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.comp-table{width:100%;border-collapse:collapse;font-size:11px}
-.comp-table th{background:#f0f6fb;padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);font-weight:600;border-bottom:2px solid var(--border)}
-.comp-table td{padding:10px 14px;border-bottom:1px solid #e8f0f6;color:#2a4a60}
-.comp-table tr:last-child td{border-bottom:none}
-.comp-table tr:hover td{background:rgba(0,114,188,.03)}
-.comp-table .metric-col{font-weight:600;color:var(--text);width:180px}
-.comp-table .mono{font-family:'JetBrains Mono',monospace;font-weight:600}
-.comp-table .red{color:var(--crimson)}
-.comp-table .green{color:var(--green)}
-.comp-table .amber{color:var(--gold)}
-.comp-table .blue{color:var(--blue)}
-
-/* Timeline */
-.timeline-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:32px;box-shadow:0 1px 4px rgba(0,0,0,.04)}
-.timeline{position:relative;padding-left:24px}
-.timeline::before{content:'';position:absolute;left:8px;top:0;bottom:0;width:2px;background:linear-gradient(180deg,var(--blue),var(--crimson))}
-.tl-item{position:relative;padding-bottom:20px}
-.tl-item:last-child{padding-bottom:0}
-.tl-dot{position:absolute;left:-20px;top:2px;width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 2px var(--blue)}
-.tl-dot.active{background:var(--blue)}
-.tl-dot.pending{background:#fff}
-.tl-dot.done{background:var(--green);box-shadow:0 0 0 2px var(--green)}
-.tl-dot.blocked{background:var(--crimson);box-shadow:0 0 0 2px var(--crimson)}
-.tl-date{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--blue);font-weight:600;margin-bottom:2px}
-.tl-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px}
-.tl-desc{font-size:10px;color:var(--muted);line-height:1.5}
-
-.dp-alert{padding:12px 14px;border-radius:8px;margin-bottom:10px;font-size:11px;line-height:1.6}
-.dp-alert.danger{background:#fff0f3;border:1px solid #f0c0c8;border-left:4px solid var(--crimson)}
-.dp-alert.warn{background:#fffbee;border:1px solid #f0e0a0;border-left:4px solid var(--gold)}
-.dp-alert.info{background:var(--blue-l);border:1px solid #aad4ef;border-left:4px solid var(--blue)}
-.dp-alert .ah{font-weight:700;margin-bottom:3px}
-.dp-alert.danger .ah{color:var(--crimson)}
-.dp-alert.warn .ah{color:var(--gold)}
-.dp-alert.info .ah{color:var(--blue)}
-
-/* Risk Table */
-.risk-table{width:100%;border-collapse:collapse;font-size:10.5px;margin-top:8px}
-.risk-table th{background:#f0f6fb;padding:7px 10px;text-align:left;font-size:8px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border-bottom:1px solid var(--border)}
-.risk-table td{padding:7px 10px;border-bottom:1px solid #e8f0f6;color:#2a4a60}
-.risk-badge{font-size:8px;font-weight:700;padding:2px 6px;border-radius:3px;display:inline-block}
-.rb-high{background:#fff0f3;color:var(--crimson)}
-.rb-med{background:#fffbee;color:var(--gold)}
-.rb-low{background:#f0f8ff;color:var(--blue)}
-
-/* Floor Plan Mini */
-.floor-list{font-size:10px;color:#2a4a60}
-.floor-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid #f0f4f8}
-.floor-item:last-child{border-bottom:none}
-.floor-level{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--blue);min-width:30px;flex-shrink:0}
-.floor-content{line-height:1.5}
-
-/* Responsive */
-@media(max-width:768px){
-  .hdr-inner{gap:10px}
-  .hdr-txt h1{font-size:14px}
-  .hdr-right{display:none}
-  .main{padding:14px 12px 30px}
-  .kpi-strip{grid-template-columns:1fr 1fr}
-  .centres-grid{grid-template-columns:1fr}
-  .comp-table-wrap{overflow-x:auto}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg2);
+  color: var(--tx);
+  font-family: var(--f);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
+a { color: var(--vps-blue); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ═══ HEADER ═══ */
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,.93);
+  backdrop-filter: blur(18px) saturate(1.4);
+  border-bottom: 1px solid var(--bd);
+  padding: 0 clamp(16px, 4vw, 48px);
+}
+.header-inner {
+  max-width: 1300px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 62px; gap: 16px;
+}
+.logo { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.logo img { height: 34px; width: auto; }
+.logo-sep {
+  width: 1px; height: 30px; background: var(--bd); margin: 0 2px;
+}
+.logo-label {
+  font-size: 13px; font-weight: 600; color: var(--vps-blue); line-height: 1.25;
+}
+.logo-label span {
+  display: block; font-size: 10.5px; font-weight: 400; color: var(--vps-gray);
+  letter-spacing: .3px;
+}
+.nav { display: flex; gap: 2px; overflow-x: auto; align-items: center; }
+.nav-sep { width: 1px; height: 20px; background: var(--bd); margin: 0 6px; flex-shrink: 0; }
+.nav-btn {
+  padding: 8px 15px; font-size: 13px; font-weight: 500; font-family: var(--f);
+  background: none; border: none; color: var(--tx2); cursor: pointer;
+  border-radius: var(--r); transition: all .15s; white-space: nowrap;
+}
+.nav-btn:hover { color: var(--tx); background: var(--bg3); }
+.nav-btn.active { color: var(--vps-blue); background: var(--vps-blue-l); }
+.nav-btn--secondary { font-size: 12px; color: var(--tx3); padding: 6px 11px; }
+.nav-btn--secondary.active { color: var(--vps-blue); background: var(--vps-blue-l); }
+
+@media (max-width: 760px) {
+  .nav-btn { padding: 7px 10px; font-size: 12px; }
+  .header-inner { height: 52px; }
+  .logo img { height: 26px; }
+  .logo-label { font-size: 11px; }
+  .logo-sep { height: 22px; }
+}
+
+/* ═══ HERO ═══ */
+.hero {
+  padding: clamp(32px,6vw,64px) clamp(16px,4vw,48px) clamp(20px,3vw,36px);
+  max-width: 1300px; margin: 0 auto;
+}
+.hero-badge {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--vps-blue); background: var(--vps-blue-l);
+  padding: 5px 14px; border-radius: 20px; margin-bottom: 16px;
+}
+.hero h1 {
+  font-size: clamp(26px, 4.5vw, 46px); font-weight: 700;
+  line-height: 1.2; letter-spacing: -.5px;
+  max-width: 740px; margin-bottom: 14px;
+}
+.hero h1 em { font-style: normal; color: var(--vps-maroon); }
+.hero p {
+  font-size: 15px; color: var(--tx2); max-width: 620px; line-height: 1.7;
+}
+
+/* ═══ METRICS BAR ═══ */
+.metrics-bar {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 1px; background: var(--bd); border-radius: var(--rl); overflow: hidden;
+  margin: 0 clamp(16px,4vw,48px) clamp(20px,3vw,40px);
+  max-width: 1300px; box-shadow: var(--sh);
+}
+@media (max-width: 900px) {
+  .metrics-bar { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 560px) {
+  .metrics-bar { grid-template-columns: repeat(2, 1fr); }
+}
+.metric { background: var(--bg); padding: 18px 16px; }
+.metric-lbl {
+  font-size: 10px; color: var(--tx3); margin-bottom: 4px;
+  text-transform: uppercase; letter-spacing: .7px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.metric-val { font-size: 24px; font-weight: 700; letter-spacing: -.5px; }
+.metric-val.danger { color: var(--red); }
+.metric-val.good { color: var(--vps-blue); }
+
+/* ═══ SECTIONS ═══ */
+.section {
+  display: none;
+  padding: 0 clamp(16px,4vw,48px) clamp(24px,3vw,48px);
+  max-width: 1300px; margin: 0 auto;
+}
+.section.active { display: block; }
+.section-head { margin-bottom: 20px; }
+.section-head h2 {
+  font-size: clamp(22px, 3vw, 32px); font-weight: 700;
+  letter-spacing: -.3px; margin-bottom: 6px;
+}
+.section-head p {
+  font-size: 14px; color: var(--tx2); max-width: 700px; line-height: 1.7;
+}
+
+/* ═══ MAP WRAPPER ═══ */
+.map-wrap {
+  border-radius: var(--rl); overflow: hidden;
+  border: 1px solid var(--bd); box-shadow: var(--sh);
+  background: var(--bg); position: relative;
+}
+.map-el { height: clamp(340px, 48vw, 540px); width: 100%; z-index: 1; }
+.map-legend {
+  position: absolute; bottom: 12px; left: 12px; z-index: 500;
+  background: rgba(255,255,255,.93); backdrop-filter: blur(10px);
+  border: 1px solid var(--bd); border-radius: var(--r);
+  padding: 10px 14px; font-size: 11px; color: var(--tx2);
+  display: flex; flex-wrap: wrap; gap: 14px; box-shadow: var(--sh);
+}
+.map-legend i {
+  display: inline-block; width: 9px; height: 9px;
+  border-radius: 50%; vertical-align: middle; margin-right: 4px;
+}
+
+/* ═══ LEAFLET CUSTOM ═══ */
+.leaflet-popup-content-wrapper {
+  background: #fff !important; color: var(--tx) !important;
+  border: 1px solid var(--bd) !important; border-radius: var(--r) !important;
+  box-shadow: var(--shl) !important;
+}
+.leaflet-popup-tip { background: #fff !important; }
+.leaflet-popup-content {
+  font-family: var(--f) !important; font-size: 13px !important;
+  line-height: 1.5 !important; margin: 10px 14px !important;
+}
+.leaflet-popup-content strong { font-weight: 600; color: var(--vps-blue); }
+.leaflet-popup-content .sub {
+  color: var(--tx2); font-size: 12px; margin-top: 4px;
+}
+
+/* ═══ CORRIDOR TABLE ═══ */
+.corr-grid {
+  display: grid; gap: 1px; background: var(--bd);
+  border-radius: var(--rl); overflow: hidden;
+  margin-top: 20px; box-shadow: var(--sh);
+}
+.corr-row {
+  display: grid; grid-template-columns: 2.2fr 1fr 1fr 1fr;
+  background: var(--bg); padding: 14px 20px; align-items: center;
+  transition: background .12s;
+}
+.corr-row:hover { background: var(--bg2); }
+.corr-row.head {
+  background: var(--bg2); font-size: 11px; color: var(--tx3);
+  text-transform: uppercase; letter-spacing: .7px; font-weight: 500;
+}
+.corr-name { font-weight: 600; font-size: 14px; }
+.corr-sub { font-size: 12px; color: var(--tx3); margin-top: 2px; line-height: 1.4; }
+.corr-val { text-align: center; font-weight: 700; font-size: 16px; }
+.corr-val.leak { color: var(--vps-maroon); }
+.corr-val.share { color: var(--vps-blue); }
+.corr-val small {
+  display: block; font-size: 10px; font-weight: 400;
+  color: var(--tx3); margin-top: 1px;
+}
+@media (max-width: 640px) {
+  .corr-row { grid-template-columns: 1.5fr 1fr 1fr; }
+  .corr-row > *:last-child { display: none; }
+}
+
+/* ═══ INSIGHT BOX ═══ */
+.insight {
+  background: var(--vps-blue-ll); border: 1px solid rgba(43,124,190,.12);
+  border-radius: var(--rl); padding: 18px 22px; margin-top: 20px;
+  font-size: 14px; color: var(--vps-blue-d); line-height: 1.7;
+}
+.insight strong { color: var(--vps-blue); }
+
+/* ═══ SCORING LAYOUT ═══ */
+.score-layout {
+  display: grid; grid-template-columns: 280px 1fr; gap: 20px; margin-top: 20px;
+}
+@media (max-width: 820px) { .score-layout { grid-template-columns: 1fr; } }
+.score-panel {
+  background: var(--bg); border: 1px solid var(--bd); border-radius: var(--rl);
+  padding: 22px; position: sticky; top: 78px; align-self: start; box-shadow: var(--sh);
+}
+.score-panel h3 { font-size: 14px; font-weight: 700; margin-bottom: 16px; }
+.slider-grp { margin-bottom: 14px; }
+.slider-lbl {
+  display: flex; justify-content: space-between;
+  font-size: 13px; color: var(--tx2); margin-bottom: 5px;
+}
+.slider-lbl span { color: var(--vps-blue); font-weight: 700; }
+input[type=range] {
+  -webkit-appearance: none; width: 100%; height: 4px;
+  border-radius: 2px; background: var(--bg4); outline: none; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--vps-blue); border: 2.5px solid #fff;
+  cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,.18);
+}
+input[type=range]::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--vps-blue); border: 2.5px solid #fff; cursor: pointer;
+}
+
+/* ═══ SITE CARDS ═══ */
+.s-card {
+  background: var(--bg); border: 1px solid var(--bd); border-radius: var(--rl);
+  padding: 22px; margin-bottom: 14px; box-shadow: var(--sh);
+  transition: border-color .15s, box-shadow .15s;
+}
+.s-card:hover { border-color: var(--bd2); box-shadow: var(--shl); }
+.s-head { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+.s-rank {
+  width: 42px; height: 42px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 700; flex-shrink: 0;
+}
+.s-title { font-size: 17px; font-weight: 700; letter-spacing: -.2px; }
+.s-area { font-size: 12px; color: var(--tx3); margin-top: 2px; }
+.s-badge {
+  margin-left: auto; text-align: center; padding: 8px 14px;
+  background: var(--bg2); border-radius: var(--r);
+}
+.s-badge-num { font-size: 26px; font-weight: 700; line-height: 1; }
+.s-badge-lbl {
+  font-size: 10px; color: var(--tx3); text-transform: uppercase;
+  letter-spacing: .4px; margin-top: 2px;
+}
+.tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+.tag {
+  font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500;
+  background: var(--vps-blue-l); color: var(--vps-blue);
+}
+.tag.warn { background: var(--accent-l); color: var(--accent); }
+.tag.ok { background: var(--teal-l); color: var(--teal); }
+.tag.hot { background: var(--vps-maroon-l); color: var(--vps-maroon); }
+.bars { display: grid; gap: 7px; }
+.bar-r { display: flex; align-items: center; gap: 10px; }
+.bar-l { min-width: 90px; font-size: 12px; color: var(--tx3); text-align: right; }
+.bar-t { flex: 1; height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+.bar-f { height: 100%; border-radius: 3px; transition: width .5s cubic-bezier(.22,1,.36,1); }
+.bar-v { min-width: 26px; font-size: 13px; font-weight: 700; }
+.s-meta {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--bd);
+}
+.s-meta-item { font-size: 12px; }
+.s-meta-lbl { color: var(--tx3); margin-bottom: 1px; }
+.s-meta-val { font-weight: 600; }
+
+/* ═══ REC CARDS ═══ */
+.rec { background: var(--bg); border: 1px solid var(--bd); border-radius: var(--rl); margin-bottom: 18px; overflow: hidden; box-shadow: var(--sh); }
+.rec-top { padding: 22px 24px; border-bottom: 1px solid var(--bd); display: flex; align-items: center; gap: 14px; background: var(--bg2); }
+.rec-rank { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 700; flex-shrink: 0; }
+.rec-name { font-size: 19px; font-weight: 700; letter-spacing: -.3px; }
+.rec-sub { font-size: 12px; color: var(--tx3); margin-top: 2px; }
+.rec-sc { margin-left: auto; text-align: right; }
+.rec-sc-num { font-size: 34px; font-weight: 700; line-height: 1; }
+.rec-sc-lbl { font-size: 11px; color: var(--tx3); }
+.rec-body { padding: 22px 24px; }
+.rec-text { font-size: 14px; color: var(--tx2); line-height: 1.75; margin-bottom: 18px; }
+.rec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .rec-grid { grid-template-columns: 1fr; } }
+.rec-stat { background: var(--bg2); border-radius: var(--r); padding: 14px 16px; }
+.rec-stat-lbl { font-size: 11px; color: var(--tx3); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 3px; font-weight: 500; }
+.rec-stat-val { font-size: 15px; font-weight: 600; }
+
+/* ═══ DEPT BUTTONS ═══ */
+.dept-btn {
+  padding: 7px 16px; font-size: 13px; font-weight: 500; font-family: var(--f);
+  background: var(--bg); border: 1px solid var(--bd); color: var(--tx2);
+  cursor: pointer; border-radius: 20px; transition: all .15s;
+}
+.dept-btn:hover { border-color: var(--vps-blue); color: var(--vps-blue); }
+.dept-btn.active {
+  background: var(--vps-blue); border-color: var(--vps-blue); color: #fff;
+}
+.dept-table {
+  width: 100%; border-collapse: separate; border-spacing: 0;
+  font-size: 13px; border-radius: var(--rl); overflow: hidden;
+  border: 1px solid var(--bd); box-shadow: var(--sh);
+}
+.dept-table thead th {
+  background: var(--bg2); padding: 10px 14px; text-align: left;
+  font-size: 11px; font-weight: 600; color: var(--tx3);
+  text-transform: uppercase; letter-spacing: .5px;
+  border-bottom: 1px solid var(--bd);
+}
+.dept-table tbody td {
+  padding: 12px 14px; background: var(--bg);
+  border-bottom: 1px solid var(--bd);
+}
+.dept-table tbody tr:last-child td { border-bottom: none; }
+.dept-table tbody tr:hover td { background: var(--bg2); }
+.str-bar { display:inline-block; height:6px; border-radius:3px; vertical-align:middle; margin-right:6px; }
+
+/* ═══ FOOTER ═══ */
+.footer {
+  margin-top: clamp(32px,5vw,60px); padding: 22px clamp(16px,4vw,48px);
+  border-top: 1px solid var(--bd); font-size: 12px; color: var(--tx3);
+  text-align: center; background: var(--bg);
+}
+.footer a { color: var(--vps-blue); }
+
+/* ═══ KAKKANAD TAB ═══ */
+
+/* Vision header */
+.kk-vision {
+  display:grid; grid-template-columns:1.2fr 1fr; gap:24px;
+  background:linear-gradient(135deg,var(--vps-blue-ll) 0%,#fff 60%);
+  border:1px solid rgba(43,124,190,.12); border-radius:var(--rl);
+  padding:clamp(20px,3vw,36px); margin-bottom:20px; box-shadow:var(--sh);
+}
+@media(max-width:760px){.kk-vision{grid-template-columns:1fr;}}
+.kk-vision-badge {
+  font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px;
+  color:var(--vps-maroon); background:var(--vps-maroon-l);
+  display:inline-block; padding:4px 12px; border-radius:20px; margin-bottom:12px;
+}
+.kk-vision-h {
+  font-size:clamp(19px,2.5vw,27px); font-weight:800; line-height:1.2;
+  letter-spacing:-.4px; margin-bottom:12px; color:var(--tx);
+}
+.kk-vision-h em { font-style:normal; color:var(--vps-blue); }
+.kk-vision-p { font-size:13.5px; color:var(--tx2); line-height:1.7; max-width:580px; }
+.kk-vision-right { display:flex; flex-direction:column; gap:0; justify-content:center; }
+.kk-vision-campus {
+  background:var(--bg); border:1px solid var(--bd); border-radius:var(--r);
+  padding:14px 16px;
+}
+.kk-vc-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; margin-bottom:2px; }
+.kk-vc-role { font-size:13px; font-weight:700; margin-bottom:8px; color:var(--tx); }
+.kk-vc-tags { display:flex; flex-wrap:wrap; gap:4px; }
+.kk-vc-tags span {
+  font-size:11px; padding:3px 9px; border-radius:20px; font-weight:500;
+  background:var(--vps-blue-l); color:var(--vps-blue-d);
+}
+.kk-vc-arrow {
+  text-align:center; font-size:11.5px; font-weight:600; color:var(--tx3);
+  padding:8px 0; letter-spacing:.3px;
+}
+
+/* Metrics pull — breaks metrics-bar out of section padding, full width */
+.kk-metrics-pull {
+  margin: 0 calc(-1 * clamp(16px,4vw,48px)) 28px;
+}
+.kk-metrics-pull .metrics-bar {
+  border-left: none; border-right: none; border-radius: 0;
+  box-shadow: none; max-width: none; margin: 0;
+}
+
+/* Section label */
+.kk-section-label {
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px;
+  color:var(--vps-blue); margin:28px 0 12px;
+  padding-bottom:8px; border-bottom:2px solid var(--vps-blue-l);
+}
+
+/* Land options */
+.kk-land-row-top { display:grid; grid-template-columns:290px 1fr; gap:16px; }
+@media(max-width:900px){.kk-land-row-top{grid-template-columns:1fr;}}
+.kk-land-cards { display:flex; flex-direction:column; gap:12px; }
+.kk-lo-card { background:var(--bg); border:1px solid var(--bd); border-radius:var(--rl); padding:16px; box-shadow:var(--sh); }
+.kk-lo-card--sel { border-color:rgba(43,124,190,.3); background:var(--vps-blue-l); }
+.kk-lo-badge { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:var(--tx3); margin-bottom:4px; }
+.kk-lo-badge--sel { color:var(--vps-blue); }
+.kk-lo-area { font-size:24px; font-weight:800; color:var(--vps-blue); letter-spacing:-.5px; }
+.kk-lo-sub { font-size:11px; color:var(--tx3); margin-bottom:8px; }
+.kk-lo-rows { display:flex; flex-direction:column; border-top:1px solid var(--bd); padding-top:6px; margin-bottom:8px; }
+.kk-lo-row { display:flex; justify-content:space-between; font-size:11.5px; padding:4px 0; border-bottom:1px solid var(--bd); }
+.kk-lo-row:last-child { border-bottom:none; }
+.kk-lo-row span:first-child { color:var(--tx3); }
+.kk-lo-row span:last-child { font-weight:600; }
+.kk-pdf-btn { width:100%; padding:7px; border-radius:var(--r); font-size:11.5px; font-weight:600; cursor:pointer; font-family:var(--f); border:1px solid var(--bd); background:var(--bg3); color:var(--tx2); transition:all .15s; }
+.kk-pdf-btn:hover { background:var(--vps-blue); color:#fff; border-color:var(--vps-blue); }
+.kk-pdf-btn--sel { background:var(--vps-blue); color:#fff; border-color:var(--vps-blue); }
+.kk-pdf-panel { background:var(--bg); border:1px solid var(--bd); border-radius:var(--rl); overflow:hidden; box-shadow:var(--sh); display:flex; flex-direction:column; min-height:460px; }
+.kk-pdf-tabs { display:flex; border-bottom:1px solid var(--bd); background:var(--bg2); align-items:center; }
+.kk-pdf-tab { padding:9px 14px; font-size:12px; font-weight:500; font-family:var(--f); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; color:var(--tx2); transition:all .15s; }
+.kk-pdf-tab.active { color:var(--vps-blue); border-bottom-color:var(--vps-blue); }
+.kk-pdf-dl { margin-left:auto; padding:6px 14px; font-size:11.5px; color:var(--vps-blue); text-decoration:none; font-weight:600; }
+.kk-pdf-frame { width:100%; flex:1; border:none; min-height:420px; }
+
+/* Connectivity grid */
+.kk-conn-grid { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; margin-top:10px; }
+@media(max-width:800px){.kk-conn-grid{grid-template-columns:1fr 1fr;}}
+.kk-conn { display:flex; align-items:flex-start; gap:10px; background:var(--bg); border:1px solid var(--bd); border-radius:var(--r); padding:12px; font-size:12px; color:var(--tx2); line-height:1.55; box-shadow:var(--sh); }
+.kk-conn strong { color:var(--tx); display:block; margin-bottom:2px; }
+.kk-conn-icon { font-size:18px; flex-shrink:0; }
+
+/* Flow sources */
+.kk-flow-src-row { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; margin-bottom:14px; }
+@media(max-width:800px){.kk-flow-src-row{grid-template-columns:1fr 1fr;}}
+.kk-fsrc { display:flex; align-items:flex-start; gap:10px; background:var(--bg); border:1px solid var(--bd); border-radius:var(--rl); padding:14px; box-shadow:var(--sh); }
+.kk-fsrc-icon { width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:800; flex-shrink:0; }
+.kk-fsrc-t { font-size:12.5px; font-weight:700; margin-bottom:3px; }
+.kk-fsrc-s { font-size:11.5px; color:var(--tx2); line-height:1.5; }
+
+/* Referral table */
+.kk-referral-table { border-radius:var(--rl); overflow:hidden; border:1px solid var(--bd); box-shadow:var(--sh); }
+.kk-ref-row { display:grid; grid-template-columns:1.2fr 1.4fr 1.4fr; padding:10px 14px; border-bottom:1px solid var(--bd); font-size:12.5px; background:var(--bg); transition:background .12s; }
+.kk-ref-row:last-child { border-bottom:none; }
+.kk-ref-row:hover:not(.kk-ref-head) { background:var(--bg2); }
+.kk-ref-head { background:var(--bg2); font-size:11px; color:var(--tx3); text-transform:uppercase; letter-spacing:.6px; font-weight:600; }
+.kk-ref-primary { color:#1a5a30; font-weight:600; }
+.kk-ref-secondary { color:var(--vps-blue); }
+
+/* Competition cards */
+.kk-comp-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:12px; }
+.kk-comp-card { background:var(--bg); border:1px solid var(--bd); border-radius:var(--rl); padding:16px; box-shadow:var(--sh); }
+.kk-comp-name { font-size:13.5px; font-weight:700; margin-bottom:2px; }
+.kk-comp-dist { font-size:11.5px; color:var(--tx3); margin-bottom:8px; }
+.kk-threat-bar { height:4px; border-radius:2px; background:var(--bg3); margin:6px 0 8px; overflow:hidden; }
+.kk-threat-fill { height:100%; border-radius:2px; background:var(--vps-maroon); }
+
+/* Financial grid */
+.kk-fin-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(195px,1fr)); gap:1px; background:var(--bd); border-radius:var(--rl); overflow:hidden; box-shadow:var(--sh); margin-bottom:12px; }
+.kk-fin-card { background:var(--bg); padding:18px 20px; }
+.kk-fin-card--primary { background:var(--vps-blue); }
+.kk-fin-card--primary .kk-fin-label { color:rgba(255,255,255,.75); }
+.kk-fin-card--primary .kk-fin-val { color:#fff; }
+.kk-fin-card--primary .kk-fin-sub { color:rgba(255,255,255,.65); }
+.kk-fin-label { font-size:11px; color:var(--tx3); text-transform:uppercase; letter-spacing:.5px; font-weight:600; margin-bottom:4px; }
+.kk-fin-val { font-size:21px; font-weight:800; color:var(--vps-blue); letter-spacing:-.5px; margin-bottom:4px; }
+.kk-fin-sub { font-size:11.5px; color:var(--tx3); line-height:1.5; }
+
+/* Projection table */
+.kk-proj-wrap { overflow-x:auto; border-radius:var(--rl); border:1px solid var(--bd); box-shadow:var(--sh); }
+.kk-proj-tbl { width:100%; border-collapse:collapse; font-size:12.5px; min-width:640px; }
+.kk-proj-tbl thead tr { background:var(--vps-blue); color:#fff; }
+.kk-proj-tbl thead th { padding:11px 14px; text-align:left; font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.4px; }
+.kk-proj-tbl tbody td { padding:11px 14px; border-bottom:1px solid var(--bd); background:var(--bg); }
+.kk-proj-tbl tbody tr:last-child td { border-bottom:none; }
+.kk-proj-tbl tbody tr:hover td { background:var(--bg2); }
+.kk-proj-tbl tbody td:first-child { font-weight:600; color:var(--tx2); font-size:12px; }
+.kk-td-red { color:var(--red); font-weight:700; }
+.kk-td-amber { color:var(--accent); font-weight:700; }
+.kk-td-green { color:var(--teal); font-weight:700; }
+
+/* Two campus */
+.kk-two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+@media(max-width:720px){.kk-two-col{grid-template-columns:1fr;}}
+.kk-card { border-radius:var(--rl); border:1px solid var(--bd); overflow:hidden; box-shadow:var(--sh); }
+.kk-card--blue .kk-card-header { background:var(--vps-blue-l); border-bottom:1px solid rgba(43,124,190,.12); }
+.kk-card--green .kk-card-header { background:rgba(26,122,64,.07); border-bottom:1px solid rgba(26,122,64,.12); }
+.kk-card-header { display:flex; align-items:center; gap:12px; padding:16px 20px; }
+.kk-card-icon { font-size:20px; flex-shrink:0; }
+.kk-card-title { font-size:14px; font-weight:700; }
+.kk-card-sub { font-size:11.5px; color:var(--tx3); margin-top:2px; }
+.kk-card-body { padding:16px 20px; background:var(--bg); }
+.kk-spec-list { display:flex; flex-direction:column; gap:4px; margin-bottom:8px; }
+.kk-spec-item { font-size:12.5px; padding:5px 10px; border-radius:6px; display:flex; align-items:center; gap:7px; }
+.kk-spec-item::before { content:''; width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+.kk-spec-item--keep { background:var(--vps-blue-l); color:var(--vps-blue-d); }
+.kk-spec-item--keep::before { background:var(--vps-blue); }
+.kk-spec-item--move { background:rgba(139,26,74,.06); color:var(--vps-maroon); font-style:italic; }
+.kk-spec-item--move::before { background:var(--vps-maroon); }
+.kk-spec-item--new { background:rgba(26,122,64,.07); color:#1a5a30; }
+.kk-spec-item--new::before { background:#1a7a40; }
+.kk-note { font-size:12px; color:var(--tx2); line-height:1.6; border-top:1px solid var(--bd); padding-top:10px; margin-top:8px; }
+
+/* Doctor grid */
+.kk-doc-grid { border-radius:var(--rl); overflow:hidden; border:1px solid var(--bd); box-shadow:var(--sh); }
+.kk-dg-head { display:grid; grid-template-columns:1fr 1.5fr 1.5fr 1.5fr; background:var(--bg2); padding:10px 14px; font-size:11px; color:var(--tx3); text-transform:uppercase; letter-spacing:.6px; font-weight:600; border-bottom:1px solid var(--bd); }
+.kk-dg-row { display:grid; grid-template-columns:1fr 1.5fr 1.5fr 1.5fr; padding:10px 14px; border-bottom:1px solid var(--bd); font-size:12.5px; background:var(--bg); transition:background .12s; align-items:start; }
+.kk-dg-row:last-child { border-bottom:none; }
+.kk-dg-row:hover { background:var(--bg2); }
+.kk-dg-dept { font-weight:700; color:var(--vps-blue-d); }
+.kk-dg-kk { color:#1a5a30; }
+.kk-dg-sh { color:var(--tx2); font-size:11.5px; font-style:italic; }
+@media(max-width:760px){.kk-dg-head,.kk-dg-row{grid-template-columns:1fr 1.2fr 1.2fr;}.kk-dg-row>*:nth-child(4),.kk-dg-head>*:nth-child(4){display:none;}}
+
+/* Target segments */
+.kk-tgt-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+@media(max-width:800px){.kk-tgt-grid{grid-template-columns:1fr 1fr;}}
+.kk-tgt { background:var(--bg); border:1px solid var(--bd); border-radius:var(--rl); padding:16px; box-shadow:var(--sh); }
+.kk-tgt-hd { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.kk-tgt-icon { font-size:18px; }
+.kk-tgt-nm { font-size:13px; font-weight:700; flex:1; }
+.kk-tp-high { font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; background:var(--vps-maroon-l); color:var(--vps-maroon); white-space:nowrap; }
+.kk-tp-med { font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; background:var(--accent-l); color:var(--accent); white-space:nowrap; }
+.kk-tgt-bd { font-size:12.5px; color:var(--tx2); line-height:1.6; }
+
+/* Growth grid */
+.kk-growth-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1px; background:var(--bd); border-radius:var(--rl); overflow:hidden; box-shadow:var(--sh); margin-bottom:16px; }
+.kk-gw { background:var(--bg); padding:16px 18px; }
+.kk-gw-v { font-size:24px; font-weight:800; color:var(--vps-blue); letter-spacing:-.5px; margin-bottom:4px; }
+.kk-gw-l { font-size:11px; color:var(--tx3); line-height:1.4; }
+
+/* Recommendation block */
+.kk-recommendation {
+  background:var(--vps-blue); color:#fff;
+  border-radius:var(--rl); padding:clamp(20px,3vw,36px);
+  margin-top:8px; box-shadow:0 4px 20px rgba(43,124,190,.25);
+}
+.kk-rec-head {
+  font-size:clamp(16px,2vw,20px); font-weight:800; margin-bottom:12px;
+  letter-spacing:-.2px;
+}
+.kk-recommendation p { font-size:13.5px; line-height:1.75; color:rgba(255,255,255,.9); }
+.kk-recommendation strong { color:#fff; }
+
+.kk-rec-disclaimer {
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+  border-radius: var(--r); padding: 12px 16px; margin-bottom: 16px;
+  font-size: 12.5px; color: rgba(255,255,255,.95); line-height: 1.6;
+}
+.kk-rec-steps { display:flex; flex-direction:column; gap:10px; margin-top:12px; margin-bottom:16px; }
+.kk-rec-step {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: rgba(255,255,255,.1); border-radius: var(--r); padding: 12px 14px;
+  font-size: 13px; line-height: 1.6; color: rgba(255,255,255,.9);
+}
+.kk-rec-step strong { color: #fff; }
+.kk-rec-step-n {
+  width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,.9);
+  color: var(--vps-blue); font-weight: 800; font-size: 13px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.kk-rec-timeline {
+  background: rgba(0,0,0,.18); border-radius: var(--r); overflow: hidden;
+  margin-top: 16px; margin-bottom: 16px;
+}
+.kk-rec-tl-head {
+  font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  color: rgba(255,255,255,.6); padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.kk-rec-tl-row {
+  display: grid; grid-template-columns: 180px 1fr; gap: 12px;
+  padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.08);
+  font-size: 12.5px; color: rgba(255,255,255,.85); line-height: 1.55;
+}
+.kk-rec-tl-row:last-child { border-bottom: none; }
+.kk-rec-tl-row--key { background: rgba(255,255,255,.1); }
+.kk-rec-tl-row--key strong { color: #fff; }
+.kk-rec-tl-phase { font-weight: 700; color: rgba(255,255,255,.95); font-size: 12px; }
+@media(max-width:640px){.kk-rec-tl-row{grid-template-columns:1fr;}.kk-rec-tl-phase{margin-bottom:3px;}}
+
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.anim{animation:fadeUp .5s ease-out both;}
+.d1{animation-delay:.08s;}
+.d2{animation-delay:.16s;}
+.d3{animation-delay:.24s;}
 </style>
 </head>
 <body>
 
-<!-- Header -->
-<div class="hdr">
-  <div class="hdr-row">
-    <div class="vps-logo-wrap">
-      <img class="vps-logo-img" src="https://tukuz.com/wp-content/uploads/2020/09/vps-lakeshore-hospital-logo-vector.png" alt="VPS Lakeshore">
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+  <div class="header-inner">
+    <div class="logo">
+      <img src="logo.png" alt="VPS Lakeshore">
+      <div class="logo-sep"></div>
+      <div class="logo-label">VPS Two-Campus Strategy<span>VPS Lakeshore · Kakkanad</span></div>
     </div>
-    <div class="hdr-divider"></div>
-    <div class="hdr-txt">
-      <h1>VPS New Centre Strategy</h1>
-      <div class="sub">VPS Lakeshore · Expansion Pipeline</div>
-    </div>
-    <div class="hdr-right">
-      <span class="hdr-badge">Confidential</span>
-      <span class="hdr-ts">April 2026</span>
-    </div>
+    <nav class="nav" id="mainNav">
+      <button class="nav-btn active" data-tab="5">Kakkanad hospital</button>
+      <div class="nav-sep"></div>
+      <button class="nav-btn nav-btn--secondary" data-tab="0">Town map</button>
+      <button class="nav-btn nav-btn--secondary" data-tab="1">Patient flow</button>
+      <button class="nav-btn nav-btn--secondary" data-tab="2">Dept. flows</button>
+      <button class="nav-btn nav-btn--secondary" data-tab="3">Scoring</button>
+      <button class="nav-btn nav-btn--secondary" data-tab="4">Recommendations</button>
+    </nav>
   </div>
-  <div class="tab-bar">
-    <button class="tab-btn active" onclick="switchTab('kakkanad')"><span class="tab-dot tab-dot-gray"></span>Kakkanad</button>
-    <button class="tab-btn" onclick="switchTab('qutub')"><span class="tab-dot tab-dot-blue"></span>Delhi (Qutub)</button>
-    <button class="tab-btn" onclick="switchTab('tirupati')"><span class="tab-dot tab-dot-red"></span>Tirupati</button>
-    <button class="tab-btn" onclick="switchTab('kota')"><span class="tab-dot tab-dot-amber"></span>Jaipur / Kota</button>
-    <button class="tab-btn" onclick="switchTab('market')"><span class="tab-dot tab-dot-green"></span>Market Studies</button>
-  </div>
-  <div class="hdr-gradient"></div>
+</header>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero anim" id="heroBlock">
+  <div class="hero-badge" id="heroBadge">SmartCity Kochi · Strategic Brief · April 2026</div>
+  <h1 id="heroH">VPS Kakkanad — <em>second campus</em> at SmartCity</h1>
+  <p id="heroP">A 400-bed multispecialty hospital on the SmartCity land parcel frees VPS Lakeshore to operate as Kerala's premier specialist centre — while capturing ₹500–600 Cr in new annual revenue by Year 5.</p>
 </div>
 
-<!-- Main -->
-<div class="main">
-
-<!-- ═══════════════ TAB: OVERVIEW (REMOVED) ═══════════════ -->
-<!-- Overview tab removed per user request — Kakkanad is now the default tab -->
-
-<!-- OVERVIEW_REMOVED -->
-
-
-<!-- ═══════════════ TAB: KAKKANAD ═══════════════ -->
-<div class="tab-content active" id="tab-kakkanad">
-  <div class="kpi-strip" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
-    <div class="kpi"><div class="label">Status</div><div class="value" style="font-size:16px">Land Hold</div><div class="detail">Purchase & hold — feasibility pending</div></div>
-    <div class="kpi good"><div class="label">Growth Trajectory</div><div class="value">&#8593; Fast</div><div class="detail">Fastest-growing catchment in Ernakulam</div></div>
-    <div class="kpi"><div class="label">Current VPS Share</div><div class="value">2%</div><div class="detail">vs AIMS 4%, Aster 3%, Rajagiri 3%</div></div>
-    <div class="kpi"><div class="label">Demographic</div><div class="value" style="font-size:16px">IT / Young Prof.</div><div class="detail">Infopark, SmartCity corridor</div></div>
-    <div class="kpi"><div class="label">Phase</div><div class="value" style="font-size:16px">Subsequent</div><div class="detail">No immediate action beyond land purchase</div></div>
-  </div>
-
-  <div class="section-title">Strategic Rationale</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
-    <div class="centre-card" style="cursor:default;border-left:4px solid var(--blue)">
-      <div class="cc-body">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">Why Kakkanad?</div>
-        <div class="cc-desc" style="margin-bottom:0;line-height:1.7">Kakkanad is Kochi's IT hub — home to Infopark and SmartCity — with a young professional demographic that represents the future patient base for VPS Lakeshore. The area is experiencing rapid residential and commercial growth, making it the fastest-growing local catchment zone. Securing land now while prices are favourable creates a long-term strategic asset. A medical city development here would dramatically expand VPS's footprint in the eastern Ernakulam corridor where competitors currently lead.</div>
-      </div>
-    </div>
-    <div class="centre-card" style="cursor:default;border-left:4px solid var(--gold)">
-      <div class="cc-body">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">Competitive Landscape</div>
-        <div class="cc-desc" style="margin-bottom:0;line-height:1.7">AIMS Kochi (1,300 beds) dominates this zone with 4% patient share. Aster Medcity (862 beds) holds 3%. Rajagiri Hospital gains via proximity. VPS currently captures only 2% of Kakkanad patients — the lowest among major Kochi hospitals. Recommended strategies: corporate health tie-ups with Infopark companies, executive health check-up packages for IT professionals, ortho & sports medicine marketing, and a shuttle service from Kakkanad to VPS Lakeshore.</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title">Patient Flow Intelligence</div>
-  <div class="centre-card priority-1" style="cursor:default;max-width:600px;margin-bottom:24px">
-    <div class="cc-body">
-      <div class="cc-name" style="font-size:14px;margin-bottom:8px">Full Patient Flow Dashboard Available</div>
-      <div class="cc-desc">Interactive map-based patient flow intelligence dashboard with origin flows, specialty filters, hospital comparison, market intelligence alerts, and strategy playbook for the entire Kochi catchment.</div>
-      <div style="margin-top:12px">
-        <a href="Kakkanad/index.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:var(--blue);color:#fff;border-radius:6px;font-size:12px;font-weight:600">Open Patient Flow Dashboard &#8594;</a>
-      </div>
-    </div>
-  </div>
-
-  <div class="section-title">Next Steps</div>
-  <div class="timeline-wrap">
-    <div class="timeline">
-      <div class="tl-item"><div class="tl-dot active"></div><div class="tl-date">Q1 FY27</div><div class="tl-title">Evaluate available land parcels in Kakkanad</div><div class="tl-desc">Identify suitable plots. Assess land price, accessibility, zoning, and expansion potential.</div></div>
-      <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-date">Q2 FY27</div><div class="tl-title">Purchase and hold land</div><div class="tl-desc">Secure the parcel at current prices. No construction commitment.</div></div>
-      <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-date">H2 FY27</div><div class="tl-title">Commission feasibility assessment</div><div class="tl-desc">Determine options for medical city development — bed count, specialty mix, investment quantum.</div></div>
-      <div class="tl-item"><div class="tl-dot pending"></div><div class="tl-date">FY28+</div><div class="tl-title">Board decision on development</div><div class="tl-desc">Based on feasibility, decide whether to proceed with construction or continue holding.</div></div>
-    </div>
-  </div>
+<!-- ═══ METRICS ═══ -->
+<div class="metrics-bar anim d1" id="metricsBlock">
+  <div class="metric"><div class="metric-lbl">Target bed capacity</div><div class="metric-val good">400</div></div>
+  <div class="metric"><div class="metric-lbl">Land parcel (Option 2)</div><div class="metric-val">6.17 Ac</div></div>
+  <div class="metric"><div class="metric-lbl">IT workforce within 2 km</div><div class="metric-val">140k+</div></div>
+  <div class="metric"><div class="metric-lbl">Current corridor leakage</div><div class="metric-val danger">40%</div></div>
+  <div class="metric"><div class="metric-lbl">Year 5 revenue (Kakkanad)</div><div class="metric-val good">₹550 Cr</div></div>
+  <div class="metric"><div class="metric-lbl">Payback horizon</div><div class="metric-val">10–12 yr</div></div>
 </div>
 
-<!-- ═══════════════ TAB: DELHI (QUTUB) ═══════════════ -->
-<div class="tab-content" id="tab-qutub">
-  <div class="kpi-strip" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
-    <div class="kpi"><div class="label">Status</div><div class="value" style="font-size:16px;color:var(--blue)">Priority 1</div><div class="detail">Immediate — site clearance in progress</div></div>
-    <div class="kpi"><div class="label">Licensed Beds</div><div class="value">280</div><div class="detail">86 ICU + 116 Ward + 71 Daycare + ancillary</div></div>
-    <div class="kpi warn"><div class="label">Est. Capex</div><div class="value">~INR 150 Cr</div><div class="detail">Greenfield · 1 acre leasehold</div></div>
-    <div class="kpi"><div class="label">Built-up Area</div><div class="value" style="font-size:16px">3,00,000 sq ft</div><div class="detail">G+7 + 4 Basements + Roof</div></div>
-    <div class="kpi"><div class="label">Time to Operations</div><div class="value" style="font-size:18px">2 Years</div><div class="detail">Construction + commissioning</div></div>
-    <div class="kpi"><div class="label">OT Suite</div><div class="value">7</div><div class="detail">3 Transplant · 2 Onco · 1 Hybrid · 1 Routine</div></div>
+<!-- ═══ TAB 0: TOWN MAP ═══ -->
+<section class="section" id="sec0">
+  <div class="section-head anim">
+    <h2>Town-level hospital coverage</h2>
+    <p>Every major town in Ernakulam district plotted by population (circle size) and tertiary care availability. Click any marker for details. 28 of 32 towns have no tertiary hospital.</p>
   </div>
-
-  <div class="section-title">Programme Verticals</div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:24px">
-    <div class="centre-card" style="cursor:default;border-left:4px solid var(--crimson)"><div class="cc-body" style="padding:12px 14px"><div class="cc-name" style="font-size:12px">Haemato-Oncology & BMT / CAR-T</div><div class="cc-desc" style="margin:4px 0 0;font-size:10px">Long LOS · BMT + CAR-T · Continuous infusion · ICU-dependent · Highest revenue per episode</div></div></div>
-    <div class="centre-card" style="cursor:default;border-left:4px solid var(--purple)"><div class="cc-body" style="padding:12px 14px"><div class="cc-name" style="font-size:12px">Rare Disease / Metabolic / Immunology</div><div class="cc-desc" style="margin:4px 0 0;font-size:10px">Lifelong patients · Predictable ERT/IVIG cycles · Low surgery, high daycare · Genetics dependency</div></div></div>
-    <div class="centre-card" style="cursor:default;border-left:4px solid var(--gold)"><div class="cc-body" style="padding:12px 14px"><div class="cc-name" style="font-size:12px">Neuromuscular Programme</div><div class="cc-desc" style="margin:4px 0 0;font-size:10px">Low volume, high complexity · Ventilator + ICU heavy · Gene therapy protocols · Respiratory crisis</div></div></div>
-    <div class="centre-card" style="cursor:default;border-left:4px solid var(--blue)"><div class="cc-body" style="padding:12px 14px"><div class="cc-name" style="font-size:12px">Precision Oncology — Solid Tumours</div><div class="cc-desc" style="margin:4px 0 0;font-size:10px">Complex resections · High infusion · MDT-driven · Medium/unpredictable LOS · Robotic-assisted</div></div></div>
-    <div class="centre-card" style="cursor:default;border-left:4px solid var(--green)"><div class="cc-body" style="padding:12px 14px"><div class="cc-name" style="font-size:12px">Organ-Specific Transplantation</div><div class="cc-desc" style="margin:4px 0 0;font-size:10px">Kidney (highest volume) · Liver (high complexity) · Heart/Lung optional · Dedicated ICU & OT clusters</div></div></div>
-  </div>
-
-  <div class="section-title">Floor-by-Floor Programme</div>
-  <div class="comp-table-wrap" style="margin-bottom:24px">
-  <table class="comp-table">
-    <thead><tr><th style="width:60px">Floor</th><th style="width:140px">Function</th><th>Clinical & Functional Content</th></tr></thead>
-    <tbody>
-      <tr><td class="mono blue">Roof</td><td>Plant & Services</td><td>HVAC · MGPS / LMO / O2 plant · Solar PV · Water treatment · IT riser · Fire suppression</td></tr>
-      <tr><td class="mono blue">7F</td><td>Clinical Trials & Digital</td><td>Clinical Trials Unit (Phase I: 4 beds, Phase II/III: 10 bays) · Digital Command Centre (real-time dashboards, AI decision support, telemedicine) · Academic wing</td></tr>
-      <tr><td class="mono blue">6F</td><td>BMT & Cellular Therapy</td><td>8–10 HEPA+ positive-pressure rooms (allo/auto HSCT, CAR-T, engraftment monitoring) · BMT Day Care (6 bays) · Pharmacy satellite · Departmental procedure room</td></tr>
-      <tr><td class="mono blue">5F</td><td>Haemato-Onco ICU/HDU</td><td>ICU (10 beds) — ventilated, neutropenic sepsis, CRS/ICANS · HDU (8 beds) — step-down · Isolation (4 AIIR rooms) — negative pressure</td></tr>
-      <tr><td class="mono blue">4F</td><td>Surgical OT Suite</td><td>Transplant OTs x3 · Onco Surgery OTs x2 (laminar flow, robotic) · Hybrid OT x1 (IR + vascular) · Routine OTs x2 · Pre/Post Op (12 bays) · CSSD satellite</td></tr>
-      <tr><td class="mono blue">3F</td><td>Haematology & Transplant Ward</td><td>Haematology ward (25 beds) — leukaemias, MDS, lymphomas, coagulopathy · Immunocompromised ward (15 beds) — negative-pressure isolation, post-BMT step-down</td></tr>
-      <tr><td class="mono blue">2F</td><td>Complex Care & Palliative</td><td>Complex Care (25 beds) — rare tumours, sarcoma, AYA · Palliative & Symptom Mgmt (8 beds) · Neuromuscular zone (6 beds, ventilator-capable)</td></tr>
-      <tr><td class="mono blue">1F</td><td>Infusion, MDT & Genomics</td><td>Complex Infusion (20 bays) · Rare Disease Infusion (12 bays) · MDT Boardrooms x2 · Genomics & Tumour Board Support Office</td></tr>
-      <tr><td class="mono blue">GF</td><td>OPD, Urgent Care, Dialysis</td><td>Specialist OPD (30 rooms) · Oncology Urgent Care (4 bays) · Dialysis (12 stations) · Reception & triage · OPD Pharmacy</td></tr>
-      <tr><td class="mono">B1</td><td>Parking & Staff</td><td>~300 car parking · Staff change rooms, canteen, lockers · HR/admin · Biomedical engineering · Security</td></tr>
-      <tr><td class="mono">B2</td><td>Imaging + CSSD + Pharmacy</td><td>MRI x2 (3T + 1.5T) · PET-CT · CT · SPECT-CT · CSSD (full sterile processing) · Central Pharmacy + cold chain + IMP storage</td></tr>
-      <tr><td class="mono">B3</td><td>Lab, Molecular Dx, Biobank</td><td>Central Lab · Advanced Blood Bank (24x7, apheresis 4 chairs) · Molecular Diagnostics & Genomics (NGS panels) · Biobank & Cancer Registry</td></tr>
-      <tr><td class="mono">B4</td><td>Engineering Plant</td><td>HVAC plant · Medical gas manifolds · Electrical substations, UPS, DG · IT data centre · Biomedical waste holding</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <div class="section-title">Bed Mix Summary</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
-    <div class="comp-table-wrap"><table class="comp-table">
-      <thead><tr><th colspan="2">Licensed Inpatient Beds</th></tr></thead>
-      <tbody>
-        <tr><td>Surgical ICU (SICU)</td><td class="mono">12</td></tr>
-        <tr><td>General High-Acuity ICU</td><td class="mono">24</td></tr>
-        <tr><td>Immunocompromised ICU (neg. pressure)</td><td class="mono">12</td></tr>
-        <tr><td>BMT Beds (HEPA+ pos. pressure)</td><td class="mono">14</td></tr>
-        <tr><td>Transplant ICU (neg. pressure)</td><td class="mono">12</td></tr>
-        <tr><td>Step-Down / HDU</td><td class="mono">12</td></tr>
-        <tr><td><strong>ICU / Critical Subtotal</strong></td><td class="mono blue"><strong>86</strong></td></tr>
-        <tr><td>Oncology + Rare Disease + Neuromuscular Wards</td><td class="mono">116</td></tr>
-        <tr><td>Ancillary (Pre/Post Op, Urgent Care, Recovery)</td><td class="mono">30</td></tr>
-        <tr><td>Phase I Clinical Trial Suites</td><td class="mono">4</td></tr>
-        <tr><td style="font-weight:700;color:var(--blue)">TOTAL LICENSED BEDS</td><td class="mono blue" style="font-size:14px"><strong>280</strong></td></tr>
-      </tbody>
-    </table></div>
-    <div class="comp-table-wrap"><table class="comp-table">
-      <thead><tr><th colspan="2">Daycare / Treatment Bays</th></tr></thead>
-      <tbody>
-        <tr><td>Chemotherapy Chairs & Beds</td><td class="mono">18</td></tr>
-        <tr><td>Critical Infusion Beds (single cubicles)</td><td class="mono">15</td></tr>
-        <tr><td>Rare Disease Infusion Suite</td><td class="mono">12</td></tr>
-        <tr><td>Apheresis (Blood Bank, B3)</td><td class="mono">4 chairs</td></tr>
-        <tr><td>Dialysis Stations</td><td class="mono">12</td></tr>
-        <tr><td>Clinical Trials Bays</td><td class="mono">10</td></tr>
-        <tr><td style="font-weight:700;color:var(--blue)">DAYCARE / INFUSION TOTAL</td><td class="mono blue" style="font-size:14px"><strong>71</strong></td></tr>
-      </tbody>
-      <thead><tr><th colspan="2" style="padding-top:12px">Procedure Spaces</th></tr></thead>
-      <tbody>
-        <tr><td>Transplant OTs</td><td class="mono">3</td></tr>
-        <tr><td>Oncology Surgery OTs</td><td class="mono">2</td></tr>
-        <tr><td>Hybrid OT (IR + vascular)</td><td class="mono">1</td></tr>
-        <tr><td>Routine OTs</td><td class="mono">2 (incl 1 LINAC vault)</td></tr>
-        <tr><td>LINAC Vaults</td><td class="mono">1+1 shell</td></tr>
-        <tr><td>Brachytherapy · CT Sim</td><td class="mono">1 each</td></tr>
-      </tbody>
-    </table></div>
-  </div>
-
-  <div class="section-title">Strategic Context</div>
-  <div class="centre-card" style="cursor:default;border-left:4px solid var(--blue);max-width:800px;margin-bottom:24px">
-    <div class="cc-body">
-      <div class="cc-desc" style="margin-bottom:0;line-height:1.7;font-size:11.5px">This centre is the centrepiece of the VPS Healthcare India three-year transformation plan. Delhi provides access to a national patient pool including CGHS beneficiaries, NRI stopovers from the Gulf corridor, and the north Indian oncology referral network. The vision is to become India's leading integrated network for Complex Cancer Care & Rare Disease Management. The Qutub Institutional Area location adjacent to IIT Delhi reinforces the academic and research positioning. The three-year financial projections for VPS overall show revenue growing from INR 500 Cr to INR 780 Cr (16% CAGR) with EBITDA margins expanding from 19% to 24%.</div>
+  <div class="map-wrap anim d1">
+    <div class="map-el" id="map0"></div>
+    <div class="map-legend">
+      <span><i style="background:var(--vps-blue)"></i>VPS Lakeshore</span>
+      <span><i style="background:#C0392B"></i>Competitor hospital</span>
+      <span><i style="background:var(--vps-blue-d)"></i>Has tertiary (town)</span>
+      <span><i style="background:var(--vps-maroon)"></i>No tertiary (&gt;40k)</span>
+      <span><i style="background:var(--tx3)"></i>No tertiary (&lt;40k)</span>
     </div>
   </div>
-</div>
+</section>
 
-<!-- ═══════════════ TAB: TIRUPATI ═══════════════ -->
-<div class="tab-content" id="tab-tirupati">
-  <div style="background:#fff0f3;border:2px solid #f0c0c8;border-radius:10px;padding:16px 20px;margin-bottom:20px">
-    <div style="font-size:14px;font-weight:700;color:var(--crimson);margin-bottom:6px">Recommendation: Do Not Proceed With This Deal</div>
-    <div style="font-size:11.5px;color:#4a2030;line-height:1.7">The Tirupati oncology partnership presents a high-risk, low-strategic-fit proposition for VPS Healthcare. The projected IRR of 16–17% (below the 20% minimum hurdle), combined with an unproven market for high-end complex oncology care in Tirupati and structural imbalances in the deal, does not justify committing INR 111 Cr of capital or senior management bandwidth.</div>
+<!-- ═══ TAB 1: PATIENT FLOW ═══ -->
+<section class="section" id="sec1">
+  <div class="section-head anim">
+    <h2>Patient flow corridors</h2>
+    <p>Estimated patient volume share and leakage rate for each corridor flowing to VPS Lakeshore. Based on FY25 annual report data, Kerala DHS statistics, and competitive intelligence.</p>
   </div>
-
-  <div class="kpi-strip" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
-    <div class="kpi danger"><div class="label">Project IRR (Opt 1)</div><div class="value">16.6%</div><div class="detail">VPS hurdle: >20% minimum</div></div>
-    <div class="kpi danger"><div class="label">Project IRR (Opt 2)</div><div class="value">17.2%</div><div class="detail">Lease + Revenue Share</div></div>
-    <div class="kpi danger"><div class="label">VPS Capex</div><div class="value">INR 111 Cr</div><div class="detail">INR 90.1 Cr VPS + 41 Cr G2</div></div>
-    <div class="kpi danger"><div class="label">Breakeven</div><div class="value">After Yr 9</div><div class="detail">Both options</div></div>
-    <div class="kpi"><div class="label">Total Beds</div><div class="value">120</div><div class="detail">87 Census + 33 Non-Census</div></div>
-    <div class="kpi"><div class="label">EBITDA Yr 10</div><div class="value" style="color:var(--gold)">14.5–16.3%</div><div class="detail">VPS benchmark: >25%</div></div>
-  </div>
-
-  <div class="section-title">Financial Comparison — Option 1 vs Option 2</div>
-  <div class="comp-table-wrap" style="margin-bottom:24px">
-  <table class="comp-table">
-    <thead><tr><th>Metric</th><th>Option 1 — Revenue Share</th><th>Option 2 — Lease + Rev Share</th><th>VPS Benchmark</th></tr></thead>
-    <tbody>
-      <tr><td class="metric-col">VPS Capex (INR Cr)</td><td class="mono">111.1</td><td class="mono">111.1</td><td class="mono">—</td></tr>
-      <tr><td class="metric-col">Project IRR</td><td class="mono red">16.6%</td><td class="mono red">17.2%</td><td class="mono blue">>20% (minimum)</td></tr>
-      <tr><td class="metric-col">Net Present Value (INR Cr)</td><td class="mono">46.1</td><td class="mono">54.9</td><td class="mono">—</td></tr>
-      <tr><td class="metric-col">EBITDA in Year 1</td><td class="mono red">-0.4%</td><td class="mono red">-11.3%</td><td class="mono">—</td></tr>
-      <tr><td class="metric-col">EBITDA by Year 10 (%)</td><td class="mono amber">14.5%</td><td class="mono amber">16.3%</td><td class="mono blue">>25% at maturity</td></tr>
-      <tr><td class="metric-col">Breakeven Point</td><td class="mono red">After Year 9</td><td class="mono red">After Year 9</td><td class="mono blue">5–7 years</td></tr>
-      <tr><td class="metric-col">12-yr Cumulative EBITDA (INR Cr)</td><td class="mono">98.3</td><td class="mono">101.9</td><td class="mono">—</td></tr>
-      <tr><td class="metric-col">Cumulative Revenue 12 yrs (INR Cr)</td><td class="mono">833.4</td><td class="mono">836.8</td><td class="mono">—</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <div class="section-title">Key Risks</div>
-  <div class="comp-table-wrap" style="margin-bottom:24px">
-  <table class="comp-table">
-    <thead><tr><th>Risk</th><th>Why It Matters</th><th style="width:90px">Rating</th></tr></thead>
-    <tbody>
-      <tr><td class="metric-col">Small patient catchment</td><td>Tirupati has limited oncology patient base. SVICCAR (Tata-backed), Helios, Aster Narayanadri are established competitors on subsidised models.</td><td><span class="risk-badge rb-high">High</span></td></tr>
-      <tr><td class="metric-col">Capital at risk for 9+ years</td><td>INR 111 Cr deployed with no return until after Year 9. No easy exit mechanism.</td><td><span class="risk-badge rb-high">High</span></td></tr>
-      <tr><td class="metric-col">Construction risk</td><td>2-year greenfield build involving 100,000 sq ft. Real cost overrun and delay risk.</td><td><span class="risk-badge rb-high">High</span></td></tr>
-      <tr><td class="metric-col">Talent pipeline</td><td>Finding specialist oncologists and transplant surgeons in Tirupati will be genuinely hard. Local talent pool is thin.</td><td><span class="risk-badge rb-high">High</span></td></tr>
-      <tr><td class="metric-col">Reliance on G2</td><td>VPS revenues depend heavily on G2's imaging and pathology assets. Inherent partner dependency.</td><td><span class="risk-badge rb-high">High</span></td></tr>
-      <tr><td class="metric-col">Revenue split imbalance</td><td>G2 retains 80% of imaging revenue from its own equipment while VPS pays G2 10% of oncology revenue.</td><td><span class="risk-badge rb-med">Medium</span></td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <div class="section-title">Operational Projections (PwC Model)</div>
-  <div class="comp-table-wrap" style="margin-bottom:24px">
-  <table class="comp-table" style="font-size:10px">
-    <thead><tr><th>Metric</th><th>C0</th><th>C1</th><th>Yr 1</th><th>Yr 2</th><th>Yr 3</th><th>Yr 4</th><th>Yr 5</th><th>Yr 6</th><th>Yr 7</th><th>Yr 8</th><th>Yr 9</th><th>Yr 10</th></tr></thead>
-    <tbody>
-      <tr><td class="metric-col">Operational Beds</td><td>—</td><td>—</td><td class="mono">87</td><td class="mono">87</td><td class="mono">87</td><td class="mono">87</td><td class="mono">87</td><td class="mono">87</td><td class="mono">87</td><td class="mono">87</td><td class="mono">87</td><td class="mono">87</td></tr>
-      <tr><td class="metric-col">Occupancy</td><td>—</td><td>—</td><td class="mono">14%</td><td class="mono">21%</td><td class="mono">31%</td><td class="mono">38%</td><td class="mono">45%</td><td class="mono">51%</td><td class="mono">56%</td><td class="mono">60%</td><td class="mono">64%</td><td class="mono">67%</td></tr>
-      <tr><td class="metric-col">Occupied Beds</td><td>—</td><td>—</td><td class="mono">12</td><td class="mono">18</td><td class="mono">27</td><td class="mono">33</td><td class="mono">39</td><td class="mono">44</td><td class="mono">49</td><td class="mono">52</td><td class="mono">55</td><td class="mono">59</td></tr>
-      <tr><td class="metric-col">ARPOB (INR)</td><td class="mono">44,504</td><td class="mono">44,479</td><td class="mono">48,524</td><td class="mono">47,647</td><td class="mono">49,424</td><td class="mono">51,624</td><td class="mono">54,862</td><td class="mono">57,082</td><td class="mono">60,843</td><td class="mono">64,195</td><td class="mono">68,332</td><td class="mono">72,094</td></tr>
-      <tr><td class="metric-col">Insurance %</td><td class="mono">10%</td><td class="mono">15%</td><td class="mono">15%</td><td class="mono">21%</td><td class="mono">23%</td><td class="mono">25%</td><td class="mono">27%</td><td class="mono">29%</td><td class="mono">31%</td><td class="mono">33%</td><td class="mono">35%</td><td class="mono">37%</td></tr>
-      <tr><td class="metric-col">Cash %</td><td class="mono">90%</td><td class="mono">80%</td><td class="mono">77.5%</td><td class="mono">64.5%</td><td class="mono">57.5%</td><td class="mono">53.5%</td><td class="mono">49.5%</td><td class="mono">45.5%</td><td class="mono">42.5%</td><td class="mono">39.5%</td><td class="mono">36.5%</td><td class="mono">33.5%</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <div class="section-title">Better Alternatives for This Capital</div>
-  <div style="background:var(--blue-l);border:1.5px solid #aad4ef;border-radius:10px;padding:16px 20px;margin-bottom:24px">
-    <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:8px">If deploying capital to build an oncology brand remains a priority — there are better options:</div>
-    <div style="font-size:11px;color:#2a4a60;line-height:1.8">
-      &#8226; Invest the INR 111 Cr into expanding clinical services capacity at VPS Lakeshore itself — where the brand, patient base, and operational platform already exist.<br>
-      &#8226; Evaluate other opportunities in the Kerala market: deeper market, stronger talent pool, growing medical tourism, with specific oncology focus aligning to brand positioning.<br>
-      &#8226; If the G2 relationship is worth preserving, renegotiate with fairer revenue split, volume guarantees from G2, and exit rights.
+  <div class="map-wrap anim d1">
+    <div class="map-el" id="map1"></div>
+    <div class="map-legend">
+      <span><i style="background:var(--vps-blue)"></i>VPS Lakeshore</span>
+      <span><i style="background:#2471A3"></i>Inflow corridor</span>
+      <span><i style="background:var(--vps-maroon)"></i>Leakage origin</span>
     </div>
   </div>
-</div>
+  <div class="corr-grid anim d2" id="corrGrid"></div>
+  <div class="insight anim d3">
+    <strong>Key finding:</strong> The Aluva–Angamaly corridor has 65% patient leakage — VPS captures barely a third of reachable patients from the north. The Kakkanad IT corridor leaks 40% to Aster Medcity. Together these two corridors represent ~223k population where an outpost could intercept referrals currently flowing to competitors.
+  </div>
+</section>
 
-<!-- ═══════════════ TAB: JAIPUR/KOTA ═══════════════ -->
-<div class="tab-content" id="tab-kota">
-  <div class="kpi-strip" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
-    <div class="kpi warn"><div class="label">Status</div><div class="value" style="font-size:16px">Under Evaluation</div><div class="detail">Due diligence & feasibility pending</div></div>
-    <div class="kpi"><div class="label">Beds Planned</div><div class="value">100</div><div class="detail">Cancer & cancer super-specialty</div></div>
-    <div class="kpi"><div class="label">Plot Size</div><div class="value" style="font-size:16px">15,000 sqm</div><div class="detail">Swami Vivekanand Nagar, Kota</div></div>
-    <div class="kpi"><div class="label">Model</div><div class="value" style="font-size:16px">Non-Profit</div><div class="detail">Indorama Institute of Medical Sciences</div></div>
-    <div class="kpi"><div class="label">DPR By</div><div class="value" style="font-size:14px">HospiHealth</div><div class="detail">November 2025</div></div>
-    <div class="kpi"><div class="label">Catchment</div><div class="value" style="font-size:16px">Hadoti Region</div><div class="detail">Kota, Baran, Bundi, Jahalwar · 1.5M+ pop</div></div>
+<!-- ═══ TAB 2: DEPARTMENT FLOWS ═══ -->
+<section class="section" id="sec2">
+  <div class="section-head anim">
+    <h2>Department-wise patient flows</h2>
+    <p>Specialty-level analysis of patient corridors and competitive dynamics. Select a department to see how flows differ from the aggregate — oncology patients, for instance, have very different referral patterns than cardiac or ortho patients.</p>
   </div>
 
-  <div class="section-title">Project Background</div>
-  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px">
-    <div class="centre-card" style="cursor:default;border-left:4px solid var(--gold)">
-      <div class="cc-body">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">Indorama Institute of Medical Sciences (IIMS)</div>
-        <div class="cc-desc" style="margin-bottom:0;line-height:1.7">A corporate business house (Indorama Group) with ancestral roots from Kota plans to develop a world-class cancer institute as a non-profit organization, providing comprehensive cancer care — from preventive to curative — to the entire Hadoti region at an affordable cost. The project concept is built around a "Social Business Model" focused on total care. The DPR was prepared by HospiHealth Consultants India Private Limited (Mumbai) after site visits to cancer hospitals in Jaipur, Kota, and surrounding Hadoti districts.</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px" class="anim d1">
+    <button class="dept-btn active" data-dept="onco">Oncology</button>
+    <button class="dept-btn" data-dept="cardiac">Cardiac sciences</button>
+    <button class="dept-btn" data-dept="neuro">Neurosciences</button>
+    <button class="dept-btn" data-dept="ortho">Orthopaedics</button>
+    <button class="dept-btn" data-dept="gastro">Gastro / liver</button>
+    <button class="dept-btn" data-dept="transplant">Transplant</button>
+  </div>
+
+  <div id="deptMetrics" class="anim d1"></div>
+
+  <div class="map-wrap anim d2" style="margin-top:16px">
+    <div class="map-el" id="map2"></div>
+    <div class="map-legend">
+      <span><i style="background:var(--vps-blue)"></i>VPS Lakeshore</span>
+      <span><i style="background:var(--vps-maroon)"></i>Competitor strength</span>
+      <span><i style="background:#2471A3"></i>Patient origin</span>
+    </div>
+  </div>
+
+  <div id="deptDetail" class="anim d3" style="margin-top:20px"></div>
+  <div id="deptInsight" class="anim d3" style="margin-top:16px"></div>
+</section>
+
+<!-- ═══ TAB 3: SCORING ═══ -->
+<section class="section" id="sec3">
+  <div class="section-head anim">
+    <h2>Multi-criteria outpost scoring</h2>
+    <p>Adjust the five strategic weights to model different priorities. The ranking updates in real-time.</p>
+  </div>
+  <div class="score-layout anim d1">
+    <div class="score-panel" id="scorePanel"></div>
+    <div id="scoreCards"></div>
+  </div>
+</section>
+
+<!-- ═══ TAB 4: RECOMMENDATIONS ═══ -->
+<section class="section" id="sec4">
+  <div class="section-head anim">
+    <h2>Site recommendations</h2>
+    <p>Deep-dive profiles for the top 5 outpost locations with population data, competitor mapping, patient leakage capture potential, and strategic positioning rationale.</p>
+  </div>
+  <div class="map-wrap anim d1" style="margin-bottom:20px">
+    <div class="map-el" id="map3"></div>
+    <div class="map-legend">
+      <span><i style="background:var(--vps-blue)"></i>VPS Lakeshore</span>
+      <span><i style="background:var(--vps-maroon)"></i>Recommended outpost</span>
+      <span><i style="background:#2471A3;opacity:.5"></i>Existing competitor</span>
+    </div>
+  </div>
+  <div id="recCards" class="anim d2"></div>
+</section>
+
+<!-- ═══ TAB 5: KAKKANAD HOSPITAL ═══ -->
+<section class="section active" id="sec5">
+
+  <!-- ══ VISION HEADER ══ -->
+  <div class="kk-vision anim">
+    <div class="kk-vision-left">
+      <div class="kk-vision-badge">VPS Two-Campus Strategy · April 2026</div>
+      <h2 class="kk-vision-h">Two large centres. One system. <em>Nothing like it in Kochi.</em></h2>
+      <p class="kk-vision-p">Transform <strong>VPS Lakeshore</strong> into a purely referral-driven specialist hospital — tertiary and quaternary cases only, anchoring Kerala's most complex care: transplant, cardiac surgery, CAR-T, and neurosurgery. Build <strong>VPS Kakkanad</strong> as a full-scale multispecialty hospital on the SmartCity land parcel — akin to how Medeor Abu Dhabi operates as a high-quality, accessible, community-facing centre that captures everyday volume and feeds complex cases upward. Together they serve Kochi's fastest-growing urban population — young IT professionals, NRI families, and the 140,000-strong Infopark–SmartCity workforce — through a managed referral loop no competitor in Kerala can replicate.</p>
+    </div>
+    <div class="kk-vision-right">
+      <div class="kk-vision-campus">
+        <div class="kk-vc-label" style="color:var(--vps-blue)">VPS Lakeshore</div>
+        <div class="kk-vc-role">Specialist &amp; referral hub</div>
+        <div class="kk-vc-tags">
+          <span>Transplant</span><span>Cardiac surgery</span><span>Oncology / CAR-T</span><span>Neurosurgery</span><span>MVT intake</span>
+        </div>
       </div>
-    </div>
-    <div class="centre-card" style="cursor:default;border-left:4px solid var(--blue)">
-      <div class="cc-body">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">Location Highlights</div>
-        <div class="cc-desc" style="margin-bottom:0;line-height:1.7;font-size:10.5px">
-          &#8226; Strategic location along the river<br>
-          &#8226; Fast-developing area with new institutional & residential complexes<br>
-          &#8226; Accessible from both old city and new developing area<br>
-          &#8226; Patients from entire Hadoti region can easily travel to site<br>
-          &#8226; Plot size good for 100-bed hospital with scope for expansion
+      <div class="kk-vc-arrow">⇅ referral &amp; step-down</div>
+      <div class="kk-vision-campus">
+        <div class="kk-vc-label" style="color:#1a7a40">VPS Kakkanad · SmartCity</div>
+        <div class="kk-vc-role">Multispecialty · volume · urban</div>
+        <div class="kk-vc-tags" style="--chip-bg:rgba(26,122,64,.08);--chip-c:#1a5a30">
+          <span>Emergency · 24×7</span><span>Obstetrics &amp; NICU</span><span>Cardiology</span><span>General surgery</span><span>Wellness &amp; TPA</span>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="section-title">DPR Coverage (HospiHealth, Nov 2025)</div>
-  <div class="comp-table-wrap" style="margin-bottom:24px">
-  <table class="comp-table">
-    <thead><tr><th>Section</th><th>Coverage</th><th>DPR Page</th></tr></thead>
-    <tbody>
-      <tr><td class="metric-col">Environmental Scan</td><td>Cancer incidence & prevalence (India vs Rajasthan), demographic profile Kota, defining service area</td><td class="mono">9–41</td></tr>
-      <tr><td class="metric-col">Competitive Landscape</td><td>Institutional survey of Kota's healthcare facilities</td><td class="mono">44–53</td></tr>
-      <tr><td class="metric-col">Benchmarking</td><td>Bhagwan Mahavir Cancer Hospital & Research Centre, Jaipur</td><td class="mono">54–67</td></tr>
-      <tr><td class="metric-col">Stakeholder Survey</td><td>Medical consultants and stakeholders in the Kota region</td><td class="mono">68–71</td></tr>
-      <tr><td class="metric-col">Insurance & Schemes</td><td>Medical insurance scenario, payment mechanism, government schemes</td><td class="mono">72–77</td></tr>
-      <tr><td class="metric-col">Risk Factors</td><td>Critical overview & risk factors; success factors</td><td class="mono">78–81</td></tr>
-      <tr><td class="metric-col">Facility Plan</td><td>Project conceptualization with facility plan; trust benefits</td><td class="mono">82–92</td></tr>
-      <tr><td class="metric-col">Financial Feasibility</td><td>Cost of project, income, expenses, P&L, balance sheet, cash flow, DSCR, IRR, payback, ROE/ROI</td><td class="mono">99–149</td></tr>
-    </tbody>
-  </table>
-  </div>
-
-  <div class="section-title">VPS Role — Assessment Needed</div>
-  <div style="background:#fffbee;border:1.5px solid #f0e0a0;border-radius:10px;padding:16px 20px;margin-bottom:24px">
-    <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px">Due Diligence Required Before VPS Commitment</div>
-    <div style="font-size:11px;color:#4a3a10;line-height:1.8">
-      Per the VPS Healthcare India approach note (Feb 2026), Jaipur/Kota land parcels with the Indorama Group are in subsequent phases. VPS is to conduct independent due diligence and feasibility study for establishing a ~100 bed multispecialty/cancer centre with precision care, complex care, and rare disease unit. VPS's role could range from O&M provider to equity partner — this must be determined through the due diligence process. Key questions: market depth validation, non-profit sustainability model, VPS investment quantum, and how this fits with the overall expansion strategy.
+  <!-- ══ METRICS STRIP ══ -->
+  <div class="kk-metrics-pull">
+    <div class="metrics-bar" style="border-radius:0;box-shadow:none;margin:0;">
+      <div class="metric"><div class="metric-lbl">Beds · Kakkanad</div><div class="metric-val good">400</div></div>
+      <div class="metric"><div class="metric-lbl">Land parcel · Option 2</div><div class="metric-val">6.17 Ac</div></div>
+      <div class="metric"><div class="metric-lbl">IT workforce · 2 km</div><div class="metric-val">140k+</div></div>
+      <div class="metric"><div class="metric-lbl">Corridor leakage</div><div class="metric-val danger">40%</div></div>
+      <div class="metric"><div class="metric-lbl">System revenue · Yr 5</div><div class="metric-val good">₹1,500 Cr</div></div>
+      <div class="metric"><div class="metric-lbl">Target IRR</div><div class="metric-val good">&gt;20%</div></div>
+      <div class="metric"><div class="metric-lbl">Payback horizon</div><div class="metric-val">10–12 yr</div></div>
     </div>
   </div>
-</div>
+  <!-- ══ LAND OPTIONS ══ -->
+  <div class="kk-section-label anim">① Land options — SmartCity Kochi</div>
+  <div class="kk-land-row-top anim d1">
+    <div class="kk-land-cards">
+      <div class="kk-lo-card">
+        <div class="kk-lo-badge">Option 1</div>
+        <div class="kk-lo-area">5.85 Acres</div>
+        <div class="kk-lo-sub">23,662 sq m · Plots B2-3-2, B3-1, B3-2</div>
+        <div class="kk-lo-rows">
+          <div class="kk-lo-row"><span>Plots</span><span>3 (fragmented)</span></div>
+          <div class="kk-lo-row"><span>Beds achievable</span><span>300–350</span></div>
+          <div class="kk-lo-row"><span>Built-up (5× FAR)</span><span>~1,18,000 sq ft</span></div>
+          <div class="kk-lo-row"><span>Parking</span><span>~350 cars</span></div>
+          <div class="kk-lo-row"><span>Capex range</span><span>₹800–950 Cr</span></div>
+          <div class="kk-lo-row"><span>Verdict</span><span style="color:var(--accent)">Fallback</span></div>
+        </div>
+        <button class="kk-pdf-btn" onclick="showPDF(1)">View site plan ↗</button>
+      </div>
+      <div class="kk-lo-card kk-lo-card--sel">
+        <div class="kk-lo-badge kk-lo-badge--sel">Option 2 · Recommended</div>
+        <div class="kk-lo-area">6.17 Acres</div>
+        <div class="kk-lo-sub">24,965 sq m · Plots B3-3, B3-4</div>
+        <div class="kk-lo-rows">
+          <div class="kk-lo-row"><span>Plots</span><span>2 (contiguous)</span></div>
+          <div class="kk-lo-row"><span>Beds achievable</span><span>380–420</span></div>
+          <div class="kk-lo-row"><span>Built-up (5× FAR)</span><span>~1,34,000 sq ft</span></div>
+          <div class="kk-lo-row"><span>Parking</span><span>~400 cars</span></div>
+          <div class="kk-lo-row"><span>Capex range</span><span>₹950–1,100 Cr</span></div>
+          <div class="kk-lo-row"><span>Verdict</span><span style="color:#1a7a40;font-weight:700">Preferred ✓</span></div>
+        </div>
+        <button class="kk-pdf-btn kk-pdf-btn--sel" onclick="showPDF(2)">View site plan ↗</button>
+      </div>
+    </div>
+    <div class="kk-pdf-panel" id="pdfPanel">
+      <div class="kk-pdf-tabs">
+        <button class="kk-pdf-tab" id="pdfTab1" onclick="showPDF(1)">Option 1 — 5.85 Ac</button>
+        <button class="kk-pdf-tab active" id="pdfTab2" onclick="showPDF(2)">Option 2 — 6.17 Ac</button>
+        <a class="kk-pdf-dl" id="pdfDl" href="SCK_Option2.pdf" target="_blank">⬇ Download</a>
+      </div>
+      <iframe id="pdfFrame" class="kk-pdf-frame" src="" allowfullscreen></iframe>
+    </div>
+  </div>
 
-<!-- ═══════════════ TAB: MARKET STUDIES ═══════════════ -->
-<div class="tab-content" id="tab-market">
-  <div class="section-title">Related Market Studies & Documents</div>
-  <div class="centres-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
-    <div class="centre-card" style="border-left:4px solid var(--purple);cursor:default">
-      <div class="cc-body" style="padding:16px 18px">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">PwC — Advanced Oncology Market Assessment</div>
-        <div class="cc-desc" style="margin-bottom:4px;line-height:1.6">Approach note for Kerala oncology market assessment. April 2026. Evaluates oncology platform opportunity for VPS expansion. Commissioned to assess the INR 2,000+ Cr Kerala cancer market opportunity.</div>
-        <div style="font-size:9px;color:var(--muted);margin-top:6px">Market Study VPS / PwC_VPS_Approach note_Market Assessment_Advanced Oncology_April 2026.pdf</div>
+  <!-- ══ MAP & CATCHMENT ══ -->
+  <div class="kk-section-label anim">② Location, catchment &amp; connectivity</div>
+  <div class="map-wrap anim d1" style="margin-bottom:10px">
+    <div class="map-el" id="mapKK"></div>
+    <div class="map-legend">
+      <span><i style="background:var(--vps-blue)"></i>VPS Lakeshore</span>
+      <span><i style="background:#1a7a40"></i>Proposed Kakkanad</span>
+      <span><i style="background:#e67e22"></i>IT parks</span>
+      <span><i style="background:var(--vps-maroon)"></i>Competitor</span>
+      <span><i style="background:#8e44ad"></i>Catchment</span>
+    </div>
+  </div>
+  <div class="kk-conn-grid anim d2">
+    <div class="kk-conn"><span class="kk-conn-icon">🛣</span><div><strong>Seaport–Airport Road</strong><br>VPS Lakeshore is 15 km via NH-66 · 25–30 min · primary inter-campus ambulance route</div></div>
+    <div class="kk-conn"><span class="kk-conn-icon">🚇</span><div><strong>Metro Pink Line (2030)</strong><br>Infopark station planned · transforms non-motorised OPD access</div></div>
+    <div class="kk-conn"><span class="kk-conn-icon">⛵</span><div><strong>Water Metro</strong><br>Kakkanad jetty operational · 20 min to Vyttila Hub · island connectivity</div></div>
+    <div class="kk-conn"><span class="kk-conn-icon">✈</span><div><strong>CIAL — 25 km</strong><br>MVT patient intake · NRI arrivals · dedicated airport transfer tie-up</div></div>
+  </div>
+
+  <!-- ══ PATIENT FLOWS & CATCHMENT ══ -->
+  <div class="kk-section-label anim">③ Patient flows &amp; catchment</div>
+  <div class="kk-flow-src-row anim d1">
+    <div class="kk-fsrc"><div class="kk-fsrc-icon" style="background:rgba(230,126,34,.12);color:#c0670a">IT</div><div><div class="kk-fsrc-t">IT Workforce — 140k+</div><div class="kk-fsrc-s">Infopark (72k) + SmartCity (30k) + CSEZ/KINFRA · TPA insured · cardiac, MSK, mental health, emergency</div></div></div>
+    <div class="kk-fsrc"><div class="kk-fsrc-icon" style="background:rgba(142,68,173,.1);color:#7d3c98">🏘</div><div><div class="kk-fsrc-t">Residential Belt — 320k+</div><div class="kk-fsrc-s">Kakkanad · Vazhakkala · Thrippunithura · Cheranallur · young families · OBG · paediatrics · GP visits</div></div></div>
+    <div class="kk-fsrc"><div class="kk-fsrc-icon" style="background:var(--vps-blue-l);color:var(--vps-blue)">↩</div><div><div class="kk-fsrc-t">VPS Lakeshore Step-down</div><div class="kk-fsrc-s">Post-transplant · post-CABG recovery · MVT patients pre-departure · frees VPS Lakeshore ICU for next case</div></div></div>
+    <div class="kk-fsrc"><div class="kk-fsrc-icon" style="background:var(--vps-maroon-l);color:var(--vps-maroon)">↑</div><div><div class="kk-fsrc-t">District Referrals</div><div class="kk-fsrc-s">Idukki · Muvattupuzha · Kothamangalam · CGHS / ECHS · Lakshadweep</div></div></div>
+  </div>
+  <div class="kk-referral-table anim d2">
+    <div class="kk-ref-row kk-ref-head"><div>Patient profile</div><div>Kakkanad handles</div><div>Escalates to Nettoor</div></div>
+    <div class="kk-ref-row"><div><strong>IT worker — cardiac event</strong></div><div class="kk-ref-primary">Stabilise · cath lab · stent · monitored care</div><div class="kk-ref-secondary">CABG · valve surgery · LVAD</div></div>
+    <div class="kk-ref-row"><div><strong>Cancer screening positive</strong></div><div class="kk-ref-primary">Biopsy · staging · day-care chemo · OPD follow-up</div><div class="kk-ref-secondary">Surgery · radiation · CAR-T · BMT</div></div>
+    <div class="kk-ref-row"><div><strong>Obstetrics / delivery</strong></div><div class="kk-ref-primary">Normal delivery · LSCS · NICU Level 2</div><div class="kk-ref-secondary">High-risk MFM · NICU Level 3</div></div>
+    <div class="kk-ref-row"><div><strong>Orthopaedic / sports</strong></div><div class="kk-ref-primary">Primary joint replacement · fractures · sports medicine</div><div class="kk-ref-secondary">Tumour ortho · robotic revision</div></div>
+    <div class="kk-ref-row"><div><strong>Post-Nettoor MVT recovery</strong></div><div class="kk-ref-primary">Step-down ward · rehab · physio · pre-departure</div><div class="kk-ref-secondary">All acute intervention</div></div>
+    <div class="kk-ref-row"><div><strong>District gen. surgery</strong></div><div class="kk-ref-primary">Laparoscopic · hernia · appendix · gallbladder</div><div class="kk-ref-secondary">HPB · complex oncosurgery</div></div>
+  </div>
+
+  <!-- ══ COMPETITION ══ -->
+  <div class="kk-section-label anim">④ Competition in the corridor</div>
+  <div class="kk-comp-grid anim d1" id="kkCompGrid"></div>
+
+  <!-- ══ FINANCIALS ══ -->
+  <div class="kk-section-label anim">⑤ Financial case</div>
+  <div class="kk-fin-grid anim d1">
+    <div class="kk-fin-card kk-fin-card--primary">
+      <div class="kk-fin-label">All-in capex · Option 2 · 400 beds</div>
+      <div class="kk-fin-val">₹950–1,100 Cr</div>
+      <div class="kk-fin-sub">Land ~₹175 Cr + construction + MEP + equipment. Phased build reduces Year 1 draw to ~₹400 Cr.</div>
+    </div>
+    <div class="kk-fin-card">
+      <div class="kk-fin-label">Year 5 EBITDA · Kakkanad</div>
+      <div class="kk-fin-val">₹85–105 Cr</div>
+      <div class="kk-fin-sub">16–18% EBITDA margin on ₹520–600 Cr revenue · 400 beds · 80% occupancy</div>
+    </div>
+    <div class="kk-fin-card">
+      <div class="kk-fin-label">Target IRR</div>
+      <div class="kk-fin-val">&gt; 20%</div>
+      <div class="kk-fin-sub">Based on phased build, TPA ramp-up, and VPS Lakeshore case-mix improvement. Consistent with top-quartile greenfield hospital returns.</div>
+    </div>
+    <div class="kk-fin-card">
+      <div class="kk-fin-label">Payback period</div>
+      <div class="kk-fin-val">10–12 years</div>
+      <div class="kk-fin-sub">Phased build (200 beds Y1 → 400 by Y4) compresses early capital and improves NPV.</div>
+    </div>
+    <div class="kk-fin-card">
+      <div class="kk-fin-label">VPS Lakeshore uplift · Year 5</div>
+      <div class="kk-fin-val">+₹150–200 Cr</div>
+      <div class="kk-fin-sub">Case mix shifts to complex procedures. Revenue per bed rises even if total volume falls.</div>
+    </div>
+    <div class="kk-fin-card">
+      <div class="kk-fin-label">Combined VPS system · Year 5</div>
+      <div class="kk-fin-val">₹1,500–1,700 Cr</div>
+      <div class="kk-fin-sub">vs ~₹800 Cr today (VPS Lakeshore alone) — near-doubling without cannibalisation</div>
+    </div>
+  </div>
+
+  <!-- ══ PROJECTION TABLE ══ -->
+  <div class="kk-proj-wrap anim d2">
+    <table class="kk-proj-tbl">
+      <thead>
+        <tr><th>Metric</th><th>Y1 · 200 beds</th><th>Y3 · 350 beds</th><th>Y5 · 400 beds</th><th>Y7 · expanded</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Kakkanad revenue</td><td>₹120–160 Cr</td><td>₹320–380 Cr</td><td>₹520–600 Cr</td><td>₹700–850 Cr</td></tr>
+        <tr><td>EBITDA margin</td><td class="kk-td-red">Negative</td><td>8–12%</td><td>16–18%</td><td>20–22%</td></tr>
+        <tr><td>EBITDA (₹ Cr)</td><td class="kk-td-red">—</td><td>₹26–46 Cr</td><td>₹85–105 Cr</td><td>₹140–187 Cr</td></tr>
+        <tr><td>Bed occupancy</td><td>45–55%</td><td>65–72%</td><td>75–82%</td><td>82–88%</td></tr>
+        <tr><td>OPD / day</td><td>400–600</td><td>900–1,100</td><td>1,400–1,600</td><td>1,800–2,200</td></tr>
+        <tr><td>Corporate TPA accounts</td><td>8–12</td><td>25–35</td><td>50–60</td><td>80+</td></tr>
+        <tr><td>Corridor leakage</td><td class="kk-td-red">40%</td><td class="kk-td-amber">25–30%</td><td class="kk-td-green">12–18%</td><td class="kk-td-green">8–12%</td></tr>
+        <tr><td>VPS Lakeshore uplift</td><td>Neutral</td><td>+₹80–120 Cr</td><td>+₹150–200 Cr</td><td>+₹200–250 Cr</td></tr>
+        <tr><td>Combined VPS system revenue</td><td>₹700–800 Cr</td><td>₹1,100–1,200 Cr</td><td>₹1,500–1,700 Cr</td><td>₹1,900–2,200 Cr</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ══ TWO-CAMPUS MODEL ══ -->
+  <div class="kk-section-label anim">⑥ What goes where — clinical deployment</div>
+  <div class="kk-two-col anim d1">
+    <div class="kk-card kk-card--blue">
+      <div class="kk-card-header">
+        <div class="kk-card-icon">🏥</div>
+        <div>
+          <div class="kk-card-title">VPS Lakeshore</div>
+          <div class="kk-card-sub">Specialist &amp; referral hub · stays &amp; intensifies</div>
+        </div>
+      </div>
+      <div class="kk-card-body">
+        <div class="kk-spec-list">
+          <div class="kk-spec-item kk-spec-item--keep">Oncology — CAR-T · BMT · haematology · solid tumours · radiation</div>
+          <div class="kk-spec-item kk-spec-item--keep">Multi-organ transplant — liver · kidney · heart · lung</div>
+          <div class="kk-spec-item kk-spec-item--keep">Cardiac surgery — CABG · valve · LVAD · ECMO · TAVR</div>
+          <div class="kk-spec-item kk-spec-item--keep">Neurosurgery — brain tumour · epilepsy · DBS · neuro-IR</div>
+          <div class="kk-spec-item kk-spec-item--keep">Hepatobiliary — complex liver · bile duct · pancreas</div>
+          <div class="kk-spec-item kk-spec-item--keep">MVT hub — GCC · Maldives · Africa international intake</div>
+        </div>
+        <div class="kk-note">Migrating routine volume frees ~100–120 beds. ICU and OT capacity converts to complex cases. Revenue per bed rises materially as case mix improves.</div>
       </div>
     </div>
-    <div class="centre-card" style="border-left:4px solid var(--purple);cursor:default">
-      <div class="cc-body" style="padding:16px 18px">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">Grant Thornton — Market Research for Lakeshore Hospital</div>
-        <div class="cc-desc" style="margin-bottom:4px;line-height:1.6">Comprehensive market research study for VPS Lakeshore. Competitive landscape, patient flow patterns, growth opportunities, and medical tourism intelligence.</div>
-        <div style="font-size:9px;color:var(--muted);margin-top:6px">Market Study VPS / Market Research for Lakeshore Hospital_GT.pdf</div>
+    <div class="kk-card kk-card--green">
+      <div class="kk-card-header">
+        <div class="kk-card-icon">🏗</div>
+        <div>
+          <div class="kk-card-title">VPS Kakkanad — SmartCity</div>
+          <div class="kk-card-sub">400 beds · multispecialty · phased build</div>
+        </div>
       </div>
-    </div>
-    <div class="centre-card" style="border-left:4px solid var(--purple);cursor:default">
-      <div class="cc-body" style="padding:16px 18px">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">Deloitte — Oncology Platform Proposal</div>
-        <div class="cc-desc" style="margin-bottom:4px;line-height:1.6">Revised proposal for oncology platform strategy for VPS Lakeshore. April 2026. Includes market sizing, competitive positioning, and implementation roadmap.</div>
-        <div style="font-size:9px;color:var(--muted);margin-top:6px">Market Study VPS / rerevisedproposals / Deloitte Proposal_Oncology Platform_VPS Lakeshore_14 April 2026.pdf</div>
-      </div>
-    </div>
-    <div class="centre-card" style="border-left:4px solid var(--purple);cursor:default">
-      <div class="cc-body" style="padding:16px 18px">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">Deloitte — Rare Diseases Proposal</div>
-        <div class="cc-desc" style="margin-bottom:4px;line-height:1.6">Proposal for rare disease programme at VPS Lakeshore. April 2026. Complements the oncology platform with specialist rare disease and genetic medicine capabilities.</div>
-        <div style="font-size:9px;color:var(--muted);margin-top:6px">Market Study VPS / rerevisedproposals / Deloitte Proposal_Rare diseases_VPS Lakeshore_14 April 2026.pdf</div>
-      </div>
-    </div>
-    <div class="centre-card" style="border-left:4px solid var(--purple);cursor:default">
-      <div class="cc-body" style="padding:16px 18px">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">HospiHealth — Detailed Project Report IIMS Kota</div>
-        <div class="cc-desc" style="margin-bottom:4px;line-height:1.6">Full DPR for Cancer Hospital, Kota-Rajasthan. November 2025. Technical & financial feasibility study for Indorama Institute of Medical Sciences. 149 pages covering market research, facility plan, and financial projections.</div>
-        <div style="font-size:9px;color:var(--muted);margin-top:6px">Jaipur:Kota / Detailed Project Report IIMS Kota.pdf</div>
-      </div>
-    </div>
-    <div class="centre-card" style="border-left:4px solid var(--purple);cursor:default">
-      <div class="cc-body" style="padding:16px 18px">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">PwC — Tirupati Business Plan & Partner Search</div>
-        <div class="cc-desc" style="margin-bottom:4px;line-height:1.6">Draft business plan deck for G2 Healthcare partnership. March 2026. Roles & responsibilities, capital expenditure, revenue share assumptions, financial metrics (Opt 1 vs Opt 2), and operational projections through Year 10.</div>
-        <div style="font-size:9px;color:var(--muted);margin-top:6px">Tirupati / PwC_Draft Business Plan Deck_VPS_March 2026.pdf</div>
-      </div>
-    </div>
-    <div class="centre-card" style="border-left:4px solid var(--crimson);cursor:default">
-      <div class="cc-body" style="padding:16px 18px">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">EAIIA Advisory — Tirupati Investment Note</div>
-        <div class="cc-desc" style="margin-bottom:4px;line-height:1.6">Strategic evaluation and investment recommendation. March 2026. Recommendation: Do Not Proceed. Analysis of financial performance, strategic fit, deal structure, risks, and alternative capital deployment options.</div>
-        <div style="font-size:9px;color:var(--muted);margin-top:6px">Tirupati / VPS_Tirupati_Note_Mar'26.pdf</div>
-      </div>
-    </div>
-    <div class="centre-card" style="border-left:4px solid var(--blue);cursor:default">
-      <div class="cc-body" style="padding:16px 18px">
-        <div class="cc-name" style="font-size:14px;margin-bottom:8px">VPS Healthcare India — Preliminary Approach Note</div>
-        <div class="cc-desc" style="margin-bottom:4px;line-height:1.6">Three-year transformation plan toward leadership in cancer and complex care. February 2026. Covers VPS Lakeshore transformation, Delhi Qutub centre, Kakkanad land strategy, and Jaipur/Kota due diligence.</div>
-        <div style="font-size:9px;color:var(--muted);margin-top:6px">Qutub / VPS Lakeshore_Prelim Approach_Feb'26_vDraft (1).pptx</div>
+      <div class="kk-card-body">
+        <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#1a7a40;margin-bottom:5px">Phase 1 · Year 1–2 · ~200 beds</div>
+        <div class="kk-spec-list">
+          <div class="kk-spec-item kk-spec-item--new">Emergency &amp; trauma · 24×7 ATLS team</div>
+          <div class="kk-spec-item kk-spec-item--new">General medicine · general surgery · laparoscopic</div>
+          <div class="kk-spec-item kk-spec-item--new">Cardiology — interventional · cath lab · echo</div>
+          <div class="kk-spec-item kk-spec-item--new">Obstetrics &amp; gynaecology · full delivery suite · NICU L2</div>
+          <div class="kk-spec-item kk-spec-item--new">Diagnostics — MRI · CT · PET-CT · pathology</div>
+          <div class="kk-spec-item kk-spec-item--new">Corporate wellness &amp; executive health</div>
+        </div>
+        <div style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:#1a7a40;margin-bottom:5px;margin-top:10px">Phase 2 · Year 3–4 · expand to 400</div>
+        <div class="kk-spec-list">
+          <div class="kk-spec-item kk-spec-item--new">Paediatrics · NICU L3 · orthopaedics · fertility &amp; IVF</div>
+          <div class="kk-spec-item kk-spec-item--new">Oncology OPD + day-care chemo unit</div>
+          <div class="kk-spec-item kk-spec-item--new">Psychiatry &amp; mental wellness · IT worker segment</div>
+          <div class="kk-spec-item kk-spec-item--new">Step-down &amp; rehab ward — post-Nettoor transfers</div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-</div><!-- /.main -->
 
+  <!-- ══ CLINICAL STAFF ══ -->
+  <div class="kk-section-label anim">⑦ Clinical staff — who sits where</div>
+  <div class="kk-doc-grid anim d1">
+    <div class="kk-dg-head"><div>Department</div><div>VPS Lakeshore anchors</div><div>Kakkanad team</div><div>Shared protocol</div></div>
+    <div class="kk-dg-row"><div class="kk-dg-dept">Cardiology</div><div>Cardiac surgeons · EP · LVAD</div><div class="kk-dg-kk">Sr. cardiologist · cath lab · echo</div><div class="kk-dg-sh">Complex PCI → Nettoor specialist 2×/wk</div></div>
+    <div class="kk-dg-row"><div class="kk-dg-dept">Oncology</div><div>Surgical onco · RT · BMT · CAR-T</div><div class="kk-dg-kk">Medical onco · day-care chemo · OPD</div><div class="kk-dg-sh">Weekly joint tumour board via telemedicine</div></div>
+    <div class="kk-dg-row"><div class="kk-dg-dept">Neurology</div><div>Neurosurgery · neuro-IR · DBS</div><div class="kk-dg-kk">Neurologist · stroke fast-track ED</div><div class="kk-dg-sh">Thrombolyse at KK → thrombectomy at Nettoor</div></div>
+    <div class="kk-dg-row"><div class="kk-dg-dept">OBG</div><div>MFM · foetal surgery · gynae onco</div><div class="kk-dg-kk">2–3 obstetricians · IVF specialist</div><div class="kk-dg-sh">High-risk → Nettoor transfer at 36 wk</div></div>
+    <div class="kk-dg-row"><div class="kk-dg-dept">Orthopaedics</div><div>Tumour ortho · robotic revision</div><div class="kk-dg-kk">2 surgeons · sports medicine</div><div class="kk-dg-sh">Robotic / complex revision at Nettoor</div></div>
+    <div class="kk-dg-row"><div class="kk-dg-dept">Psychiatry</div><div>Inpatient unit</div><div class="kk-dg-kk">2 psychiatrists · psychologists · IT burnout focus</div><div class="kk-dg-sh">New segment — significant unmet demand in IT clusters</div></div>
+  </div>
+  <div class="insight anim d2" style="margin-top:12px">
+    <strong>Recruitment:</strong> Kakkanad builds its own independent senior team — targeting mid-career consultants (10–15 yr) from Aster Medcity, Sunrise, and Rajagiri. HOD titles at a brand-new premium VPS campus offer what VPS Lakeshore's established hierarchy cannot.
+  </div>
+
+  <!-- ══ TARGET SEGMENTS ══ -->
+  <div class="kk-section-label anim">⑧ Who we go after</div>
+  <div class="kk-tgt-grid anim d1">
+    <div class="kk-tgt"><div class="kk-tgt-hd"><span class="kk-tgt-icon">💼</span><span class="kk-tgt-nm">IT Corporate TPA</span><span class="kk-tp-high">Priority 1</span></div><div class="kk-tgt-bd">72k Infopark + 30k SmartCity employees. Target 15–20 corporate TPA agreements pre-opening. Dedicated OPD slots, priority ED, annual health camps inside IT campuses. Single biggest volume driver in Y1–2.</div></div>
+    <div class="kk-tgt"><div class="kk-tgt-hd"><span class="kk-tgt-icon">👨‍👩‍👧</span><span class="kk-tgt-nm">Young IT Families</span><span class="kk-tp-high">Priority 1</span></div><div class="kk-tgt-bd">320k residential belt, growing 8–10% pa. Young couples — high OBG and paediatric demand. Partner with apartment complexes. Maternity packages. Brand: "built for Kochi's new generation."</div></div>
+    <div class="kk-tgt"><div class="kk-tgt-hd"><span class="kk-tgt-icon">✈️</span><span class="kk-tgt-nm">NRI / GCC Diaspora</span><span class="kk-tp-high">Priority 1</span></div><div class="kk-tgt-bd">900k+ Keralites in UAE. Many families in Kakkanad–Thrippunithura belt. WhatsApp pre-consultation before travel. CIAL airport transfer. Coordinate with VPS UAE / Maldives outreach network.</div></div>
+    <div class="kk-tgt"><div class="kk-tgt-hd"><span class="kk-tgt-icon">🏛</span><span class="kk-tgt-nm">CGHS / ECHS / PSU</span><span class="kk-tp-med">Priority 2</span></div><div class="kk-tgt-bd">Collectorate · CSEZ · Port Trust · FACT · BPCL. Apply for CGHS empanelment pre-opening. Guaranteed base volume of government-insured patients with lower acquisition cost.</div></div>
+    <div class="kk-tgt"><div class="kk-tgt-hd"><span class="kk-tgt-icon">🎓</span><span class="kk-tgt-nm">CUSAT &amp; Academia</span><span class="kk-tp-med">Priority 2</span></div><div class="kk-tgt-bd">15,000 CUSAT students adjacent to site. MOU for preferred healthcare provider status. Psychiatry and mental wellness — high unmet demand in engineering and MBA student populations.</div></div>
+    <div class="kk-tgt"><div class="kk-tgt-hd"><span class="kk-tgt-icon">🔄</span><span class="kk-tgt-nm">Aster / Sunrise Conversion</span><span class="kk-tp-med">Priority 2</span></div><div class="kk-tgt-bd">40% corridor leakage is default behaviour, not loyalty. Build GP referral network before opening. Target 10–15% below Aster rack rates on comparable procedures.</div></div>
+  </div>
+
+  <!-- ══ GROWTH CONTEXT ══ -->
+  <div class="kk-section-label anim">⑨ Why Kakkanad · why now</div>
+  <div class="kk-growth-grid anim d1">
+    <div class="kk-gw"><div class="kk-gw-v">100k+</div><div class="kk-gw-l">Additional jobs at Infopark Phase II — still under development</div></div>
+    <div class="kk-gw"><div class="kk-gw-v">8–10%</div><div class="kk-gw-l">Annual residential growth · Kakkanad–Vazhakkala belt</div></div>
+    <div class="kk-gw"><div class="kk-gw-v">2030</div><div class="kk-gw-l">Metro Pink Line · Infopark station · transforms access</div></div>
+    <div class="kk-gw"><div class="kk-gw-v">0</div><div class="kk-gw-l">Premium inpatient hospital inside SmartCity / Infopark cluster today</div></div>
+    <div class="kk-gw"><div class="kk-gw-v">246 Ac</div><div class="kk-gw-l">SmartCity SEZ still expanding — more companies every quarter</div></div>
+    <div class="kk-gw"><div class="kk-gw-v">Now</div><div class="kk-gw-l">SmartCity land available — delay means Aster deepens TPA lock-in</div></div>
+  </div>
+
+  <!-- ══ RECOMMENDATION ══ -->
+  <div class="kk-recommendation anim d2">
+    <div class="kk-rec-head">Recommendation — proceed to full due diligence</div>
+
+    <div class="kk-rec-disclaimer">
+      <strong>⚠ Draft — for internal discussion only.</strong> All financial projections, market sizing, catchment estimates, and competitive assessments in this document are high-level indicative figures based on publicly available data and internal assumptions. They have not been independently validated and should not be relied upon for investment decisions without formal external validation by qualified advisors.
+    </div>
+
+    <p>The strategic direction is clear. No hospital group in Kochi operates two large, purpose-differentiated campuses. Aster Medcity is a single quaternary centre trying to be everything. Amrita is anchored in Edappally. Rajagiri is tertiary. <strong>VPS has a rare and time-limited opportunity to build the only genuine two-hospital system in Kerala</strong> — VPS Lakeshore as the specialist referral hub, and VPS Kakkanad modelled on what Medeor has achieved in Abu Dhabi: a premium, accessible, community-facing multispecialty centre that captures high everyday volume and channels complex cases upward.</p>
+    <p style="margin-top:12px">VPS Lakeshore becomes Kerala's most focused specialist and referral hospital. Kakkanad becomes the premium multispecialty centre for a young, growing, insured urban population that currently has no quality option in its backyard. Together they build a system that no competitor can replicate without land, capital, and a decade of time.</p>
+
+    <p style="margin-top:16px"><strong>Recommended next steps — due diligence and evaluation:</strong></p>
+    <div class="kk-rec-steps">
+      <div class="kk-rec-step"><span class="kk-rec-step-n">1</span><div><strong>Appoint an independent financial and market advisor</strong> — commission a formal feasibility study covering demand validation, competitive benchmarking, financial modelling (DCF, IRR, sensitivity analysis), and regulatory review. Firms with relevant track record: Grant Thornton, KPMG Healthcare, EY Health Sciences, or a specialist healthcare investment bank.</div></div>
+      <div class="kk-rec-step"><span class="kk-rec-step-n">2</span><div><strong>Land and legal due diligence</strong> — conduct title verification, SEZ compliance review, FAR and zoning confirmation, and environmental clearance assessment for both Option 1 (5.85 Ac) and Option 2 (6.17 Ac) parcels. Engage a Kerala-based real estate legal firm alongside SmartCity's development team.</div></div>
+      <div class="kk-rec-step"><span class="kk-rec-step-n">3</span><div><strong>Operator and clinical model validation</strong> — engage hospital planning consultants (HKS, EDAC, or equivalent) to develop a concept brief, department programme, and bed mix validation for a 400-bed multispecialty facility on 6.17 Ac. Confirm phased build viability and infrastructure requirements.</div></div>
+      <div class="kk-rec-step"><span class="kk-rec-step-n">4</span><div><strong>Corporate TPA pipeline development</strong> — begin informal conversations with HR Directors at top 10 Infopark corporates (TCS, Wipro, HCL, IBM, Cognizant) to gauge willingness to switch or add VPS as a panel hospital. This runs in parallel with due diligence and costs nothing.</div></div>
+      <div class="kk-rec-step"><span class="kk-rec-step-n">5</span><div><strong>Board sanction and capital planning</strong> — present the validated feasibility study and clinical concept brief to the VPS Healthcare board for investment approval. Explore financing structures: internal accruals, project finance, strategic partnership, or a combination.</div></div>
+    </div>
+
+    <div class="kk-rec-timeline">
+      <div class="kk-rec-tl-head">Indicative pathway to first operations</div>
+      <div class="kk-rec-tl-row"><span class="kk-rec-tl-phase">Now → Month 6</span><span>Due diligence, land DD, feasibility study, clinical concept brief, board approval</span></div>
+      <div class="kk-rec-tl-row"><span class="kk-rec-tl-phase">Month 6 → 12</span><span>Architectural design, regulatory approvals, contractor selection, financial close</span></div>
+      <div class="kk-rec-tl-row kk-rec-tl-row--key"><span class="kk-rec-tl-phase">Construction start</span><span>At minimum <strong>12 months from construction start</strong> before any form of operations can commence — fit-out, equipment commissioning, NABH pre-assessment, and staff mobilisation require this lead time as a floor, not a target</span></div>
+      <div class="kk-rec-tl-row"><span class="kk-rec-tl-phase">Phase 1 opening</span><span>~200-bed operations · Emergency, medicine, OBG, cardiology, diagnostics · TPA empanelments active</span></div>
+      <div class="kk-rec-tl-row"><span class="kk-rec-tl-phase">Year 3–4</span><span>Full 400-bed expansion complete · all Phase 2 departments operational · NABH accreditation</span></div>
+    </div>
+
+    <p style="margin-top:16px"><strong>The question is not whether to build VPS Kakkanad. The strategic and competitive case is unambiguous. The immediate task is to validate the numbers with the rigour that a commitment of this scale demands — and to start that process now.</strong></p>
+  </div>
+
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer class="footer">
+  <p>VPS Lakeshore · Kakkanad Second Campus Strategy · Data: VPS AR FY25, Aster DM AR FY25, Kerala DHS, Census 2011, Infopark Annual Report 2024</p>
+  <p style="margin-top:5px"><a href="../">← Back to Patient Flow Dashboard</a></p>
+</footer>
 
 <script>
-function switchTab(tabId) {
-  // Hide all tabs
-  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-  // Show selected tab
-  const tabEl = document.getElementById('tab-' + tabId);
-  if (tabEl) tabEl.classList.add('active');
-  // Highlight the button
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    if (btn.getAttribute('onclick') === "switchTab('" + tabId + "')") {
-      btn.classList.add('active');
-    }
-  });
-  // Scroll to top
-  window.scrollTo(0, 0);
+/* ═══════════════════════════════════════
+   DATA
+   ═══════════════════════════════════════ */
+const VPS = { lat: 9.9190, lon: 76.3189 };
+
+const TOWNS = [
+  {n:'Kochi Corporation',p:633553,lat:9.972,lon:76.282,h:8,t:1},
+  {n:'Edathala',p:77811,lat:10.058,lon:76.315,h:0,t:0},
+  {n:'Kalamassery',p:71038,lat:10.048,lon:76.308,h:1,t:0},
+  {n:'Thrippunithura',p:69390,lat:9.945,lon:76.340,h:0,t:0},
+  {n:'Vazhakkala',p:51242,lat:10.012,lon:76.340,h:0,t:0},
+  {n:'Alangad',p:47329,lat:10.090,lon:76.340,h:0,t:0},
+  {n:'Maradu',p:44704,lat:9.935,lon:76.300,h:1,t:1},
+  {n:'Choornikkara',p:43207,lat:10.052,lon:76.288,h:0,t:0},
+  {n:'Kumbalangy',p:42367,lat:9.905,lon:76.270,h:0,t:0},
+  {n:'Kottuvally',p:42922,lat:10.125,lon:76.275,h:0,t:0},
+  {n:'Manakunnam',p:39538,lat:9.940,lon:76.312,h:0,t:0},
+  {n:'Kadungalloor',p:39666,lat:10.080,lon:76.355,h:0,t:0},
+  {n:'Kothamangalam',p:38837,lat:10.060,lon:76.630,h:1,t:0},
+  {n:'Eramalloor',p:33829,lat:9.895,lon:76.320,h:0,t:0},
+  {n:'Puthenvelikkara',p:33372,lat:10.115,lon:76.265,h:0,t:0},
+  {n:'Angamaly',p:33465,lat:10.192,lon:76.390,h:0,t:0},
+  {n:'Vengola',p:32697,lat:10.080,lon:76.420,h:0,t:0},
+  {n:'Paravur',p:31503,lat:10.140,lon:76.230,h:0,t:0},
+  {n:'Eloor',p:31468,lat:10.065,lon:76.280,h:0,t:0},
+  {n:'Cheranallur',p:30594,lat:10.005,lon:76.312,h:1,t:1},
+  {n:'Muvattupuzha',p:30397,lat:9.985,lon:76.570,h:1,t:0},
+  {n:'Chendamangalam',p:29326,lat:10.145,lon:76.255,h:0,t:0},
+  {n:'Koovappady',p:29339,lat:10.105,lon:76.455,h:0,t:0},
+  {n:'Nedumbassery',p:29706,lat:10.155,lon:76.385,h:0,t:0},
+  {n:'Kumbalam',p:29193,lat:9.920,lon:76.310,h:0,t:0},
+  {n:'Perumbavoor',p:28110,lat:10.115,lon:76.470,h:0,t:0},
+  {n:'Kakkanad',p:25531,lat:9.975,lon:76.345,h:0,t:0},
+  {n:'Varappuzha',p:26750,lat:10.090,lon:76.252,h:0,t:0},
+  {n:'Mulamthuruthy',p:25852,lat:9.905,lon:76.375,h:0,t:0},
+  {n:'Thiruvankulam',p:23160,lat:9.955,lon:76.355,h:0,t:0},
+  {n:'Puthencruz',p:22378,lat:9.935,lon:76.385,h:0,t:0},
+  {n:'Karumalloor',p:29805,lat:10.115,lon:76.245,h:0,t:0}
+];
+
+const CORRIDORS = [
+  {name:'Maradu \u2013 Kumbalam \u2013 Kumbalangy',from:[9.915,76.290],vol:22,leak:10,leakTo:'Welcare / EMC',pop:116000,trend:'Stable',note:'VPS\u2019s strongest catchment. Low leakage but saturating.'},
+  {name:'Tripunithura \u2013 Thiruvankulam',from:[9.945,76.340],vol:18,leak:25,leakTo:'Rajagiri / Medical Trust',pop:115000,trend:'Growing',note:'Dense residential belt SE of VPS. No tertiary hospital.'},
+  {name:'Kakkanad \u2013 Vazhakkala \u2013 Infopark',from:[9.985,76.345],vol:14,leak:40,leakTo:'Aster Medcity / Sunrise',pop:78000,trend:'Fast growing',note:'IT corridor, 100k+ daytime pop. No tertiary/quaternary.'},
+  {name:'Central Ernakulam (MG Road)',from:[9.982,76.290],vol:12,leak:35,leakTo:'Lisie / Medical Trust',pop:180000,trend:'Stable',note:'Dense hospital cluster. VPS competes with 5+ hospitals.'},
+  {name:'Edathala \u2013 Kalamassery',from:[10.053,76.300],vol:8,leak:55,leakTo:'Amrita AIMS / Aster',pop:192000,trend:'Stable',note:'Largest pop cluster N of Kochi. Amrita dominates.'},
+  {name:'Fort Kochi \u2013 Mattancherry',from:[9.960,76.255],vol:6,leak:50,leakTo:'General Hosp / Lourdes',pop:85000,trend:'Flat',note:'Island geography. Aging population.'},
+  {name:'Aluva \u2013 Angamaly',from:[10.130,76.370],vol:5,leak:65,leakTo:'Rajagiri / Amrita',pop:145000,trend:'Growing',note:'Airport corridor. Highest leakage. Rajagiri captures most.'}
+];
+
+const COMPETITORS = [
+  {n:'Aster Medcity',lat:10.0055,lon:76.3115,b:862},
+  {n:'Amrita AIMS',lat:10.0345,lon:76.2885,b:1350},
+  {n:'Rajagiri Hospital',lat:10.104,lon:76.346,b:650},
+  {n:'Lisie Hospital',lat:9.993,lon:76.295,b:600},
+  {n:'Medical Trust',lat:9.971,lon:76.289,b:750},
+  {n:'Lourdes Hospital',lat:9.981,lon:76.287,b:500},
+  {n:'General Hospital',lat:9.9815,lon:76.282,b:783},
+  {n:'EMC',lat:9.952,lon:76.315,b:250},
+  {n:'Welcare',lat:9.958,lon:76.310,b:200},
+  {n:'Sunrise',lat:9.980,lon:76.340,b:150}
+];
+
+const SITES = [
+  {r:1,nm:'Kakkanad \u2013 Vazhakkala',sb:'Seaport\u2013Airport Rd, near Infopark',sc:92,pS:88,gS:95,xS:85,tS:90,sS:95,lat:10.008,lon:76.340,co:'#2B7CBE',
+   tg:[{t:'IT corridor',c:'hot'},{t:'100k+ daytime pop',c:'warn'},{t:'No tertiary care',c:'hot'},{t:'Metro planned',c:'ok'}],
+   dt:'Vazhakkala (51k) + Kakkanad (26k) + Thrikkakara overlap = 130k+ resident population. Infopark adds 60k+ working population daily. Only Sunrise Hospital serves the area \u2014 no cardiac, neuro, or oncology. Aster Medcity captures most referrals. An outpost intercepts the highest-leakage corridor (40%) and positions VPS as the IT corridor\u2019s primary referral hub. 12-minute drive to VPS main campus.',
+   lc:'Aster Medcity, Rajagiri',nc:'Aster (5.2 km), Sunrise (1.5 km)',ps:'130,000+',ig:'High confidence'},
+  {r:2,nm:'Thrippunithura \u2013 Thiruvankulam',sb:'Hill Palace / Thiruvankulam junction',sc:87,pS:85,gS:90,xS:90,tS:78,sS:82,lat:9.950,lon:76.348,co:'#8B1A4A',
+   tg:[{t:'69k municipality',c:''},{t:'Zero tertiary',c:'hot'},{t:'Metro-connected',c:'ok'},{t:'Heritage town',c:''}],
+   dt:'Thrippunithura (69k) is the largest town near VPS with zero tertiary hospital. Combined with Thiruvankulam (23k) and Puthencruz (22k), catchment is 115k+. Patients travel 8\u201312 km to VPS, Medical Trust, or Rajagiri. An outpost consolidates VPS\u2019s geographic advantage \u2014 only 6 km from main campus. Metro extension reaches Thrippunithura.',
+   lc:'Medical Trust, Rajagiri',nc:'Medical Trust (9 km), Rajagiri (14 km)',ps:'115,000+',ig:'High confidence'},
+  {r:3,nm:'Edathala \u2013 Kalamassery',sb:'CUSAT / Kalamassery industrial belt',sc:83,pS:92,gS:75,xS:60,tS:88,sS:80,lat:10.052,lon:76.305,co:'#C8922A',
+   tg:[{t:'192k catchment',c:'warn'},{t:'Industrial belt',c:''},{t:'Amrita-dominated',c:'hot'},{t:'Metro Line 1',c:'ok'}],
+   dt:'Edathala (78k) + Kalamassery (71k) + Choornikkara (43k) = 192k \u2014 the largest cluster in metro Kochi outside the corporation. Amrita AIMS dominates (55% leak). An offensive move into competitor territory. Kalamassery metro + NH-544 junction. Strategy: specialty OPD (oncology screening, cardiac) not full hospital.',
+   lc:'Amrita AIMS',nc:'Amrita (3.2 km), Aster (4.5 km)',ps:'192,000+',ig:'Moderate \u2014 competitive risk'},
+  {r:4,nm:'Aluva \u2013 Angamaly corridor',sb:'Aluva metro terminal / CIAL approach',sc:78,pS:75,gS:82,xS:45,tS:92,sS:78,lat:10.107,lon:76.352,co:'#1A5C8F',
+   tg:[{t:'Airport corridor',c:'warn'},{t:'Rail + metro hub',c:'ok'},{t:'Tourism gateway',c:''},{t:'65% leakage',c:'hot'}],
+   dt:'Aluva (22k core, 100k+ extended with Kadungalloor 40k, Alangad 47k) sits at metro northern terminus and CIAL gateway. Rajagiri captures most patients. 65% leakage \u2014 highest corridor. Dual purpose: local OPD + medical tourism intake for CIAL arrivals. International corridors (Gulf, Bangladesh) under pressure per FY25 \u2014 airport presence could stabilize the funnel.',
+   lc:'Rajagiri',nc:'Rajagiri (5 km)',ps:'145,000+',ig:'Moderate \u2014 distance risk'},
+  {r:5,nm:'Fort Kochi \u2013 Mattancherry',sb:'Bazaar Road / Chinese fishing nets area',sc:68,pS:60,gS:78,xS:48,tS:40,sS:72,lat:9.963,lon:76.258,co:'#7F8C9B',
+   tg:[{t:'Island geography',c:''},{t:'Aging population',c:'warn'},{t:'Access barrier',c:'hot'},{t:'Tourism hub',c:''}],
+   dt:'85k population on island geography. Aging demographic. General Hospital and Lourdes capture patients by default. Niche play: geriatric care + emergency stabilization + tourist medical services. Lower ROI but high brand visibility. Water ambulance to VPS main campus is a unique differentiator.',
+   lc:'General Hospital, Lourdes',nc:'General Hosp (3 km), Lourdes (2.5 km)',ps:'85,000',ig:'Lower \u2014 niche play'}
+];
+
+
+/* ═══════════════════════════════════════
+   UTILS
+   ═══════════════════════════════════════ */
+function hexToRgba(hex, alpha) {
+  var r = parseInt(hex.slice(1, 3), 16);
+  var g = parseInt(hex.slice(3, 5), 16);
+  var b = parseInt(hex.slice(5, 7), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
 }
+
+
+/* ═══════════════════════════════════════
+   NAV
+   ═══════════════════════════════════════ */
+const maps = {};
+
+/* Hero/metrics content per tab group */
+var HERO_KK = {
+  badge: 'SmartCity Kochi · Two-Campus Strategy · April 2026',
+  h: 'VPS Kakkanad \u2014 <em>second campus</em> at SmartCity',
+  p: 'A 400-bed multispecialty hospital on the SmartCity land parcel frees VPS Lakeshore to operate as Kerala\u2019s premier specialist centre \u2014 while capturing \u20b9500\u2013600\u00a0Cr in new annual revenue by Year\u00a05.'
+};
+var HERO_OUT = {
+  badge: 'FY25 Data \u00b7 Census 2011 \u00b7 Market Intelligence',
+  h: 'Where should VPS Lakeshore place its next <em>outpost</em>?',
+  p: 'Interactive site-selection analysis across 32 Ernakulam district towns \u2014 powered by patient flow corridors, healthcare gap mapping, and weighted multi-criteria scoring.'
+};
+var METRICS_KK = [
+  {l:'Target beds · Kakkanad',v:'400',cls:'good'},
+  {l:'Land · Option 2',v:'6.17 Ac',cls:''},
+  {l:'IT workforce within 2 km',v:'140k+',cls:''},
+  {l:'Corridor leakage to Aster',v:'40%',cls:'danger'},
+  {l:'Year 5 revenue · Kakkanad',v:'₹550 Cr',cls:'good'},
+  {l:'Target IRR',v:'>20%',cls:'good'},
+  {l:'Payback period',v:'10–12 yr',cls:''}
+];
+var METRICS_OUT = [
+  {l:'Towns mapped',v:'32',cls:''},
+  {l:'Without tertiary',v:'28',cls:'danger'},
+  {l:'Unserved population',v:'980k+',cls:''},
+  {l:'Patient corridors',v:'7',cls:''},
+  {l:'Top site score',v:'92',cls:'good'}
+];
+
+function setHero(isKK) {
+  var hero = document.getElementById('heroBlock');
+  var mb = document.getElementById('metricsBlock');
+  if (isKK) {
+    if (hero) hero.style.display = 'none';
+    if (mb) mb.style.display = 'none';
+    return;
+  }
+  if (hero) hero.style.display = '';
+  if (mb) mb.style.display = '';
+  var hd = HERO_OUT;
+  var mt = METRICS_OUT;
+  document.getElementById('heroBadge').textContent = hd.badge;
+  document.getElementById('heroH').innerHTML = hd.h;
+  document.getElementById('heroP').innerHTML = hd.p;
+  mb.innerHTML = mt.map(function(m){
+    return '<div class="metric"><div class="metric-lbl">'+m.l+'</div><div class="metric-val'+(m.cls?' '+m.cls:'')+'">'+m.v+'</div></div>';
+  }).join('');
+}
+
+document.querySelectorAll('.nav-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var idx = this.dataset.tab;
+    document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+    this.classList.add('active');
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    document.getElementById('sec' + idx).classList.add('active');
+    setHero(idx === '5');
+    setTimeout(function() {
+      Object.keys(maps).forEach(function(k) { maps[k].invalidateSize(); });
+    }, 150);
+  });
+});
+
+
+/* ═══════════════════════════════════════
+   MAP HELPERS
+   ═══════════════════════════════════════ */
+var TILE_URL = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+var TILE_ATTR = '\u00a9 <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> \u00a9 <a href="https://carto.com/">CARTO</a>';
+
+function makeMap(id, zoom) {
+  var m = L.map(id, { zoomControl: true, scrollWheelZoom: true }).setView([9.99, 76.31], zoom || 11);
+  L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 18 }).addTo(m);
+  maps[id] = m;
+  return m;
+}
+
+function addVPS(map) {
+  L.circleMarker([VPS.lat, VPS.lon], {
+    radius: 13, fillColor: '#2B7CBE', color: '#fff', weight: 2.5, fillOpacity: 1
+  }).addTo(map).bindPopup('<strong>VPS Lakeshore</strong><div class="sub">470+ beds \u00b7 NH-66, Nettoor, Maradu<br>Multi-organ transplant, cardiac, neuro, oncology</div>');
+  L.circleMarker([VPS.lat, VPS.lon], {
+    radius: 32, fillColor: '#2B7CBE', color: '#2B7CBE', weight: 1, fillOpacity: 0.07, dashArray: '6 4'
+  }).addTo(map);
+}
+
+
+/* ═══════════════════════════════════════
+   TAB 0: TOWN MAP
+   ═══════════════════════════════════════ */
+(function() {
+  var m = makeMap('map0'); addVPS(m);
+  TOWNS.forEach(function(t) {
+    var r = Math.max(4, Math.sqrt(t.p / 1600));
+    var c = t.t ? '#1A5C8F' : (t.p > 40000 ? '#8B1A4A' : '#8B919B');
+    var o = t.t ? 0.85 : (t.p > 40000 ? 0.7 : 0.4);
+    L.circleMarker([t.lat, t.lon], {
+      radius: r, fillColor: c, color: c, weight: 1, fillOpacity: o
+    }).addTo(m).bindPopup(
+      '<strong style="color:' + c + '">' + t.n + '</strong>' +
+      '<div class="sub">Population: ' + t.p.toLocaleString() +
+      '<br>' + (t.t ? '\u2713 Has tertiary hospital' : '\u2717 No tertiary care') + '</div>'
+    );
+  });
+
+  // Add competitor hospitals
+  COMPETITORS.forEach(function(c) {
+    L.circleMarker([c.lat, c.lon], {
+      radius: 7, fillColor: '#C0392B', color: '#fff', weight: 2, fillOpacity: 0.85
+    }).addTo(m).bindPopup(
+      '<strong style="color:#C0392B">' + c.n + '</strong>' +
+      '<div class="sub">' + c.b + ' beds \u00b7 Competitor (tertiary/quaternary)</div>'
+    );
+  });
+})();
+
+
+/* ═══════════════════════════════════════
+   TAB 1: PATIENT FLOW
+   ═══════════════════════════════════════ */
+(function() {
+  var m = makeMap('map1'); addVPS(m);
+
+  // Add competitor hospitals (dimmed)
+  COMPETITORS.forEach(function(c) {
+    L.circleMarker([c.lat, c.lon], {
+      radius: 5, fillColor: '#C0392B', color: '#C0392B', weight: 1, fillOpacity: 0.3
+    }).addTo(m).bindPopup(
+      '<strong style="color:#C0392B">' + c.n + '</strong>' +
+      '<div class="sub">' + c.b + ' beds</div>'
+    );
+  });
+
+  CORRIDORS.forEach(function(c) {
+    L.polyline([c.from, [VPS.lat, VPS.lon]], {
+      color: '#2471A3', weight: Math.max(2, c.vol / 3), opacity: 0.5
+    }).addTo(m);
+    L.circleMarker(c.from, {
+      radius: Math.max(5, c.leak / 6),
+      fillColor: '#8B1A4A', color: '#8B1A4A',
+      weight: 1, fillOpacity: Math.min(0.8, c.leak / 50)
+    }).addTo(m).bindPopup(
+      '<strong>' + c.name + '</strong>' +
+      '<div class="sub">VPS share: ' + c.vol + '% \u00b7 Leakage: ' + c.leak + '%' +
+      '<br>Leaks to: ' + c.leakTo +
+      '<br>Catchment: ' + c.pop.toLocaleString() + '</div>'
+    );
+  });
+
+  var html = '<div class="corr-row head"><div>Corridor</div><div style="text-align:center">VPS share</div><div style="text-align:center">Leakage</div><div style="text-align:center">Catchment</div></div>';
+  CORRIDORS.forEach(function(c) {
+    html += '<div class="corr-row">' +
+      '<div><div class="corr-name">' + c.name + '</div><div class="corr-sub">' + c.note + '</div></div>' +
+      '<div class="corr-val share">' + c.vol + '%<small>VPS share</small></div>' +
+      '<div class="corr-val leak">' + c.leak + '%<small>leakage</small></div>' +
+      '<div class="corr-val">' + (c.pop / 1000).toFixed(0) + 'k<small>population</small></div></div>';
+  });
+  document.getElementById('corrGrid').innerHTML = html;
+})();
+
+
+/* ═══════════════════════════════════════
+   TAB 2: SCORING
+   ═══════════════════════════════════════ */
+(function() {
+  var dims = [
+    { id: 'wP', lb: 'Population density', v: 7 },
+    { id: 'wG', lb: 'Healthcare gap', v: 9 },
+    { id: 'wX', lb: 'VPS proximity', v: 6 },
+    { id: 'wT', lb: 'Transport access', v: 7 },
+    { id: 'wS', lb: 'Strategic value', v: 8 }
+  ];
+
+  var ph = '<h3>Adjust weights</h3>';
+  dims.forEach(function(d) {
+    ph += '<div class="slider-grp"><div class="slider-lbl"><label>' + d.lb +
+      '</label><span id="v_' + d.id + '">' + d.v + '</span></div>' +
+      '<input type="range" min="1" max="10" value="' + d.v +
+      '" step="1" id="' + d.id + '" oninput="updateScores()"></div>';
+  });
+  ph += '<p style="font-size:12px;color:var(--tx3);margin-top:10px">Drag sliders to reprioritize. Rankings update instantly.</p>';
+  document.getElementById('scorePanel').innerHTML = ph;
+
+  window.updateScores = function() {
+    var w = dims.map(function(d) {
+      var v = parseInt(document.getElementById(d.id).value);
+      document.getElementById('v_' + d.id).textContent = v;
+      return v;
+    });
+    var total = w.reduce(function(a, b) { return a + b; }, 0);
+
+    var scored = SITES.map(function(s) {
+      var raw = (s.pS * w[0] + s.gS * w[1] + s.xS * w[2] + s.tS * w[3] + s.sS * w[4]) / total;
+      return Object.assign({}, s, { cp: Math.round(raw) });
+    }).sort(function(a, b) { return b.cp - a.cp; });
+
+    var html = '';
+    scored.forEach(function(s, i) {
+      var bars = [
+        { l: 'Population', v: s.pS }, { l: 'Gap score', v: s.gS },
+        { l: 'Proximity', v: s.xS }, { l: 'Transport', v: s.tS },
+        { l: 'Strategic', v: s.sS }
+      ];
+      html += '<div class="s-card"><div class="s-head">' +
+        '<div class="s-rank" style="background:' + hexToRgba(s.co, 0.08) + ';color:' + s.co + '">#' + (i + 1) + '</div>' +
+        '<div><div class="s-title">' + s.nm + '</div><div class="s-area">' + s.sb + '</div></div>' +
+        '<div class="s-badge"><div class="s-badge-num" style="color:' + s.co + '">' + s.cp + '</div><div class="s-badge-lbl">Score</div></div></div>' +
+        '<div class="tags">' + s.tg.map(function(t) { return '<span class="tag ' + t.c + '">' + t.t + '</span>'; }).join('') + '</div>' +
+        '<div class="bars">' + bars.map(function(b) {
+          return '<div class="bar-r"><span class="bar-l">' + b.l + '</span><div class="bar-t"><div class="bar-f" style="width:' + b.v + '%;background:' + s.co + '"></div></div><span class="bar-v" style="color:' + s.co + '">' + b.v + '</span></div>';
+        }).join('') + '</div>' +
+        '<div class="s-meta"><div class="s-meta-item"><div class="s-meta-lbl">Leak capture</div><div class="s-meta-val">' + s.lc + '</div></div>' +
+        '<div class="s-meta-item"><div class="s-meta-lbl">Nearest competitor</div><div class="s-meta-val">' + s.nc + '</div></div></div></div>';
+    });
+    document.getElementById('scoreCards').innerHTML = html;
+  };
+  updateScores();
+})();
+
+
+/* ═══════════════════════════════════════
+   TAB 3: RECOMMENDATIONS
+   ═══════════════════════════════════════ */
+(function() {
+  var m = makeMap('map3'); addVPS(m);
+
+  COMPETITORS.forEach(function(c) {
+    L.circleMarker([c.lat, c.lon], {
+      radius: 5, fillColor: '#2471A3', color: '#2471A3', weight: 1, fillOpacity: 0.35
+    }).addTo(m).bindPopup('<strong>' + c.n + '</strong><div class="sub">' + c.b + ' beds</div>');
+  });
+
+  SITES.forEach(function(s, i) {
+    L.circle([s.lat, s.lon], {
+      radius: 3500, fillColor: '#8B1A4A', color: '#8B1A4A',
+      weight: 1, fillOpacity: 0.05, dashArray: '6 4'
+    }).addTo(m);
+    L.polyline([[VPS.lat, VPS.lon], [s.lat, s.lon]], {
+      color: '#2B7CBE', weight: 1, opacity: 0.15, dashArray: '6 4'
+    }).addTo(m);
+    L.circleMarker([s.lat, s.lon], {
+      radius: Math.max(8, 14 - i * 1.5),
+      fillColor: s.co, color: '#fff', weight: 2,
+      fillOpacity: Math.max(0.55, 1 - i * 0.1)
+    }).addTo(m).bindPopup(
+      '<strong style="color:' + s.co + '">#' + s.r + ' ' + s.nm + '</strong>' +
+      '<div class="sub">' + s.sb + '<br>Score: ' + s.sc + ' \u00b7 ' + s.ps + '</div>'
+    );
+  });
+
+  var html = '';
+  SITES.forEach(function(s) {
+    html += '<div class="rec"><div class="rec-top">' +
+      '<div class="rec-rank" style="background:' + hexToRgba(s.co, 0.08) + ';color:' + s.co + '">#' + s.r + '</div>' +
+      '<div><div class="rec-name">' + s.nm + '</div><div class="rec-sub">' + s.sb + '</div></div>' +
+      '<div class="rec-sc"><div class="rec-sc-num" style="color:' + s.co + '">' + s.sc + '</div><div class="rec-sc-lbl">Score</div></div></div>' +
+      '<div class="rec-body">' +
+      '<div class="tags" style="margin-bottom:14px">' + s.tg.map(function(t) { return '<span class="tag ' + t.c + '">' + t.t + '</span>'; }).join('') + '</div>' +
+      '<div class="rec-text">' + s.dt + '</div>' +
+      '<div class="rec-grid">' +
+      '<div class="rec-stat"><div class="rec-stat-lbl">Population served</div><div class="rec-stat-val">' + s.ps + '</div></div>' +
+      '<div class="rec-stat"><div class="rec-stat-lbl">Leak capture from</div><div class="rec-stat-val">' + s.lc + '</div></div>' +
+      '<div class="rec-stat"><div class="rec-stat-lbl">Nearest competitor</div><div class="rec-stat-val">' + s.nc + '</div></div>' +
+      '<div class="rec-stat"><div class="rec-stat-lbl">Investment grade</div><div class="rec-stat-val">' + s.ig + '</div></div>' +
+      '</div></div></div>';
+  });
+  document.getElementById('recCards').innerHTML = html;
+})();
+
+
+/* ═══════════════════════════════════════
+   TAB 2: DEPARTMENT FLOWS
+   ═══════════════════════════════════════ */
+var DEPTS = {
+  onco: {
+    name: 'Oncology',
+    vpsBeds: 48, vpsStrength: 'Surgical oncology (head & neck, gynae-onc firsts in Kerala), radiation oncology (ELEKTA Versa HD), Centre for Complex Head & Neck Cancer (CCHNC) — India\u2019s first',
+    keralaStats: 'Kerala: ~35,000 new cancer cases/year. Ernakulam estimated ~4,200/year. Breast (30\u201335% of female cancers), lung, oral, colorectal, thyroid most common. Incidence rising 3\u20134% annually due to aging population and lifestyle shift.',
+    metrics: [
+      {l:'Estimated new cases/yr (Ernakulam)', v:'~4,200'},
+      {l:'VPS oncology OP volume/day', v:'80\u2013100'},
+      {l:'Key VPS differentiator', v:'CCHNC (India 1st)'},
+      {l:'Chemo chairs', v:'24'},
+      {l:'Radiation machines', v:'2 LINAC'}
+    ],
+    competitors: [
+      {n:'Amrita AIMS Cancer Centre',lat:10.0345,lon:76.2885,str:95,note:'Full cancer centre: medical, surgical, radiation onco, BMT, molecular lab. 300+ stem cell transplants. Strongest research. Largest team.'},
+      {n:'Aster Medcity AIIO',lat:10.0055,lon:76.3115,str:90,note:'Aster International Institute of Oncology. PET-CT (Siemens Biograph), BMT unit, site-specific disease groups, head & neck CoE.'},
+      {n:'Rajagiri Hospital',lat:10.104,lon:76.346,str:55,note:'Medical and surgical oncology. No radiation facility — refers out for radiotherapy.'},
+      {n:'Lisie Hospital',lat:9.993,lon:76.295,str:45,note:'Medical oncology and palliative. Limited surgical oncology. No radiation unit.'},
+      {n:'Lourdes Hospital',lat:9.981,lon:76.287,str:40,note:'Basic oncology services. Refers complex cases to Amrita/Aster/VPS.'},
+      {n:'Regional Cancer Centre (TVM)',lat:8.525,lon:76.934,str:98,note:'Govt apex centre 220 km away. Many Ernakulam patients prefer Kochi private hospitals over travel to RCC TVM.'}
+    ],
+    corridors: [
+      {name:'Tripunithura\u2013Puthencruz belt',from:[9.948,76.360],pct:20,leak:30,leakTo:'Aster AIIO',note:'No oncology screening nearby. Patients discover cancer late, get referred to whichever hospital their GP is affiliated with.'},
+      {name:'Kakkanad\u2013Thrikkakara IT belt',from:[9.990,76.342],pct:12,leak:45,leakTo:'Aster AIIO',note:'Working population. Insurance-driven choice. Aster\u2019s corporate tie-ups dominate.'},
+      {name:'North Kochi (Edathala\u2013Kalamassery)',from:[10.050,76.300],pct:8,leak:70,leakTo:'Amrita Cancer Centre',note:'Amrita\u2019s cancer centre is the default. Research reputation pulls patients.'},
+      {name:'Aluva\u2013Angamaly\u2013Perumbavoor',from:[10.130,76.400],pct:5,leak:60,leakTo:'Amrita / Rajagiri',note:'Long-distance patients. Airport medical tourism patients often choose Amrita or Aster for brand recognition.'},
+      {name:'Central Ernakulam',from:[9.980,76.288],pct:18,leak:35,leakTo:'Lisie / Medical Trust',note:'Convenience-driven. Patients with mild symptoms go to nearest hospital; VPS captures referrals for complex surgical cases.'},
+      {name:'South belt (Maradu\u2013Kumbalam)',from:[9.918,76.295],pct:25,leak:8,leakTo:'EMC',note:'VPS\u2019s home territory. Strongest oncology capture. Walk-in screening patients.'},
+      {name:'Alappuzha & Kottayam districts',from:[9.500,76.340],pct:12,leak:40,leakTo:'Aster / Amrita',note:'Inter-district referrals. 45\u201360 min drive. Patients choose based on doctor reputation.'}
+    ],
+    outpostImplication: 'An oncology-focused outpost in <strong>Kakkanad</strong> (screening, chemo day-care, second opinions) would intercept the 45% leakage to Aster AIIO from the IT corridor. A satellite screening centre in <strong>Thrippunithura</strong> could enable early detection in the 115k population belt that currently has zero cancer screening within 8 km. For northern Kochi, a chemo day-care at <strong>Kalamassery</strong> would be an aggressive move into Amrita\u2019s territory but addresses the 192k population that currently travels 12+ km for chemo cycles.',
+    insight: 'Oncology is VPS Lakeshore\u2019s highest-value department for outpost strategy. Cancer patients generate 15\u201320 visits over a treatment journey (consultations, chemo cycles, radiation sessions, follow-ups) vs 2\u20133 for most other departments. Each intercepted oncology patient represents \u20b95\u201315 lakh lifetime value. The CCHNC (India\u2019s first) is a brand asset — screening camps referencing this centre could pull patients from Aster and Amrita.'
+  },
+  cardiac: {
+    name: 'Cardiac sciences',
+    vpsBeds: 60, vpsStrength: 'Interventional cardiology, electrophysiology, CABG, valve surgery, paediatric cardiology. LVAD implantation capability.',
+    keralaStats: 'Kerala: cardiovascular disease is #1 killer. 20% diabetes prevalence (2x national average) drives cardiac load. Ernakulam estimated 8,000+ cardiac interventions/year across all hospitals.',
+    metrics: [{l:'Cardiac interventions/yr (est.)',v:'8,000+'},{l:'VPS cath lab procedures/day',v:'8\u201312'},{l:'Key differentiator',v:'Electrophysiology + LVAD'},{l:'ICU beds (cardiac)',v:'22'},{l:'Competition intensity',v:'Very high'}],
+    competitors: [
+      {n:'Lisie Heart Institute',lat:9.993,lon:76.295,str:92,note:'Premier cardiac centre in Kochi. First beating-heart total arterial bypass. 4,000+ interventional procedures/year. Dominant brand.'},
+      {n:'Amrita Cardiac Centre',lat:10.0345,lon:76.2885,str:88,note:'Heart transplant capability. Full paediatric cardiac surgery. Academic powerhouse.'},
+      {n:'Aster Heart Centre',lat:10.0055,lon:76.3115,str:85,note:'Advanced interventional. JCI accredited. Structural heart disease programme.'},
+      {n:'Medical Trust',lat:9.971,lon:76.289,str:65,note:'Established cardiac surgery. Good interventional programme. City-centre convenience.'},
+      {n:'Rajagiri',lat:10.104,lon:76.346,str:60,note:'Growing cardiac programme. Robotic surgery capability.'}
+    ],
+    corridors: [
+      {name:'Central Ernakulam',from:[9.980,76.288],pct:15,leak:50,leakTo:'Lisie Heart Institute',note:'Lisie dominates central Kochi cardiac. Brand loyalty is generational.'},
+      {name:'South belt',from:[9.918,76.295],pct:28,leak:12,leakTo:'EMC',note:'VPS strongest cardiac catchment.'},
+      {name:'Kakkanad\u2013Vazhakkala',from:[9.990,76.342],pct:10,leak:50,leakTo:'Aster Heart Centre',note:'Corporate insurance tie-ups drive to Aster.'},
+      {name:'North Kochi',from:[10.050,76.300],pct:8,leak:60,leakTo:'Amrita / Lisie',note:'Amrita for complex, Lisie for routine interventional.'},
+      {name:'Aluva corridor',from:[10.130,76.370],pct:5,leak:65,leakTo:'Rajagiri / Amrita',note:'Distance barrier. Emergency cardiac goes to nearest.'}
+    ],
+    outpostImplication: 'Cardiac is the most competitive department in Kochi — Lisie Heart Institute is a legacy brand. Outpost strategy should focus on <strong>cardiac screening and preventive check-ups</strong> (diabetes-linked cardiac risk) rather than competing on intervention volume. Kakkanad (diabetic IT worker demographic) and Thrippunithura (aging population) are ideal for preventive cardiac clinics.',
+    insight: 'Cardiac has the highest competition density — 5 major centres within 15 km. VPS\u2019s electrophysiology and LVAD capability are differentiators but don\u2019t drive volume the way a screening outpost would. The outpost play is preventive: diabetes + cardiac risk screening in the IT corridor.'
+  },
+  neuro: {
+    name: 'Neurosciences',
+    vpsBeds: 35, vpsStrength: 'Neurology, neurosurgery, neuro-interventional radiology, stroke centre, epilepsy surgery.',
+    keralaStats: 'Kerala: high stroke incidence linked to hypertension and diabetes. Aging population drives neuro-degenerative conditions. Growing demand for epilepsy and movement disorder services.',
+    metrics: [{l:'Stroke cases/yr (Ernakulam est.)',v:'~2,800'},{l:'VPS neuro OPs/day',v:'40\u201360'},{l:'Key differentiator',v:'Neuro-interventional radiology'},{l:'Neuro ICU beds',v:'16'},{l:'Competition intensity',v:'High'}],
+    competitors: [
+      {n:'Aster Neuro CoE',lat:10.0055,lon:76.3115,str:90,note:'First independent neuro facility in Kerala. Comprehensive brain & spine. Very strong brand.'},
+      {n:'Amrita Neurosciences',lat:10.0345,lon:76.2885,str:88,note:'Academic neurosciences. Movement disorders, epilepsy surgery. Deep brain stimulation.'},
+      {n:'Lisie',lat:9.993,lon:76.295,str:55,note:'Neurology dept but limited neurosurgery.'},
+      {n:'Medical Trust',lat:9.971,lon:76.289,str:60,note:'Stroke management. Neurosurgery.'}
+    ],
+    corridors: [
+      {name:'South belt',from:[9.918,76.295],pct:30,leak:10,leakTo:'EMC',note:'VPS stronghold.'},
+      {name:'Tripunithura',from:[9.948,76.360],pct:15,leak:30,leakTo:'Aster',note:'Aging population = higher stroke risk.'},
+      {name:'North Kochi',from:[10.050,76.300],pct:8,leak:65,leakTo:'Aster / Amrita',note:'Aster Neuro CoE dominates.'},
+      {name:'Central Ernakulam',from:[9.980,76.288],pct:15,leak:40,leakTo:'Medical Trust / Lisie',note:'Proximity-driven emergency referrals.'}
+    ],
+    outpostImplication: 'Neuro is time-critical (stroke golden hour). An outpost with <strong>stroke stabilisation and thrombolysis capability</strong> in Thrippunithura or Kakkanad could capture cases that currently go to Aster or Medical Trust simply because they\u2019re closer during emergencies.',
+    insight: 'Neuro outpost strategy is about <strong>time, not brand</strong>. Stroke patients go to the nearest facility. A stabilisation + telestroke outpost extends VPS\u2019s effective stroke catchment radius by 8\u201310 km.'
+  },
+  ortho: {
+    name: 'Orthopaedics & sports medicine',
+    vpsBeds: 40, vpsStrength: 'India\u2019s first digitally integrated ortho OT. Joint replacement, sports medicine, spine surgery, trauma. Wireless arthroscopy (India first).',
+    keralaStats: 'Kerala: high road accident rate drives trauma demand. Aging population drives joint replacement. Growing sports medicine segment.',
+    metrics: [{l:'Joint replacements/yr (VPS)',v:'600+'},{l:'Key differentiator',v:'Digital OT + wireless arthroscopy'},{l:'Trauma volume',v:'High (NH-66 corridor)'},{l:'Competition intensity',v:'Moderate'}],
+    competitors: [
+      {n:'Amrita',lat:10.0345,lon:76.2885,str:75,note:'Ortho dept with trauma centre.'},
+      {n:'Aster',lat:10.0055,lon:76.3115,str:70,note:'Joint replacement and spine.'},
+      {n:'Medical Trust',lat:9.971,lon:76.289,str:65,note:'Sports injuries, joint replacement.'},
+      {n:'Rajagiri',lat:10.104,lon:76.346,str:60,note:'Robotic-assisted ortho surgery.'}
+    ],
+    corridors: [
+      {name:'NH-66 corridor (trauma)',from:[9.935,76.305],pct:35,leak:8,leakTo:'EMC',note:'Accident cases from NH-66 come directly. VPS\u2019s strongest ortho flow.'},
+      {name:'Kakkanad (sports medicine)',from:[9.990,76.342],pct:12,leak:35,leakTo:'Aster',note:'IT workers with sports injuries and repetitive strain.'},
+      {name:'Tripunithura (joint replacement)',from:[9.948,76.360],pct:15,leak:25,leakTo:'Medical Trust',note:'Aging population drives elective joint replacement demand.'}
+    ],
+    outpostImplication: 'Ortho is VPS\u2019s natural strength — the digital OT and wireless arthroscopy are unique differentiators. An outpost offering <strong>physiotherapy + sports medicine consultations</strong> in Kakkanad (IT corridor RSI/sports injuries) could funnel surgical cases to the main campus. Thrippunithura outpost could run <strong>joint replacement assessment clinics</strong> for the aging population.',
+    insight: 'Ortho outpost strategy: light-touch entry (physio + consultation) that funnels surgical volume to main campus. VPS\u2019s tech advantage (digital OT) is the conversion argument.'
+  },
+  gastro: {
+    name: 'Gastroenterology & liver care',
+    vpsBeds: 30, vpsStrength: 'Comprehensive GI and hepatology. Advanced endoscopy, liver transplant programme, ERCP, EUS.',
+    keralaStats: 'Kerala: high meat consumption drives colorectal cancer (5.5/100k vs national avg). Alcohol-related liver disease significant. Growing NAFLD from diabetes.',
+    metrics: [{l:'Liver transplants (VPS cumulative)',v:'100+'},{l:'ERCP procedures/month',v:'40\u201350'},{l:'Key differentiator',v:'Liver transplant programme'},{l:'Competition intensity',v:'Moderate\u2013high'}],
+    competitors: [
+      {n:'Aster Liver Care',lat:10.0055,lon:76.3115,str:88,note:'Integrated liver care unit. Liver transplant. Very strong GI.'},
+      {n:'Amrita GI',lat:10.0345,lon:76.2885,str:80,note:'Academic GI. IBD centre. Liver transplant.'},
+      {n:'Lourdes',lat:9.981,lon:76.287,str:50,note:'GI department, endoscopy. No transplant.'},
+      {n:'Medical Trust',lat:9.971,lon:76.289,str:55,note:'GI surgery. Endoscopy suite.'}
+    ],
+    corridors: [
+      {name:'South belt',from:[9.918,76.295],pct:28,leak:10,leakTo:'EMC',note:'Proximity advantage.'},
+      {name:'Central Ernakulam',from:[9.980,76.288],pct:15,leak:40,leakTo:'Lourdes / Medical Trust',note:'Walk-in convenience.'},
+      {name:'North Kochi',from:[10.050,76.300],pct:8,leak:60,leakTo:'Amrita / Aster',note:'Liver transplant reputation drives referrals north.'}
+    ],
+    outpostImplication: 'GI/liver outpost play: <strong>NAFLD and liver screening clinics</strong> in Kakkanad (diabetic IT population) and Kalamassery (industrial belt). Kerala\u2019s diabetic epidemic makes liver screening a population-health play with strong patient acquisition potential.',
+    insight: 'GI outpost is a screening play: 20% diabetes prevalence in Kerala = massive NAFLD pipeline. Early screening at outpost \u2192 conversion to liver clinic at main campus.'
+  },
+  transplant: {
+    name: 'Multi-organ transplant',
+    vpsBeds: 20, vpsStrength: 'First paediatric BMT and liver transplant in the region. Kidney, liver, heart transplant capability. 300+ organ transplants.',
+    keralaStats: 'Kerala: growing transplant demand driven by CKD (diabetes) and liver disease (alcohol + NAFLD). Cadaveric organ donation improving with KNOS (Kerala Network for Organ Sharing).',
+    metrics: [{l:'Total transplants (VPS)',v:'300+'},{l:'Key programmes',v:'Kidney, liver, BMT'},{l:'Cadaveric transplants/yr',v:'Growing'},{l:'Competition intensity',v:'High (top 3 tight)'}],
+    competitors: [
+      {n:'Aster Transplant',lat:10.0055,lon:76.3115,str:90,note:'Multi-organ transplant. Kidney, liver, heart. High volume.'},
+      {n:'Amrita Transplant',lat:10.0345,lon:76.2885,str:88,note:'Kidney and liver transplant. Academic programme. Living donor programme.'},
+      {n:'Lisie',lat:9.993,lon:76.295,str:50,note:'Kidney transplant support. Limited.'},
+      {n:'Rajagiri',lat:10.104,lon:76.346,str:45,note:'Developing transplant. Renal transplant.'}
+    ],
+    corridors: [
+      {name:'All Ernakulam',from:[9.980,76.310],pct:30,leak:35,leakTo:'Aster / Amrita',note:'Transplant is doctor-reputation driven. Patients travel for specific surgeons.'},
+      {name:'Kerala districts',from:[9.600,76.400],pct:40,leak:40,leakTo:'Amrita (academic rep)',note:'Inter-district referrals from nephrologists and hepatologists.'},
+      {name:'International',from:[10.150,76.400],pct:30,leak:50,leakTo:'Aster (Gulf connections)',note:'Medical tourism transplant. Aster\u2019s Gulf network is strong.'}
+    ],
+    outpostImplication: 'Transplant is not an outpost specialty — it requires full hospital infrastructure. However, outposts can serve as <strong>CKD screening and pre-transplant evaluation centres</strong>, identifying patients earlier in the disease journey and building the funnel for transplant referrals to main campus.',
+    insight: 'Transplant outpost strategy is indirect: screen for CKD and liver disease at outpost, manage early-stage at outpost, refer for transplant to main campus. The earlier you enter the patient journey, the more likely they choose VPS for the eventual transplant.'
+  }
+};
+
+(function() {
+  var deptMap = null;
+  var deptLayers = [];
+
+  function renderDept(key) {
+    var d = DEPTS[key];
+    if (!d) return;
+
+    // Metrics
+    var mh = '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--bd);border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh)">';
+    d.metrics.forEach(function(m) {
+      mh += '<div style="background:var(--bg);padding:14px 18px"><div style="font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;font-weight:500;margin-bottom:3px">' + m.l + '</div><div style="font-size:18px;font-weight:700">' + m.v + '</div></div>';
+    });
+    mh += '</div>';
+    document.getElementById('deptMetrics').innerHTML = mh;
+
+    // Map
+    if (!deptMap) {
+      deptMap = makeMap('map2', 11);
+      addVPS(deptMap);
+    }
+    deptLayers.forEach(function(ly) { deptMap.removeLayer(ly); });
+    deptLayers = [];
+
+    // Competitor markers
+    d.competitors.forEach(function(c) {
+      var r = Math.max(5, c.str / 12);
+      var mk = L.circleMarker([c.lat, c.lon], {
+        radius: r, fillColor: '#8B1A4A', color: '#8B1A4A',
+        weight: 1, fillOpacity: Math.min(0.8, c.str / 100)
+      }).addTo(deptMap).bindPopup(
+        '<strong style="color:#8B1A4A">' + c.n + '</strong>' +
+        '<div class="sub">Strength: ' + c.str + '/100<br>' + c.note + '</div>'
+      );
+      deptLayers.push(mk);
+    });
+
+    // Corridor flows
+    if (d.corridors) {
+      d.corridors.forEach(function(c) {
+        var line = L.polyline([c.from, [VPS.lat, VPS.lon]], {
+          color: '#2471A3', weight: Math.max(1.5, c.pct / 5), opacity: 0.45
+        }).addTo(deptMap);
+        deptLayers.push(line);
+
+        var mk2 = L.circleMarker(c.from, {
+          radius: Math.max(4, c.leak / 8), fillColor: '#2471A3', color: '#2471A3',
+          weight: 1, fillOpacity: 0.5
+        }).addTo(deptMap).bindPopup(
+          '<strong>' + c.name + '</strong>' +
+          '<div class="sub">VPS share: ' + c.pct + '% \u00b7 Leakage: ' + c.leak + '%<br>Leaks to: ' + c.leakTo + '</div>'
+        );
+        deptLayers.push(mk2);
+      });
+    }
+
+    // Detail table
+    var th = '<div style="margin-bottom:16px"><div style="font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:12px"><strong style="color:var(--vps-blue)">VPS Lakeshore ' + d.name + ':</strong> ' + d.vpsStrength + '</div>';
+    th += '<div style="font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:16px"><strong style="color:var(--vps-maroon)">Market context:</strong> ' + d.keralaStats + '</div></div>';
+
+    // Competitor table
+    th += '<table class="dept-table"><thead><tr><th>Competitor</th><th>Strength</th><th>Notes</th></tr></thead><tbody>';
+    d.competitors.forEach(function(c) {
+      var barW = Math.round(c.str * 0.8);
+      var barColor = c.str > 80 ? '#8B1A4A' : (c.str > 60 ? '#C8922A' : '#2B7CBE');
+      th += '<tr><td style="font-weight:600">' + c.n + '</td>' +
+        '<td><span class="str-bar" style="width:' + barW + 'px;background:' + barColor + '"></span>' + c.str + '</td>' +
+        '<td style="font-size:12px;color:var(--tx2)">' + c.note + '</td></tr>';
+    });
+    th += '</tbody></table>';
+
+    // Corridor table
+    if (d.corridors) {
+      th += '<div style="margin-top:20px"><div style="font-size:14px;font-weight:700;margin-bottom:10px">Patient corridors \u2014 ' + d.name + '</div>';
+      th += '<table class="dept-table"><thead><tr><th>Corridor</th><th>VPS share</th><th>Leakage</th><th>Leaks to</th></tr></thead><tbody>';
+      d.corridors.forEach(function(c) {
+        th += '<tr><td><div style="font-weight:600">' + c.name + '</div><div style="font-size:11px;color:var(--tx3)">' + c.note + '</div></td>' +
+          '<td style="font-weight:700;color:var(--vps-blue)">' + c.pct + '%</td>' +
+          '<td style="font-weight:700;color:var(--vps-maroon)">' + c.leak + '%</td>' +
+          '<td style="font-size:12px">' + c.leakTo + '</td></tr>';
+      });
+      th += '</tbody></table></div>';
+    }
+
+    // Outpost implication
+    th += '<div style="margin-top:20px"><div style="font-size:14px;font-weight:700;margin-bottom:8px">Outpost implication</div><div style="font-size:14px;color:var(--tx2);line-height:1.7">' + d.outpostImplication + '</div></div>';
+
+    document.getElementById('deptDetail').innerHTML = th;
+
+    // Insight box
+    document.getElementById('deptInsight').innerHTML = '<div class="insight"><strong>Strategic takeaway:</strong> ' + d.insight + '</div>';
+  }
+
+  // Dept button handlers
+  document.querySelectorAll('.dept-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.dept-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      renderDept(this.dataset.dept);
+      if (deptMap) setTimeout(function() { deptMap.invalidateSize(); }, 100);
+    });
+  });
+
+  // Initial render (deferred until tab is shown)
+  var deptInited = false;
+  var origNavHandler = null;
+  document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (this.dataset.tab === '2' && !deptInited) {
+        setTimeout(function() {
+          renderDept('onco');
+          deptInited = true;
+          if (deptMap) deptMap.invalidateSize();
+        }, 200);
+      }
+    });
+  });
+})();
+
+/* ═══════════════════════════════════════
+   TAB 5: KAKKANAD HOSPITAL
+   ═══════════════════════════════════════ */
+(function() {
+
+  /* ── PDF VIEWER ── */
+  var PDF_URLS = { 1: 'SCK_Option1.pdf', 2: 'SCK_Option2.pdf' };
+  window.showPDF = function(opt) {
+    var frame = document.getElementById('pdfFrame');
+    var t1 = document.getElementById('pdfTab1');
+    var t2 = document.getElementById('pdfTab2');
+    var dl = document.getElementById('pdfDl');
+    if (!frame) return;
+    frame.src = PDF_URLS[opt];
+    if (t1) t1.classList.toggle('active', opt === 1);
+    if (t2) t2.classList.toggle('active', opt === 2);
+    if (dl) dl.href = PDF_URLS[opt];
+  };
+
+  /* ── MAP + COMP CARDS ── */
+  var kkInited = false;
+  function initKK() {
+    if (kkInited) return;
+    kkInited = true;
+
+    /* Coordinates verified against OpenStreetMap, Grokipedia, and latlong.net */
+    // VPS Lakeshore: NH-66, Nettoor — 9.9378, 76.3070 (verified)
+    // Kakkanad proposed: SmartCity SEZ — 10.0006, 76.3540
+    // Aster Medcity: Grokipedia/OSM — 10°02'36"N 76°16'41"E = 10.0433, 76.2781
+    // Amrita AIMS: Ponekkara, Edappally — 10.0265, 76.3082
+    // Rajagiri: OSM/latlong — 10.0877, 76.3882
+    // Sunrise: Palarivattom junction — 9.9985, 76.3119
+    // Infopark: Kakkanad — 10.0219, 76.3711
+    // SmartCity campus: 10.0040, 76.3580
+
+    var m = L.map('mapKK', { zoomControl: true, scrollWheelZoom: true })
+              .setView([9.985, 76.330], 12);
+    L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 18 }).addTo(m);
+    maps['mapKK'] = m;
+
+    /* VPS Lakeshore (existing) */
+    L.circleMarker([9.9190, 76.3189], {
+      radius: 14, fillColor: '#2B7CBE', color: '#fff', weight: 2.5, fillOpacity: 1
+    }).addTo(m).bindPopup('<strong>VPS Lakeshore</strong><div class="sub">470+ beds · NH-66, Nettoor, Maradu<br>Specialist &amp; quaternary hub<br>Transplant · Cardiac surgery · Oncology · Neuro · MVT</div>');
+    L.circleMarker([9.9190, 76.3189], {
+      radius: 40, fillColor: '#2B7CBE', color: '#2B7CBE', weight: 1, fillOpacity: 0.07, dashArray: '6 4'
+    }).addTo(m);
+
+    /* Proposed VPS Kakkanad */
+    var kkLat = 10.0012, kkLon = 76.3714;
+    L.circleMarker([kkLat, kkLon], {
+      radius: 16, fillColor: '#1a7a40', color: '#fff', weight: 3, fillOpacity: 1
+    }).addTo(m).bindPopup('<strong style="color:#1a7a40">VPS Kakkanad — Proposed</strong><div class="sub">SmartCity Kochi · 6.17 Acres (Option 2)<br>Target: 380–420 beds · Multispecialty<br>IT corridor + residential catchment</div>').openPopup();
+    L.circleMarker([kkLat, kkLon], {
+      radius: 50, fillColor: '#1a7a40', color: '#1a7a40', weight: 1, fillOpacity: 0.06, dashArray: '5 4'
+    }).addTo(m);
+
+    /* Inter-campus referral corridor */
+    L.polyline([[9.9190, 76.3189], [kkLat, kkLon]], {
+      color: '#2B7CBE', weight: 3, dashArray: '8 6', opacity: 0.55
+    }).addTo(m).bindPopup('<strong>Inter-campus referral corridor</strong><div class="sub">~15 km via NH-66 / Seaport–Airport Rd<br>25–30 min transfer<br>Complex cases: Kakkanad → VPS Lakeshore<br>Step-down: VPS Lakeshore → Kakkanad</div>');
+
+    /* IT parks */
+    [
+      { n:'Infopark Kochi', lat:10.0225, lon:76.3725,
+        sub:'72,000 professionals · TCS, Wipro, HCL, IBM, Cognizant, KPMG, EY, Nielsen<br>323 acres · Phase II still under development' },
+      { n:'SmartCity Kochi (VPS parcel)', lat:10.0012, lon:76.3714,
+        sub:'246 acres SEZ · 90,000+ target jobs<br>VPS proposed land parcel B3-3/B3-4 · adjacent to Infopark' },
+      { n:'CSEZ / KINFRA', lat:10.0110, lon:76.3490,
+        sub:'Cochin Special Economic Zone · Collectorate nearby · PSU offices' }
+    ].forEach(function(p) {
+      L.circleMarker([p.lat, p.lon], { radius:10, fillColor:'#e67e22', color:'#fff', weight:2, fillOpacity:.88 })
+        .addTo(m).bindPopup('<strong>'+p.n+'</strong><div class="sub">'+p.sub+'</div>');
+      L.polyline([[p.lat,p.lon],[kkLat,kkLon]], {color:'#e67e22',weight:1.5,dashArray:'3 6',opacity:.35}).addTo(m);
+    });
+
+    /* Competitors — coordinates from OSM, Grokipedia, latlong.net */
+    [
+      { n:'Aster Medcity', lat:10.0433, lon:76.2781,
+        sub:'710 beds · Kuttisahib Rd, Cheranelloor · JCI accredited<br>Quaternary · waterfront campus · 40 acres' },
+      { n:'Amrita Hospital (AIMS)', lat:10.0265, lon:76.3082,
+        sub:'1450 beds · Ponekkara, Edappally · 125 acres<br>Tertiary + academic · transplant · cardiac' },
+      { n:'Sunrise Hospital', lat:10.0253, lon:76.3390,
+        sub:'500+ beds · Kakkanad · general multispecialty · high OPD volume' },
+      { n:'Rajagiri Hospital', lat:10.0877, lon:76.3882,
+        sub:'570 beds · Chunangamvely, Aluva · JCI accredited<br>Quaternary · captures north Kochi corridor' }
+    ].forEach(function(c) {
+      L.circleMarker([c.lat, c.lon], { radius:9, fillColor:'#8B1A4A', color:'#fff', weight:2, fillOpacity:.85 })
+        .addTo(m).bindPopup('<strong style="color:#8B1A4A">'+c.n+'</strong><div class="sub">'+c.sub+'</div>');
+    });
+
+    /* Residential catchment zones */
+    [
+      { n:'Kakkanad', lat:9.9750, lon:76.3450,
+        sub:'37k+ residents · fast-growing · IT professional families' },
+      { n:'Vazhakkala', lat:10.0120, lon:76.3400,
+        sub:'51k pop · no tertiary hospital · key residential belt' },
+      { n:'Thrippunithura', lat:9.9450, lon:76.3400,
+        sub:'69k pop · SE residential belt · feeds both campuses' },
+      { n:'Edappally', lat:10.0195, lon:76.3088,
+        sub:'Major transit hub · NH bypass · growing residential' },
+      { n:'CUSAT', lat:10.0432, lon:76.3293,
+        sub:'15,000 students · Kalamassery · MOU opportunity' }
+    ].forEach(function(r) {
+      L.circleMarker([r.lat, r.lon], { radius:7, fillColor:'#8e44ad', color:'#fff', weight:1.5, fillOpacity:.6 })
+        .addTo(m).bindPopup('<strong>'+r.n+'</strong><div class="sub">'+r.sub+'</div>');
+    });
+
+    /* COMPETITOR CARDS */
+    var COMPS = [
+      { name:'Aster Medcity', dist:'~8 km · Cheranelloor (waterfront) · 710 beds', threat:90,
+        leakShare:'~60% of Kakkanad corridor',
+        str:'Full quaternary · JCI · Aster@SmartCity OPD already on campus · strong corporate TPA base',
+        weak:'Higher rack rates · no inpatient inside SmartCity · campus is west of IT cluster',
+        opp:'A VPS hospital inside SmartCity with 400 beds and full ED directly displaces Aster\'s OPD-only foothold. Corporate TPA relationships become re-negotiable.' },
+      { name:'Sunrise Hospital', dist:'~2 km · Kakkanad · 500+ beds', threat:55,
+        leakShare:'~25% of corridor',
+        str:'High OPD volume · affordable · accessible · well-known for routine care',
+        weak:'Not premium · no quaternary · older infrastructure · limited insured segment appeal',
+        opp:'VPS brand premium at comparable pricing converts insured IT workers who use Sunrise by default, not by preference.' },
+      { name:'Amrita Hospital (AIMS)', dist:'~7 km · Ponekkara, Edappally · 1450 beds', threat:65,
+        leakShare:'Edappally & north corridor patients',
+        str:'Largest hospital campus in Kerala · 1450 beds · 125 acres · academic medicine · transplant · cardiac',
+        weak:'Western edge of Kakkanad catchment · premium pricing · academic pace',
+        opp:'Amrita competes primarily for Kalamassery / Edappally patients. VPS Kakkanad targets the eastern IT cluster population Amrita does not reach conveniently.' },
+      { name:'Aster@SmartCity OPD', dist:'Inside SmartCity campus · OPD only', threat:70,
+        leakShare:'IT worker first-contact share',
+        str:'On-campus · captive IT workers · 9 specialties · Aster brand recognition',
+        weak:'No inpatient · no emergency · cannot admit · no diagnostics · no continuity of care',
+        opp:'400-bed VPS hospital with full ED adjacent to SmartCity makes this OPD shell irrelevant for anything beyond minor consultations.' }
+    ];
+    var grid = document.getElementById('kkCompGrid');
+    if (grid) {
+      grid.innerHTML = COMPS.map(function(c) {
+        return '<div class="kk-comp-card">' +
+          '<div class="kk-comp-name">'+c.name+'</div>' +
+          '<div class="kk-comp-dist">'+c.dist+'</div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--tx3)">Leakage share</span><span style="font-weight:700;color:var(--vps-maroon)">'+c.leakShare+'</span></div>' +
+          '<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><span style="color:var(--tx3)">Threat score</span><span style="font-weight:700">'+c.threat+'/100</span></div>' +
+          '<div class="kk-threat-bar"><div class="kk-threat-fill" style="width:'+c.threat+'%"></div></div>' +
+          '<div style="font-size:11.5px;color:var(--tx2);line-height:1.55;margin-top:8px"><span style="font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--tx3)">Strength · </span>'+c.str+'</div>' +
+          '<div style="font-size:11.5px;color:var(--tx2);line-height:1.55;margin-top:5px"><span style="font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--tx3)">Weakness · </span>'+c.weak+'</div>' +
+          '<div style="font-size:11.5px;color:var(--vps-blue-d);line-height:1.55;margin-top:6px;padding-top:6px;border-top:1px solid var(--bd)"><span style="font-size:10.5px;font-weight:700;text-transform:uppercase;color:var(--vps-blue)">VPS play · </span>'+c.opp+'</div>' +
+        '</div>';
+      }).join('');
+    }
+  }
+
+  /* Auto-init on page load (tab 5 is default active) */
+  window.addEventListener('DOMContentLoaded', function() {
+    /* Hide hero/metrics — Kakkanad tab has its own header */
+    var hero = document.getElementById('heroBlock');
+    var mb = document.getElementById('metricsBlock');
+    if (hero) hero.style.display = 'none';
+    if (mb) mb.style.display = 'none';
+    setTimeout(function() { initKK(); showPDF(2); }, 300);
+  });
+
+  /* Re-init guard if user switches away and back */
+  document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      if (this.dataset.tab === '5') {
+        setTimeout(function() {
+          initKK();
+          if (maps['mapKK']) maps['mapKK'].invalidateSize();
+        }, 200);
+      }
+    });
+  });
+
+})();
 
 </script>
 </body>
