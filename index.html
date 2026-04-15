@@ -599,6 +599,31 @@ input[type=range]::-moz-range-thumb {
 @media(max-width:640px){.kk-rec-tl-row{grid-template-columns:1fr;}.kk-rec-tl-phase{margin-bottom:3px;}}
 
 
+/* ═══ BUILDING DIAGRAM ═══ */
+.bld-floor {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--fc, #f5f5f5); border: 1px solid var(--bc, #ccc);
+  padding: 7px 10px; font-size: 12px; line-height: 1.45;
+  transition: transform .12s, box-shadow .12s;
+}
+.bld-floor:hover { transform: translateX(4px); box-shadow: 0 2px 8px rgba(0,0,0,.08); z-index: 2; position: relative; }
+.bld-fl-tag {
+  font-size: 9px; font-weight: 800; color: #fff; padding: 3px 7px;
+  border-radius: 4px; font-family: var(--f); letter-spacing: .5px;
+  flex-shrink: 0; min-width: 28px; text-align: center;
+}
+.bld-fl-nm { font-weight: 600; color: var(--tx); font-size: 12px; flex: 1; }
+.bld-fl-dt { font-size: 10.5px; color: var(--tx2); line-height: 1.45; flex: 2; }
+.bld-beds {
+  display: inline-block; background: rgba(139,26,74,.12); color: #8B1A4A;
+  font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 10px;
+  margin-left: 6px; white-space: nowrap;
+}
+@media(max-width:640px){
+  .bld-floor { flex-wrap: wrap; gap: 4px; }
+  .bld-fl-dt { flex-basis: 100%; padding-left: 36px; }
+}
+
 /* ═══ ANIMATIONS ═══ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .anim{animation:fadeUp .5s ease-out both;}
@@ -1087,40 +1112,116 @@ input[type=range]::-moz-range-thumb {
 
   <!-- ══ LOCATION MAP ══ -->
   <div class="kk-section-label anim">② Location — Qutub Institutional Area, New Delhi</div>
-  <div id="mapDelhi" style="width:100%;height:500px;border-radius:8px;margin:0 clamp(16px,4vw,48px) clamp(20px,3vw,40px);box-shadow:var(--shl);"></div>
+  <div class="map-wrap anim d1" style="margin-bottom:10px">
+    <div class="map-el" id="mapDelhi"></div>
+    <div class="map-legend">
+      <span><i style="background:#8B1A4A"></i>VPS Qutub (proposed)</span>
+      <span><i style="background:#C0392B"></i>Competitor hospital</span>
+      <span><i style="background:#8e44ad;opacity:.5"></i>Catchment radius</span>
+    </div>
+  </div>
+  <div class="kk-conn-grid anim d2">
+    <div class="kk-conn"><span class="kk-conn-icon">📍</span><div><strong>Qutub Institutional Area</strong><br>Premium South Delhi institutional zone · adjacent to IIT Delhi, JNU, Sitaram Bhartia · strong healthcare precedent</div></div>
+    <div class="kk-conn"><span class="kk-conn-icon">🏥</span><div><strong>Sitaram Bhartia — 500m</strong><br>Nearest multispecialty · potential JV partner for ICU overflow and non-oncology backup</div></div>
+    <div class="kk-conn"><span class="kk-conn-icon">✈</span><div><strong>IGI Airport — 12 km</strong><br>International patient intake · Gulf, South-East Asia, Africa · Burjeel network referrals</div></div>
+    <div class="kk-conn"><span class="kk-conn-icon">🚇</span><div><strong>Metro — Qutub Minar station</strong><br>Yellow Line connectivity · accessible from all NCR zones</div></div>
+  </div>
 
   <!-- ══ STRATEGIC RATIONALE ══ -->
   <div class="kk-section-label anim">③ Why Delhi, why now — the market opportunity</div>
+
+  <!-- Market Intelligence Row -->
   <div class="kk-fin-grid anim d1">
+    <div class="kk-fin-card kk-fin-card--primary">
+      <div class="kk-fin-label">India new cancer cases (2024)</div>
+      <div class="kk-fin-val">1.56M</div>
+      <div class="kk-fin-sub">ICMR/JAMA 2024 study. 874,000 deaths pa. Delhi has among the highest cancer rates for men in India. Growing 6.8% annually.</div>
+    </div>
+    <div class="kk-fin-card">
+      <div class="kk-fin-label">India oncology market growth</div>
+      <div class="kk-fin-val">19.8% CAGR</div>
+      <div class="kk-fin-sub">Market growing by $2 billion from 2025–2029. Oncology therapeutics valued at $3.3B in 2022, projected $7.8B by 2030. Precision oncology reaching $8.9B by 2030.</div>
+    </div>
+    <div class="kk-fin-card">
+      <div class="kk-fin-label">India rare disease burden</div>
+      <div class="kk-fin-val">80–100M</div>
+      <div class="kk-fin-sub">Estimated 80–100 million patients with rare diseases. Only 11 Centres of Excellence designated by government. Massive under-diagnosis and treatment gap.</div>
+    </div>
+    <div class="kk-fin-card">
+      <div class="kk-fin-label">NFRD government allocation</div>
+      <div class="kk-fin-val">₹974 Cr</div>
+      <div class="kk-fin-sub">National Fund for Rare Diseases allocated ₹974 Cr for FY 2024–26. Financial support raised to ₹50 lakh per patient. 63 rare diseases covered.</div>
+    </div>
+    <div class="kk-fin-card">
+      <div class="kk-fin-label">India BMT market</div>
+      <div class="kk-fin-val">$783M → $1.5B</div>
+      <div class="kk-fin-sub">India BMT market: $783M (2023) → $1.49B by 2032. Fastest growing in APAC. CAR-T therapy (NexCAR19) now approved in India. Massive supply gap.</div>
+    </div>
     <div class="kk-fin-card">
       <div class="kk-fin-label">Delhi NCR population</div>
       <div class="kk-fin-val">50M+</div>
-      <div class="kk-fin-sub">India's largest metro. Growing 2.5% pa. High purchasing power. Penetration of premium healthcare rising.</div>
+      <div class="kk-fin-sub">India's largest metro. RGCI (500+ beds), Fortis (~2,000 beds NCR), Medanta (1,600+ beds + 550 Noida) all expanding. No integrated cancer + rare disease CoE exists.</div>
     </div>
-    <div class="kk-fin-card">
-      <div class="kk-fin-label">No integrated cancer + rare disease CoE</div>
-      <div class="kk-fin-val">Market gap</div>
-      <div class="kk-fin-sub">Delhi has cancer hospitals and multispecialties. None integrate haem-onc, BMT, CAR-T, rare disease, and transplant under one roof.</div>
+  </div>
+
+  <!-- Strategic rationale cards -->
+  <div class="kk-two-col anim d2" style="margin-top:14px">
+    <div class="kk-card" style="border-left:4px solid #8B1A4A">
+      <div class="kk-card-header">
+        <div class="kk-card-icon">🎯</div>
+        <div>
+          <div class="kk-card-title">The structural gap VPS can exploit</div>
+        </div>
+      </div>
+      <div class="kk-card-body">
+        <div class="kk-spec-list">
+          <div class="kk-spec-item kk-spec-item--new">Delhi has cancer hospitals (RGCI, Fortis CI) and multispecialties — none integrate haem-onc, BMT, CAR-T, rare disease, genomics, and clinical trials under one purpose-built roof</div>
+          <div class="kk-spec-item kk-spec-item--new">Rare disease infrastructure is non-existent — no private hospital in India has a dedicated rare disease wing with genetics lab, enzyme replacement, and gene therapy readiness</div>
+          <div class="kk-spec-item kk-spec-item--new">BMT capacity in NCR is severely constrained — BLK, Fortis, and Max have long waitlists. VPS can absorb unmet demand from day one</div>
+          <div class="kk-spec-item kk-spec-item--new">Genomic profiling and precision oncology still outsourced by most Delhi hospitals — an in-house NABL lab becomes a referral magnet</div>
+          <div class="kk-spec-item kk-spec-item--new">Government policy tailwind — NFRD funding, orphan drug fast-track, and NPRD 2021 designation as a Centre of Excellence creates sustainable funding pipeline</div>
+        </div>
+      </div>
     </div>
-    <div class="kk-fin-card">
-      <div class="kk-fin-label">VPS brand advantage</div>
-      <div class="kk-fin-val">Transplant legacy</div>
-      <div class="kk-fin-sub">VPS Lakeshore's 2,000+ organ transplants and CAR-T leadership differentiates in North India. Immediate credibility vs regional players.</div>
+    <div class="kk-card" style="border-left:4px solid #2B7CBE">
+      <div class="kk-card-header">
+        <div class="kk-card-icon">🏥</div>
+        <div>
+          <div class="kk-card-title">VPS differentiators in this market</div>
+        </div>
+      </div>
+      <div class="kk-card-body">
+        <div class="kk-spec-list">
+          <div class="kk-spec-item kk-spec-item--keep">VPS Lakeshore's 2,000+ organ transplants and CAR-T leadership give immediate credibility — no Delhi chain can match this track record</div>
+          <div class="kk-spec-item kk-spec-item--keep">Burjeel Healthcare network provides international patient pipeline from Gulf, Africa, South-East Asia — structural advantage vs Fortis or Max</div>
+          <div class="kk-spec-item kk-spec-item--keep">Purpose-built G+8 cancer centre vs retrofitted floors in multispecialty — infection control, laminar airflow, transplant-grade infrastructure from day one</div>
+          <div class="kk-spec-item kk-spec-item--keep">Qutub Institutional Area location: premium South Delhi, adjacent to IIT Delhi and JNU — academic partnership potential no other site offers</div>
+          <div class="kk-spec-item kk-spec-item--keep">Delhi hub + Kerala centres = national network. North India patients get local access. Bi-directional referrals for complex cases</div>
+        </div>
+      </div>
     </div>
-    <div class="kk-fin-card">
-      <div class="kk-fin-label">Qutub Institutional Area</div>
-      <div class="kk-fin-val">Premium location</div>
-      <div class="kk-fin-sub">Adjacent to Sitaram Bhartia, within 500m of medical cluster. High real estate credibility. Limited quality healthcare supply.</div>
-    </div>
-    <div class="kk-fin-card">
-      <div class="kk-fin-label">National network potential</div>
-      <div class="kk-fin-val">Hub-and-spoke</div>
-      <div class="kk-fin-sub">Delhi hub complements Kerala centres. Patients from North India get local access. Reverse referrals from VPS Lakeshore possible.</div>
-    </div>
-    <div class="kk-fin-card">
-      <div class="kk-fin-label">Site clearance status</div>
-      <div class="kk-fin-val">In progress</div>
-      <div class="kk-fin-sub">1-acre leasehold land. Regulatory approvals underway. 24-month operationalization window realistic if approvals complete by Q3 2026.</div>
+  </div>
+
+  <!-- Additional concept suggestions -->
+  <div class="anim d3" style="margin-top:14px;background:#fff;border:1.5px solid var(--bd);border-radius:var(--rl);padding:clamp(16px,2.5vw,24px);box-shadow:var(--sh)">
+    <div style="font-size:14px;font-weight:700;color:var(--vps-maroon);margin-bottom:12px">Additional strategic concepts to consider</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="padding:12px 14px;background:var(--vps-maroon-l);border-radius:var(--r);border:1px solid rgba(139,26,74,.12)">
+        <div style="font-weight:700;font-size:13px;color:#8B1A4A;margin-bottom:4px">Paediatric haem-onc wing</div>
+        <div style="font-size:12px;color:var(--tx2);line-height:1.55">Children's cancer is severely underserved in NCR. A 20-bed paediatric oncology and BMT wing could become the only dedicated children's cancer centre in South Delhi. High emotional appeal for fundraising and CSR partnerships.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--vps-maroon-l);border-radius:var(--r);border:1px solid rgba(139,26,74,.12)">
+        <div style="font-weight:700;font-size:13px;color:#8B1A4A;margin-bottom:4px">Survivorship &amp; wellness programme</div>
+        <div style="font-size:12px;color:var(--tx2);line-height:1.55">Post-treatment cancer survivorship is a growing need. Integrative oncology (nutrition, mental health, rehabilitation, fertility preservation) as a long-tail revenue stream with recurring OPD visits and brand loyalty.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--vps-blue-l);border-radius:var(--r);border:1px solid rgba(43,124,190,.12)">
+        <div style="font-weight:700;font-size:13px;color:#2B7CBE;margin-bottom:4px">Theranostics &amp; nuclear medicine hub</div>
+        <div style="font-size:12px;color:var(--tx2);line-height:1.55">Lu-177 PSMA therapy and I-131 demand is surging. Very few centres in NCR offer theranostics. A dedicated nuclear medicine suite positions VPS for prostate cancer and thyroid cancer referrals from across North India.</div>
+      </div>
+      <div style="padding:12px 14px;background:var(--vps-blue-l);border-radius:var(--r);border:1px solid rgba(43,124,190,.12)">
+        <div style="font-weight:700;font-size:13px;color:#2B7CBE;margin-bottom:4px">Digital pathology &amp; AI diagnostics</div>
+        <div style="font-size:12px;color:var(--tx2);line-height:1.55">Build India's first AI-powered digital pathology lab for cancer diagnosis. Revenue from remote diagnosis for Tier 2/3 hospitals across North India. Partnership opportunity with PathAI or Qure.ai. Positions VPS as a technology leader.</div>
+      </div>
     </div>
   </div>
 
@@ -1165,27 +1266,100 @@ input[type=range]::-moz-range-thumb {
     </div>
   </div>
 
-  <!-- ══ FLOOR-WISE CONFIGURATION ══ -->
+  <!-- ══ FLOOR-WISE CONFIGURATION — VISUAL BUILDING ══ -->
   <div class="kk-section-label anim">⑤ Building layout — 150 beds on G+8</div>
-  <div class="kk-proj-wrap anim d1">
-    <table class="kk-proj-tbl">
-      <thead>
-        <tr><th>Floor</th><th>Configuration</th><th>Beds</th><th>Key services</th></tr>
-      </thead>
-      <tbody>
-        <tr><td><strong>B3–B4</strong></td><td>Engineering plant, labs, biobank</td><td>—</td><td>Central lab, molecular diagnostics, biobank, advanced blood bank with apheresis (4 chairs)</td></tr>
-        <tr><td><strong>B1–B2</strong></td><td>Parking, imaging, CSSD</td><td>—</td><td>Parking (~300 cars), imaging (MRI x2, PET-CT, CT, SPECT-CT), CSSD, central pharmacy</td></tr>
-        <tr><td><strong>Ground</strong></td><td>Reception, OPD, diagnostics, urgent care</td><td>—</td><td>Reception, OPD (30 specialist rooms), oncology urgent care (4 bays), dialysis (12 stations), diagnostics</td></tr>
-        <tr><td><strong>Floor 1</strong></td><td>Infusion &amp; day care</td><td>32</td><td>Complex infusion (20 bays), rare disease infusion (12 bays), MDT boardrooms x2, genomics office</td></tr>
-        <tr><td><strong>Floor 2</strong></td><td>Radiation &amp; nuclear medicine</td><td>—</td><td>Radiation (1 LINAC + 1 shell), brachytherapy, CT simulator, nuclear medicine (Lu-177, I-131)</td></tr>
-        <tr><td><strong>Floor 3</strong></td><td>Haematology &amp; blood disorders ward</td><td>40</td><td>Haematology ward (25 beds), immunocompromised ward (15 beds), pharmacy satellite</td></tr>
-        <tr><td><strong>Floor 4</strong></td><td>Surgical suite &amp; recovery</td><td>—</td><td>Transplant OTs x3, onco surgery OTs x2, hybrid OT x1, routine OTs x2, pre/post-op (12 bays)</td></tr>
-        <tr><td><strong>Floor 5</strong></td><td>Critical care &amp; isolation</td><td>22</td><td>ICU (10 beds), HDU (8 beds), isolation (4 AIIR rooms)</td></tr>
-        <tr><td><strong>Floor 6</strong></td><td>BMT &amp; cellular therapy unit</td><td>14</td><td>BMT (8–10 HEPA+ rooms), departmental procedure room, BMT day care (6 bays)</td></tr>
-        <tr><td><strong>Floor 7</strong></td><td>Rare disease &amp; specialty IPD</td><td>69</td><td>Rare disease IPD (24 beds), neuromuscular (10 beds), palliative (10 beds), complex care (25 beds)</td></tr>
-        <tr><td><strong>Floor 8</strong></td><td>Clinical trials &amp; research</td><td>—</td><td>Clinical trials (Phase I: 4 beds, Phase II/III: 10 bays), digital command centre, academic rooms</td></tr>
-      </tbody>
-    </table>
+  <div class="anim d1" style="max-width:900px;margin:0 auto clamp(16px,3vw,32px)">
+    <div style="display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap">
+      <!-- BUILDING VISUAL -->
+      <div style="flex:1;min-width:280px">
+        <!-- Roof -->
+        <div style="background:linear-gradient(135deg,#6b1835,#8B1A4A);border-radius:8px 8px 0 0;padding:6px 14px;display:flex;align-items:center;gap:8px">
+          <span style="font-size:10px;color:rgba(255,255,255,.6);font-family:var(--fm);letter-spacing:.5px">ROOF</span>
+          <span style="font-size:9px;color:rgba(255,255,255,.45)">HVAC · Solar · Water treatment · IT riser</span>
+        </div>
+        <!-- F8 -->
+        <div class="bld-floor" style="--fc:#f3e8f0;--bc:#d4a5c0">
+          <div class="bld-fl-tag" style="background:#8B1A4A">F8</div>
+          <div class="bld-fl-nm">Clinical Trials &amp; Research</div>
+          <div class="bld-fl-dt">Phase I (4 beds) · Phase II/III (10 bays) · Digital command · Academic</div>
+        </div>
+        <!-- F7 -->
+        <div class="bld-floor" style="--fc:#eef5f0;--bc:#a3d4b0">
+          <div class="bld-fl-tag" style="background:#1a7a40">F7</div>
+          <div class="bld-fl-nm">Rare Disease &amp; Specialty IPD <span class="bld-beds">69 beds</span></div>
+          <div class="bld-fl-dt">Rare disease (24) · Neuromuscular (10) · Palliative (10) · Complex care (25)</div>
+        </div>
+        <!-- F6 -->
+        <div class="bld-floor" style="--fc:#fef5f8;--bc:#e8a0b8">
+          <div class="bld-fl-tag" style="background:#8B1A4A">F6</div>
+          <div class="bld-fl-nm">BMT &amp; Cellular Therapy <span class="bld-beds">14 beds</span></div>
+          <div class="bld-fl-dt">HEPA+ rooms (8–10) · CAR-T lab · BMT day care (6 bays) · Procedure room</div>
+        </div>
+        <!-- F5 -->
+        <div class="bld-floor" style="--fc:#fdf5f2;--bc:#e8c0a0">
+          <div class="bld-fl-tag" style="background:#b87800">F5</div>
+          <div class="bld-fl-nm">ICU / HDU / Isolation <span class="bld-beds">22 beds</span></div>
+          <div class="bld-fl-dt">ICU (10) · HDU (8) · AIIR isolation (4) · Post-BMT · Neutropenic sepsis</div>
+        </div>
+        <!-- F4 -->
+        <div class="bld-floor" style="--fc:#f0f4f8;--bc:#a8c4dc">
+          <div class="bld-fl-tag" style="background:#2B7CBE">F4</div>
+          <div class="bld-fl-nm">Surgical OT Suite</div>
+          <div class="bld-fl-dt">Transplant OTs ×3 · Onco surgery ×2 · Hybrid OT · Routine ×2 · Pre/post-op (12)</div>
+        </div>
+        <!-- F3 -->
+        <div class="bld-floor" style="--fc:#fef5f8;--bc:#e8a0b8">
+          <div class="bld-fl-tag" style="background:#8B1A4A">F3</div>
+          <div class="bld-fl-nm">Haematology &amp; Blood Disorders <span class="bld-beds">40 beds</span></div>
+          <div class="bld-fl-dt">Haem ward (25) · Immunocompromised (15) · Pharmacy satellite</div>
+        </div>
+        <!-- F2 -->
+        <div class="bld-floor" style="--fc:#f8f4fb;--bc:#c4a8e0">
+          <div class="bld-fl-tag" style="background:#7B4FC8">F2</div>
+          <div class="bld-fl-nm">Radiation &amp; Nuclear Medicine</div>
+          <div class="bld-fl-dt">LINAC (1+1 shell) · Brachytherapy · CT sim · Lu-177 / I-131 theranostics</div>
+        </div>
+        <!-- F1 -->
+        <div class="bld-floor" style="--fc:#f0f8f4;--bc:#a0d8b8">
+          <div class="bld-fl-tag" style="background:#1a7a40">F1</div>
+          <div class="bld-fl-nm">Infusion &amp; Day Care <span class="bld-beds">32 bays</span></div>
+          <div class="bld-fl-dt">Complex infusion (20) · Rare disease infusion (12) · MDT boards ×2 · Genomics</div>
+        </div>
+        <!-- GF -->
+        <div class="bld-floor" style="--fc:#e8f4fb;--bc:#80b8d8;border-width:2px">
+          <div class="bld-fl-tag" style="background:#0072BC;font-size:8px;padding:2px 6px">GF</div>
+          <div class="bld-fl-nm">Reception · OPD · Diagnostics · Urgent Care</div>
+          <div class="bld-fl-dt">OPD (30 rooms) · Onco urgent care (4) · Dialysis (12) · CT/MRI · Pharmacy</div>
+        </div>
+        <!-- Ground line -->
+        <div style="height:3px;background:linear-gradient(90deg,#8B1A4A,#2B7CBE);border-radius:0 0 2px 2px"></div>
+        <!-- B1-B2 -->
+        <div class="bld-floor" style="--fc:#f5f5f5;--bc:#c8c8c8;margin-top:2px;opacity:.75">
+          <div class="bld-fl-tag" style="background:#888;font-size:7px;padding:2px 5px">B1–B2</div>
+          <div class="bld-fl-nm" style="color:#888">Parking · Imaging · CSSD · Central Pharmacy</div>
+          <div class="bld-fl-dt">300 cars · MRI ×2 · PET-CT · SPECT-CT · Sterile processing · Cold chain</div>
+        </div>
+        <!-- B3-B4 -->
+        <div class="bld-floor" style="--fc:#f0f0f0;--bc:#b8b8b8;opacity:.65;border-radius:0 0 6px 6px">
+          <div class="bld-fl-tag" style="background:#777;font-size:7px;padding:2px 5px">B3–B4</div>
+          <div class="bld-fl-nm" style="color:#777">Engineering · Central Lab · Biobank</div>
+          <div class="bld-fl-dt">Molecular diagnostics · NGS · Blood bank · Apheresis (4) · Data centre · DG sets</div>
+        </div>
+      </div>
+      <!-- SUMMARY SIDEBAR -->
+      <div style="width:200px;flex-shrink:0">
+        <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
+          <div style="font-family:var(--fm);font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#8B1A4A;margin-bottom:10px">Building Summary</div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">Total licensed beds</div><div style="font-size:22px;font-weight:700;color:#8B1A4A">150</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">Day care / infusion</div><div style="font-size:18px;font-weight:700;color:#0072BC">32 bays</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">Operating theatres</div><div style="font-size:18px;font-weight:700;color:#1a7a40">8 OTs</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">ICU / HDU beds</div><div style="font-size:18px;font-weight:700;color:#b87800">22</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">BMT rooms (HEPA+)</div><div style="font-size:18px;font-weight:700;color:#8B1A4A">10</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">OPD rooms</div><div style="font-size:18px;font-weight:700;color:#505864">30</div></div>
+          <div><div style="font-size:10px;color:#8B919B">Floors</div><div style="font-size:18px;font-weight:700;color:#505864">G+8 + 4B</div></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- ══ STAR DOCTORS & CLINICAL LEADERSHIP ══ -->
@@ -1250,45 +1424,137 @@ input[type=range]::-moz-range-thumb {
   </div>
 
   <!-- ══ PARTNERSHIP MODEL ══ -->
-  <div class="kk-section-label anim">⑧ Partnership strategy — evaluation underway</div>
+  <div class="kk-section-label anim">⑧ Partnership strategy — multi-modal approach</div>
+
+  <!-- Row 1: Why + Traditional Models -->
   <div class="kk-two-col anim d1">
     <div class="kk-card" style="border-left: 4px solid #8B1A4A">
       <div class="kk-card-header">
         <div class="kk-card-icon">🤝</div>
         <div>
-          <div class="kk-card-title">Why a partner multispecialty?</div>
+          <div class="kk-card-title">Why partner rather than go solo?</div>
         </div>
       </div>
       <div class="kk-card-body">
-        <p style="font-size:14px;line-height:1.6;margin-bottom:10px">A focused 150-bed cancer and rare disease centre needs multispecialty backup:</p>
+        <p style="font-size:14px;line-height:1.6;margin-bottom:10px">A focused 150-bed cancer and rare disease centre needs multispecialty backup and market access:</p>
         <div class="kk-spec-list">
-          <div class="kk-spec-item">ICU overflow for acute cancer complications</div>
-          <div class="kk-spec-item">Non-oncology emergencies from Qutub partner referrals</div>
-          <div class="kk-spec-item">Surgical backup for high-risk oncologic patients</div>
-          <div class="kk-spec-item">Capital efficiency — don't build 50 general beds in-house</div>
+          <div class="kk-spec-item">ICU overflow for acute cancer complications — don't build 50 general beds in-house</div>
+          <div class="kk-spec-item">Non-oncology emergencies and surgical backup for high-risk patients</div>
+          <div class="kk-spec-item">Referral feeder from partner OPDs across NCR — build volume fast</div>
+          <div class="kk-spec-item">Capital efficiency — lower capex, faster operationalization, shared infrastructure</div>
+          <div class="kk-spec-item">Brand halo — enter Delhi not as unknown Kerala chain but alongside a recognized local name</div>
         </div>
-        <p style="font-size:13px;color:#8B919B;margin-top:12px">Rather than a standalone multispecialty, partner via JV or acquisition — lower capex, faster operationalization.</p>
       </div>
     </div>
     <div class="kk-card" style="border-left: 4px solid #8B1A4A">
       <div class="kk-card-header">
         <div class="kk-card-icon">📋</div>
         <div>
-          <div class="kk-card-title">Three partnership models being evaluated</div>
+          <div class="kk-card-title">Infrastructure partnerships under evaluation</div>
         </div>
       </div>
       <div class="kk-card-body">
         <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
           <div style="font-weight:600;color:#8B1A4A;font-size:13px">1. JV with Sitaram Bhartia Hospital</div>
-          <div style="font-size:13px;color:#8B919B;margin-top:4px">Established 400-bed multispecialty in South Delhi. Nearby location. Proven governance. Existing oncology capability.</div>
+          <div style="font-size:13px;color:var(--tx2);margin-top:4px">Established 400-bed multispecialty 500m away. Proven governance, existing oncology. Shared ICU, OT, and emergency backup. Low-risk, high-proximity option.</div>
         </div>
         <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
           <div style="font-weight:600;color:#8B1A4A;font-size:13px">2. JV with Max Healthcare</div>
-          <div style="font-size:13px;color:#8B919B;margin-top:4px">Large NCR network. Strong financial backing. Healthcare infrastructure expertise. Presence across North India.</div>
+          <div style="font-size:13px;color:var(--tx2);margin-top:4px">Largest NCR network (17 hospitals). Brand equity, payor relationships, and referral engine. Joint clinical protocols possible. Higher negotiation complexity.</div>
         </div>
         <div>
-          <div style="font-weight:600;color:#8B1A4A;font-size:13px">3. Acquire a nearby small hospital</div>
-          <div style="font-size:13px;color:#8B919B;margin-top:4px">Existing 80–150 bed facility. Faster integration. Operational baseline. Due diligence and turnkey conversion.</div>
+          <div style="font-weight:600;color:#8B1A4A;font-size:13px">3. Acquire a nearby 80–150 bed hospital</div>
+          <div style="font-size:13px;color:var(--tx2);margin-top:4px">Turnkey conversion to multispecialty wing. Operational baseline on day one. Due diligence needed on licences, equipment, and staff retention.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Shop-in-Shop + Clinical Partnerships -->
+  <div class="kk-two-col anim d2" style="margin-top:14px">
+    <div class="kk-card" style="border-left: 4px solid #2B7CBE">
+      <div class="kk-card-header" style="background:var(--vps-blue-l)">
+        <div class="kk-card-icon">🏪</div>
+        <div>
+          <div class="kk-card-title">Shop-in-shop with star doctors</div>
+          <div class="kk-card-sub">Clinic-within-a-clinic model — proven by Aster, HCG, Narayana</div>
+        </div>
+      </div>
+      <div class="kk-card-body">
+        <p style="font-size:13px;line-height:1.65;margin-bottom:12px">Rather than employing every specialist, create branded VPS clinics inside high-traffic multispecialty hospitals across NCR. Star oncologists run their practice under the VPS brand — patient funnels to Qutub for surgery, BMT, and trials.</p>
+        <div class="kk-spec-list">
+          <div class="kk-spec-item kk-spec-item--keep">Satellite OPD clinics at 3–5 NCR hospitals (Max, Fortis, BLK) — VPS-branded rooms</div>
+          <div class="kk-spec-item kk-spec-item--keep">Revenue share model: 70% doctor / 30% VPS on OPD, reverse on procedures at Qutub</div>
+          <div class="kk-spec-item kk-spec-item--keep">Doctor retains private practice autonomy — VPS gets referral flow and brand presence</div>
+          <div class="kk-spec-item kk-spec-item--keep">Digital booking, shared EMR, and VPS-managed patient coordinators at each clinic</div>
+          <div class="kk-spec-item kk-spec-item--new">Precedent: HCG runs oncology clinics inside partner hospitals across 20+ cities</div>
+        </div>
+      </div>
+    </div>
+    <div class="kk-card" style="border-left: 4px solid #2B7CBE">
+      <div class="kk-card-header" style="background:var(--vps-blue-l)">
+        <div class="kk-card-icon">🔬</div>
+        <div>
+          <div class="kk-card-title">Clinical &amp; research partnerships</div>
+          <div class="kk-card-sub">Global orphan drug companies, academic institutions, and payers</div>
+        </div>
+      </div>
+      <div class="kk-card-body">
+        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
+          <div style="font-weight:600;color:#2B7CBE;font-size:13px">Clinical trials revenue stream</div>
+          <div style="font-size:12.5px;color:var(--tx2);margin-top:4px">Partner with BioMarin, Sarepta, Alexion, Novartis Gene Therapies for rare disease trials. Revenue per patient in trials is 3–5× standard care. Qutub becomes a designated trial site for India.</div>
+        </div>
+        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
+          <div style="font-weight:600;color:#2B7CBE;font-size:13px">Academic affiliation</div>
+          <div style="font-size:12.5px;color:var(--tx2);margin-top:4px">MoU with AIIMS, JNU School of Life Sciences, or IIT Delhi biomedical engineering. Attracts research-oriented clinicians. Fellowship and DNB programmes build clinical depth.</div>
+        </div>
+        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--bd)">
+          <div style="font-weight:600;color:#2B7CBE;font-size:13px">Insurance &amp; payor tie-ups</div>
+          <div style="font-size:12.5px;color:var(--tx2);margin-top:4px">Structured oncology packages with Star Health, ICICI Lombard, and CGHS/ECHS. Rare disease is increasingly covered under RPWD Act — position for government reimbursement early.</div>
+        </div>
+        <div>
+          <div style="font-weight:600;color:#2B7CBE;font-size:13px">Burjeel Healthcare network</div>
+          <div style="font-size:12.5px;color:var(--tx2);margin-top:4px">Gulf patient flow via Burjeel's UAE, Oman, and Saudi facilities. Bi-directional referrals for complex cancer and BMT cases. International protocols and joint tumour boards.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Growth Accelerators -->
+  <div class="kk-two-col anim d3" style="margin-top:14px">
+    <div class="kk-card" style="border-left: 4px solid rgba(200,146,42,.6)">
+      <div class="kk-card-header" style="background:var(--accent-l)">
+        <div class="kk-card-icon">🚀</div>
+        <div>
+          <div class="kk-card-title">Growth levers — McKinsey playbook</div>
+          <div class="kk-card-sub">Strategies used by top 5 Indian hospital chains</div>
+        </div>
+      </div>
+      <div class="kk-card-body">
+        <div class="kk-spec-list">
+          <div class="kk-spec-item kk-spec-item--new"><strong style="margin-right:4px">Hub &amp; spoke:</strong> Qutub = tertiary hub. Satellite diagnostic centres in Gurgaon, Noida, Dwarka feed patients upward for procedures</div>
+          <div class="kk-spec-item kk-spec-item--new"><strong style="margin-right:4px">Asset-light OPD pods:</strong> Co-working style oncology OPDs in premium malls and commercial complexes (DLF, Ambience) — 200 sq ft, 1 doctor, VPS brand</div>
+          <div class="kk-spec-item kk-spec-item--new"><strong style="margin-right:4px">Second opinion platform:</strong> Digital second opinion service for cancer and rare disease — national catchment, converts 15–20% to in-person visits</div>
+          <div class="kk-spec-item kk-spec-item--new"><strong style="margin-right:4px">Managed care contracts:</strong> Employer packages for corporates in Gurgaon IT corridor and Delhi government employees — preventive screening + priority access</div>
+          <div class="kk-spec-item kk-spec-item--new"><strong style="margin-right:4px">Pharmacy &amp; diagnostics retail:</strong> VPS-branded pharmacy and lab collection centres across South Delhi — daily brand touchpoints, cross-sell into hospital</div>
+        </div>
+      </div>
+    </div>
+    <div class="kk-card" style="border-left: 4px solid rgba(200,146,42,.6)">
+      <div class="kk-card-header" style="background:var(--accent-l)">
+        <div class="kk-card-icon">🎯</div>
+        <div>
+          <div class="kk-card-title">Competitive moats to build early</div>
+          <div class="kk-card-sub">What would a competitor worry about?</div>
+        </div>
+      </div>
+      <div class="kk-card-body">
+        <div class="kk-spec-list">
+          <div class="kk-spec-item kk-spec-item--keep"><strong style="margin-right:4px">Genomics monopoly:</strong> If VPS builds Delhi's only NABL-accredited clinical genomics and molecular diagnostics lab, every hospital in NCR becomes a referrer</div>
+          <div class="kk-spec-item kk-spec-item--keep"><strong style="margin-right:4px">Rare disease data:</strong> India's first rare disease registry and patient database — pharma companies pay for access, patients self-refer from across the country</div>
+          <div class="kk-spec-item kk-spec-item--keep"><strong style="margin-right:4px">BMT volume lock:</strong> BMT capacity in Delhi is constrained. First mover with 10+ HEPA rooms and CAR-T capability creates a 3–5 year head start</div>
+          <div class="kk-spec-item kk-spec-item--keep"><strong style="margin-right:4px">Doctor loyalty:</strong> Equity participation, research freedom, and international network (Burjeel) are switching costs no Delhi chain currently offers</div>
+          <div class="kk-spec-item kk-spec-item--keep"><strong style="margin-right:4px">International pipeline:</strong> Burjeel's Gulf network is a structural advantage — Middle East oncology patients currently go to Singapore, Turkey, or the US. India is the cost-quality play</div>
         </div>
       </div>
     </div>
@@ -1331,19 +1597,34 @@ input[type=range]::-moz-range-thumb {
 
   <!-- ══ NEXT STEPS ══ -->
   <div class="kk-section-label anim">⑩ Next steps — market validation &amp; partnership</div>
-  <div class="kk-recommendation anim d1">
-    <div style="font-size:14px;line-height:1.7;color:#505864">
-      <p><strong>Immediate priorities:</strong></p>
-      <div class="kk-rec-steps" style="margin-top:12px">
-        <div class="kk-rec-step"><span class="kk-rec-step-n" style="background:#8B1A4A">1</span><div><strong>Commission Delhi oncology &amp; rare disease market study</strong> — Estimate TAM for complex cancer care, haem-onc, BMT, rare disease in Delhi NCR. Competitive positioning vs Fortis, Medanta, Apollo. Patient willingness-to-pay for CoE model.</div></div>
-        <div class="kk-rec-step"><span class="kk-rec-step-n" style="background:#8B1A4A">2</span><div><strong>Evaluate partnership options</strong> — Commercial and clinical due diligence on Sitaram Bhartia, Max Healthcare, and acquisition targets. Board-level discussions on JV structure, governance, and capital contribution.</div></div>
-        <div class="kk-rec-step"><span class="kk-rec-step-n" style="background:#8B1A4A">3</span><div><strong>Complete site clearance &amp; approvals</strong> — Expedite regulatory clearances on Qutub leasehold land. Environmental, zoning, and hospital registration readiness. Engage Delhi DHS and MoH&amp;FW.</div></div>
-        <div class="kk-rec-step"><span class="kk-rec-step-n" style="background:#8B1A4A">4</span><div><strong>Architectural &amp; clinical design</strong> — Commission G+8 design for 150-bed cancer &amp; rare disease hospital. Laminar air-flow, transplant OR standards, genomics lab setup. Align with VPS Lakeshore clinical protocols.</div></div>
-        <div class="kk-rec-step"><span class="kk-rec-step-n" style="background:#8B1A4A">5</span><div><strong>Leadership &amp; recruitment</strong> — Identify Medical Director (oncology or transplant background preferred). Begin outreach for HOD positions in haem-onc, rare disease, and transplant surgery. Build clinical advisory board.</div></div>
+  <div class="anim d1" style="background:#fff;border:1.5px solid var(--bd);border-radius:var(--rl);padding:clamp(20px,3vw,32px);box-shadow:var(--shl)">
+    <div style="font-size:15px;font-weight:700;color:var(--tx);margin-bottom:16px">Immediate priorities</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:12px;align-items:flex-start;background:var(--vps-maroon-l);border:1px solid rgba(139,26,74,.15);border-radius:var(--r);padding:14px 16px">
+        <span style="width:26px;height:26px;border-radius:50%;background:#8B1A4A;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">1</span>
+        <div style="font-size:13.5px;line-height:1.65;color:var(--tx)"><strong>Commission Delhi oncology &amp; rare disease market study</strong> — Estimate TAM for complex cancer care, haem-onc, BMT, rare disease in Delhi NCR. Competitive positioning vs Fortis, Medanta, Apollo. Patient willingness-to-pay for CoE model.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;background:var(--vps-maroon-l);border:1px solid rgba(139,26,74,.15);border-radius:var(--r);padding:14px 16px">
+        <span style="width:26px;height:26px;border-radius:50%;background:#8B1A4A;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">2</span>
+        <div style="font-size:13.5px;line-height:1.65;color:var(--tx)"><strong>Evaluate partnership options</strong> — Commercial and clinical due diligence on Sitaram Bhartia, Max Healthcare, and acquisition targets. Board-level discussions on JV structure, governance, and capital contribution.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;background:var(--vps-maroon-l);border:1px solid rgba(139,26,74,.15);border-radius:var(--r);padding:14px 16px">
+        <span style="width:26px;height:26px;border-radius:50%;background:#8B1A4A;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">3</span>
+        <div style="font-size:13.5px;line-height:1.65;color:var(--tx)"><strong>Complete site clearance &amp; approvals</strong> — Expedite regulatory clearances on Qutub leasehold land. Environmental, zoning, and hospital registration readiness. Engage Delhi DHS and MoH&amp;FW.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;background:var(--vps-blue-l);border:1px solid rgba(43,124,190,.15);border-radius:var(--r);padding:14px 16px">
+        <span style="width:26px;height:26px;border-radius:50%;background:#2B7CBE;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">4</span>
+        <div style="font-size:13.5px;line-height:1.65;color:var(--tx)"><strong>Architectural &amp; clinical design</strong> — Commission G+8 design for 150-bed cancer &amp; rare disease hospital. Laminar air-flow, transplant OR standards, genomics lab setup. Align with VPS Lakeshore clinical protocols.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start;background:var(--vps-blue-l);border:1px solid rgba(43,124,190,.15);border-radius:var(--r);padding:14px 16px">
+        <span style="width:26px;height:26px;border-radius:50%;background:#2B7CBE;color:#fff;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0">5</span>
+        <div style="font-size:13.5px;line-height:1.65;color:var(--tx)"><strong>Leadership &amp; recruitment</strong> — Identify Medical Director (oncology or transplant background preferred). Begin outreach for HOD positions in haem-onc, rare disease, and transplant surgery. Build clinical advisory board.</div>
       </div>
     </div>
-
-    <p style="margin-top:20px;font-size:14px;color:#8B919B"><strong>Timeline:</strong> Market study 2–3 months. Partnership evaluation 3–4 months. Site clearance + approvals 6–9 months. Architecture &amp; regulatory phase 12–18 months. Phase 0 soft opening 24 months post project sanction.</p>
+    <div style="margin-top:20px;padding:14px 16px;background:var(--bg2);border-radius:var(--r);border:1px solid var(--bd)">
+      <div style="font-size:12px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Indicative Timeline</div>
+      <div style="font-size:13px;line-height:1.7;color:var(--tx2)">Market study: 2–3 months · Partnership evaluation: 3–4 months · Site clearance + approvals: 6–9 months · Architecture &amp; regulatory: 12–18 months · <strong style="color:var(--tx)">Phase 0 soft opening: 24 months post project sanction</strong></div>
+    </div>
   </div>
 
   <!-- ══ MARKET STUDY PROPOSALS ══ -->
@@ -2284,33 +2565,42 @@ var DEPTS = {
     if (delhinited) return;
     delhinited = true;
 
+    var QUTUB = [28.5374, 77.1811];
     var m = L.map('mapDelhi', { zoomControl: true, scrollWheelZoom: true })
-              .setView([28.54, 77.15], 12);
+              .setView([28.56, 77.16], 11);
     L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 18 }).addTo(m);
     maps['mapDelhi'] = m;
 
-    /* VPS Qutub proposed site — maroon */
-    L.circleMarker([28.5274, 77.1850], {
-      radius: 15, fillColor: '#8B1A4A', color: '#fff', weight: 2.5, fillOpacity: 1
-    }).addTo(m).bindPopup('<strong style="color:#8B1A4A">VPS Qutub — Proposed Site</strong><div class="sub">Qutub Institutional Area, Delhi<br>150-bed precision medicine &amp; cancer centre<br>Haem-Onc, BMT, Rare Disease, Transplant</div>').openPopup();
-    L.circleMarker([28.5274, 77.1850], {
-      radius: 40, fillColor: '#8B1A4A', color: '#8B1A4A', weight: 1, fillOpacity: 0.07, dashArray: '6 4'
+    /* VPS Qutub proposed site — maroon with halo */
+    L.circleMarker(QUTUB, {
+      radius: 14, fillColor: '#8B1A4A', color: '#fff', weight: 2.5, fillOpacity: 1
+    }).addTo(m).bindPopup('<strong style="color:#8B1A4A">VPS Qutub — Proposed Site</strong><div class="sub">Qutub Institutional Area, New Delhi<br>150-bed complex cancer &amp; rare disease centre<br>G+8 · 1 Acre leasehold · Capex ₹150–200 Cr</div>');
+    L.circleMarker(QUTUB, {
+      radius: 35, fillColor: '#8B1A4A', color: '#8B1A4A', weight: 1, fillOpacity: 0.07, dashArray: '6 4'
+    }).addTo(m);
+    /* Catchment radius — 15 km */
+    L.circle(QUTUB, {
+      radius: 15000, fillColor: '#8e44ad', color: '#8e44ad', weight: 1, fillOpacity: 0.03, dashArray: '8 6'
     }).addTo(m);
 
-    /* Nearby hospitals — competitor markers in red */
+    /* Nearby hospitals */
     var hospitals = [
-      { n:'Sitaram Bhartia Institute', lat:28.5320, lon:77.1845, b:'~250 beds' },
-      { n:'Max Super Speciality, Saket', lat:28.5275, lon:77.2100, b:'~500 beds' },
-      { n:'Fortis Escorts Heart Institute', lat:28.5510, lon:77.2215, b:'~310 beds' },
-      { n:'AIIMS Delhi', lat:28.5672, lon:77.2100, b:'~2400 beds' },
-      { n:'Medanta Gurugram', lat:28.4395, lon:77.0425, b:'~1600 beds' },
-      { n:'BLK-Max', lat:28.6415, lon:77.1855, b:'~650 beds' },
-      { n:'Rajiv Gandhi Cancer Institute', lat:28.7145, lon:77.1200, b:'~300 beds' }
+      { n:'Sitaram Bhartia Institute', lat:28.5390, lon:77.1840, b:'~250 beds', d:'500m · potential JV partner' },
+      { n:'Max Super Speciality, Saket', lat:28.5275, lon:77.2100, b:'~500 beds', d:'3.5 km · major competitor' },
+      { n:'Fortis Escorts Heart Institute', lat:28.5510, lon:77.2215, b:'~310 beds', d:'5 km · cardiac focus' },
+      { n:'AIIMS Delhi', lat:28.5672, lon:77.2100, b:'~2,400 beds', d:'5 km · govt tertiary' },
+      { n:'Medanta, Gurugram', lat:28.4395, lon:77.0425, b:'~1,600 beds', d:'18 km · Gurgaon' },
+      { n:'BLK-Max Super Speciality', lat:28.6415, lon:77.1855, b:'~650 beds', d:'12 km · North Delhi' },
+      { n:'Rajiv Gandhi Cancer Institute', lat:28.7145, lon:77.1200, b:'~300 beds', d:'20 km · dedicated onco' }
     ];
     hospitals.forEach(function(h) {
+      /* Dashed line connecting to VPS Qutub */
+      L.polyline([QUTUB, [h.lat, h.lon]], {
+        color: '#8B1A4A', weight: 1, opacity: 0.15, dashArray: '6 4'
+      }).addTo(m);
       L.circleMarker([h.lat, h.lon], {
-        radius: 8, fillColor: '#C0392B', color: '#fff', weight: 2, fillOpacity: 0.85
-      }).addTo(m).bindPopup('<strong style="color:#C0392B">'+h.n+'</strong><div class="sub">'+h.b+' · Competitor/Reference</div>');
+        radius: Math.max(6, 8), fillColor: '#C0392B', color: '#fff', weight: 2, fillOpacity: 0.85
+      }).addTo(m).bindPopup('<strong style="color:#C0392B">'+h.n+'</strong><div class="sub">'+h.b+'<br>'+h.d+'</div>');
     });
   };
 
