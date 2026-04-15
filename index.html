@@ -75,26 +75,26 @@ a:hover { text-decoration: underline; }
   width: 1px; height: 30px; background: var(--bd); margin: 0 2px;
 }
 .logo-label {
-  font-size: 13px; font-weight: 600; color: var(--vps-blue); line-height: 1.25;
+  font-size: 15px; font-weight: 700; color: var(--vps-blue); line-height: 1.25;
 }
 .logo-label span {
   display: block; font-size: 10.5px; font-weight: 400; color: var(--vps-gray);
   letter-spacing: .3px;
 }
-.nav { display: flex; gap: 2px; overflow-x: auto; align-items: center; }
+.nav { display: flex; gap: 6px; overflow-x: auto; align-items: center; }
 .nav-sep { width: 1px; height: 20px; background: var(--bd); margin: 0 6px; flex-shrink: 0; }
 .nav-btn {
-  padding: 8px 15px; font-size: 13px; font-weight: 500; font-family: var(--f);
-  background: none; border: none; color: var(--tx2); cursor: pointer;
-  border-radius: var(--r); transition: all .15s; white-space: nowrap;
+  padding: 10px 22px; font-size: 14px; font-weight: 600; font-family: var(--f);
+  background: none; border: 1.5px solid var(--bd); color: var(--tx2); cursor: pointer;
+  border-radius: 8px; transition: all .15s; white-space: nowrap;
 }
 .nav-btn:hover { color: var(--tx); background: var(--bg3); }
-.nav-btn.active { color: var(--vps-blue); background: var(--vps-blue-l); }
+.nav-btn.active { color: var(--vps-blue); background: var(--vps-blue-l); border-color: var(--vps-blue); }
 .nav-btn--secondary { font-size: 12px; color: var(--tx3); padding: 6px 11px; }
 .nav-btn--secondary.active { color: var(--vps-blue); background: var(--vps-blue-l); }
 
 @media (max-width: 760px) {
-  .nav-btn { padding: 7px 10px; font-size: 12px; }
+  .nav-btn { padding: 8px 14px; font-size: 13px; }
   .header-inner { height: 52px; }
   .logo img { height: 26px; }
   .logo-label { font-size: 11px; }
@@ -1084,8 +1084,12 @@ input[type=range]::-moz-range-thumb {
     </div>
   </div>
 
+  <!-- ══ LOCATION MAP ══ -->
+  <div class="kk-section-label anim">② Location — Qutub Institutional Area, New Delhi</div>
+  <div id="mapDelhi" style="width:100%;height:500px;border-radius:8px;margin:0 clamp(16px,4vw,48px) clamp(20px,3vw,40px);box-shadow:var(--shl);"></div>
+
   <!-- ══ STRATEGIC RATIONALE ══ -->
-  <div class="kk-section-label anim">① Why Delhi, why now — the market opportunity</div>
+  <div class="kk-section-label anim">③ Why Delhi, why now — the market opportunity</div>
   <div class="kk-fin-grid anim d1">
     <div class="kk-fin-card">
       <div class="kk-fin-label">Delhi NCR population</div>
@@ -1120,7 +1124,7 @@ input[type=range]::-moz-range-thumb {
   </div>
 
   <!-- ══ CLINICAL FOCUS AREAS ══ -->
-  <div class="kk-section-label anim">② Clinical focus — centres of excellence</div>
+  <div class="kk-section-label anim">④ Clinical focus — centres of excellence</div>
   <div class="kk-two-col anim d1">
     <div class="kk-card kk-card--blue" style="border-top: 4px solid #8B1A4A">
       <div class="kk-card-header">
@@ -1161,28 +1165,91 @@ input[type=range]::-moz-range-thumb {
   </div>
 
   <!-- ══ FLOOR-WISE CONFIGURATION ══ -->
-  <div class="kk-section-label anim">③ Building layout — 150 beds on G+8</div>
+  <div class="kk-section-label anim">⑤ Building layout — 150 beds on G+8</div>
   <div class="kk-proj-wrap anim d1">
     <table class="kk-proj-tbl">
       <thead>
         <tr><th>Floor</th><th>Configuration</th><th>Beds</th><th>Key services</th></tr>
       </thead>
       <tbody>
-        <tr><td><strong>Ground</strong></td><td>Reception, OPD, diagnostics, emergency</td><td>—</td><td>Chem-path lab, imaging (CT/MRI), emergency assessment</td></tr>
-        <tr><td><strong>Floor 1</strong></td><td>Infusion &amp; day care</td><td>20</td><td>Chemotherapy day beds, IV hydration, monitoring</td></tr>
-        <tr><td><strong>Floor 2</strong></td><td>Radiation &amp; nuclear medicine</td><td>—</td><td>Linear accelerator, brachytherapy, PET-CT, biopsy suite</td></tr>
-        <tr><td><strong>Floor 3</strong></td><td>Haematology &amp; blood disorders ward</td><td>25</td><td>Isolated beds for immunocompromised, transfusion centre</td></tr>
-        <tr><td><strong>Floor 4</strong></td><td>Surgical OT suite &amp; recovery</td><td>—</td><td>3 ORs (oncologic, transplant, general), PACU, bleeding management</td></tr>
-        <tr><td><strong>Floor 5</strong></td><td>ICU / HDU / Isolation</td><td>20</td><td>Critical care for post-surgery, sepsis, multi-organ support</td></tr>
-        <tr><td><strong>Floor 6</strong></td><td>BMT &amp; cellular therapy unit</td><td>15</td><td>Laminar air-flow rooms, CAR-T production lab, post-transplant monitoring</td></tr>
-        <tr><td><strong>Floor 7</strong></td><td>Rare disease &amp; neuromuscular IPD</td><td>35</td><td>Genetic counselling, metabolic wards, gene therapy readiness, physio/rehab</td></tr>
-        <tr><td><strong>Floor 8</strong></td><td>Clinical trials &amp; research</td><td>—</td><td>Digital command centre, telemedicine hub, academic offices, library</td></tr>
+        <tr><td><strong>B3–B4</strong></td><td>Engineering plant, labs, biobank</td><td>—</td><td>Central lab, molecular diagnostics, biobank, advanced blood bank with apheresis (4 chairs)</td></tr>
+        <tr><td><strong>B1–B2</strong></td><td>Parking, imaging, CSSD</td><td>—</td><td>Parking (~300 cars), imaging (MRI x2, PET-CT, CT, SPECT-CT), CSSD, central pharmacy</td></tr>
+        <tr><td><strong>Ground</strong></td><td>Reception, OPD, diagnostics, urgent care</td><td>—</td><td>Reception, OPD (30 specialist rooms), oncology urgent care (4 bays), dialysis (12 stations), diagnostics</td></tr>
+        <tr><td><strong>Floor 1</strong></td><td>Infusion &amp; day care</td><td>32</td><td>Complex infusion (20 bays), rare disease infusion (12 bays), MDT boardrooms x2, genomics office</td></tr>
+        <tr><td><strong>Floor 2</strong></td><td>Radiation &amp; nuclear medicine</td><td>—</td><td>Radiation (1 LINAC + 1 shell), brachytherapy, CT simulator, nuclear medicine (Lu-177, I-131)</td></tr>
+        <tr><td><strong>Floor 3</strong></td><td>Haematology &amp; blood disorders ward</td><td>40</td><td>Haematology ward (25 beds), immunocompromised ward (15 beds), pharmacy satellite</td></tr>
+        <tr><td><strong>Floor 4</strong></td><td>Surgical suite &amp; recovery</td><td>—</td><td>Transplant OTs x3, onco surgery OTs x2, hybrid OT x1, routine OTs x2, pre/post-op (12 bays)</td></tr>
+        <tr><td><strong>Floor 5</strong></td><td>Critical care &amp; isolation</td><td>22</td><td>ICU (10 beds), HDU (8 beds), isolation (4 AIIR rooms)</td></tr>
+        <tr><td><strong>Floor 6</strong></td><td>BMT &amp; cellular therapy unit</td><td>14</td><td>BMT (8–10 HEPA+ rooms), departmental procedure room, BMT day care (6 bays)</td></tr>
+        <tr><td><strong>Floor 7</strong></td><td>Rare disease &amp; specialty IPD</td><td>69</td><td>Rare disease IPD (24 beds), neuromuscular (10 beds), palliative (10 beds), complex care (25 beds)</td></tr>
+        <tr><td><strong>Floor 8</strong></td><td>Clinical trials &amp; research</td><td>—</td><td>Clinical trials (Phase I: 4 beds, Phase II/III: 10 bays), digital command centre, academic rooms</td></tr>
       </tbody>
     </table>
   </div>
 
+  <!-- ══ STAR DOCTORS & CLINICAL LEADERSHIP ══ -->
+  <div class="kk-section-label anim">⑥ Star doctors &amp; clinical leadership — recruitment strategy</div>
+  <div class="kk-fin-grid anim d1">
+    <div class="kk-fin-card kk-fin-card--primary" style="border-top:4px solid #8B1A4A">
+      <div class="kk-fin-label">Medical Director &amp; Chief of Haem-Onc</div>
+      <div class="kk-fin-sub">Delhi's BMT market is dominated by a few names at BLK and Fortis. VPS can attract a senior haematologist with BMT/CAR-T experience by offering equity participation, clinical research leadership, and a purpose-built facility. The Burjeel/VPS international network gives access to global protocols and collaborative research unavailable at Max or Fortis.</div>
+    </div>
+    <div class="kk-fin-card" style="border-top:4px solid #8B1A4A">
+      <div class="kk-fin-label">Head of Rare Disease Programme</div>
+      <div class="kk-fin-sub">Very few senior rare disease specialists in India. This is a greenfield opportunity to recruit from AIIMS or NIMHANS with an offer of building India's first integrated rare disease hospital. Clinical trials partnerships with global orphan drug companies (BioMarin, Sarepta, Alexion) are a major draw.</div>
+    </div>
+    <div class="kk-fin-card" style="border-top:4px solid #8B1A4A">
+      <div class="kk-fin-label">Chief of Surgical Oncology</div>
+      <div class="kk-fin-sub">Target a senior surgical oncologist from Medanta, Tata Memorial, or RGCI who wants to lead a dedicated onco-surgery programme rather than share OT time in a multispecialty. Dedicated OTs, robotic capability, and complex case volume are the pitch.</div>
+    </div>
+    <div class="kk-fin-card" style="border-top:4px solid #8B1A4A">
+      <div class="kk-fin-label">Director of Precision Medicine &amp; Genomics</div>
+      <div class="kk-fin-sub">New role in Indian healthcare. Recruit from a translational research background — ACTREC, InStem, or international. Build India's most advanced tumour genomics and bioinformatics lab. Clinical trial readiness is a differentiator no Delhi hospital currently offers at this depth.</div>
+    </div>
+  </div>
+
+  <!-- ══ COMPETITIVE DIFFERENTIATION ══ -->
+  <div class="kk-section-label anim">⑦ Competitive differentiation — why not Max or Fortis?</div>
+  <div class="kk-two-col anim d1">
+    <div class="kk-card kk-card--blue">
+      <div class="kk-card-header">
+        <div class="kk-card-icon">⚠</div>
+        <div>
+          <div class="kk-card-title">The Max/Fortis problem</div>
+        </div>
+      </div>
+      <div class="kk-card-body">
+        <div class="kk-spec-list">
+          <div class="kk-spec-item">Large multispecialty hospitals where oncology is one of 30 departments</div>
+          <div class="kk-spec-item">Senior oncologists share OT time, ICU beds, and administrative attention with cardiac, ortho, and general surgery</div>
+          <div class="kk-spec-item">Research is secondary to volume — clinical trials are bolt-on, not core</div>
+          <div class="kk-spec-item">Rare disease barely exists — no dedicated infrastructure, no genetics lab, no orphan drug partnerships</div>
+          <div class="kk-spec-item">Cancer patients feel like a number, not a priority</div>
+        </div>
+      </div>
+    </div>
+    <div class="kk-card kk-card--blue">
+      <div class="kk-card-header">
+        <div class="kk-card-icon">🚀</div>
+        <div>
+          <div class="kk-card-title">The VPS Qutub advantage</div>
+        </div>
+      </div>
+      <div class="kk-card-body">
+        <div class="kk-spec-list">
+          <div class="kk-spec-item">Purpose-built for cancer and rare disease — every floor, every bed, every hire is about complex care</div>
+          <div class="kk-spec-item">Burjeel Healthcare partnership brings Gulf network: international patients, collaborative research, global protocols &amp; trials</div>
+          <div class="kk-spec-item">Clinical research is a core pillar, not an afterthought — Phase I–III trial infrastructure, biobank, bioinformatics from Day 1</div>
+          <div class="kk-spec-item">Niche focus means less crowded positioning — VPS doesn't compete with Max on hip replacements or appendectomies</div>
+          <div class="kk-spec-item">Senior clinicians get what they can't get at Max: equity upside, clinical autonomy, purpose-built infrastructure, and the chance to build something from scratch</div>
+          <div class="kk-spec-item">The Burjeel/VPS international network creates a flywheel: Gulf patients come to Delhi for treatment, Indian patients get second opinions from Burjeel's global panel</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ══ PARTNERSHIP MODEL ══ -->
-  <div class="kk-section-label anim">④ Partnership strategy — evaluation underway</div>
+  <div class="kk-section-label anim">⑧ Partnership strategy — evaluation underway</div>
   <div class="kk-two-col anim d1">
     <div class="kk-card" style="border-left: 4px solid #8B1A4A">
       <div class="kk-card-header">
@@ -1227,7 +1294,7 @@ input[type=range]::-moz-range-thumb {
   </div>
 
   <!-- ══ FINANCIAL PROJECTIONS ══ -->
-  <div class="kk-section-label anim">⑤ Financial case — 150-bed CoE model</div>
+  <div class="kk-section-label anim">⑨ Financial case — 150-bed CoE model</div>
   <div class="kk-fin-grid anim d1">
     <div class="kk-fin-card kk-fin-card--primary">
       <div class="kk-fin-label">Total capex · 150-bed G+8</div>
@@ -1262,7 +1329,7 @@ input[type=range]::-moz-range-thumb {
   </div>
 
   <!-- ══ NEXT STEPS ══ -->
-  <div class="kk-section-label anim">⑥ Next steps — market validation &amp; partnership</div>
+  <div class="kk-section-label anim">⑩ Next steps — market validation &amp; partnership</div>
   <div class="kk-recommendation anim d1">
     <div style="font-size:14px;line-height:1.7;color:#505864">
       <p><strong>Immediate priorities:</strong></p>
@@ -1276,6 +1343,20 @@ input[type=range]::-moz-range-thumb {
     </div>
 
     <p style="margin-top:20px;font-size:14px;color:#8B919B"><strong>Timeline:</strong> Market study 2–3 months. Partnership evaluation 3–4 months. Site clearance + approvals 6–9 months. Architecture &amp; regulatory phase 12–18 months. Phase 0 soft opening 24 months post project sanction.</p>
+  </div>
+
+  <!-- ══ MARKET STUDY PROPOSALS ══ -->
+  <div class="kk-section-label anim">⑪ Market study proposals received</div>
+  <div class="anim d1" style="margin-bottom:20px;display:flex;flex-direction:column;gap:12px">
+    <a href="PwC_Oncology_Market_Assessment_Apr2026.pdf" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(139,26,74,.08);border:1.5px solid rgba(139,26,74,.3);border-radius:8px;color:#8B1A4A;font-weight:600;font-size:13px;text-decoration:none;transition:all .15s">
+      <span style="font-size:16px">📄</span> PwC — Market Assessment: Advanced Oncology (April 2026) ↗
+    </a>
+    <a href="Deloitte_Oncology_Platform_Apr2026.pdf" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(139,26,74,.08);border:1.5px solid rgba(139,26,74,.3);border-radius:8px;color:#8B1A4A;font-weight:600;font-size:13px;text-decoration:none;transition:all .15s">
+      <span style="font-size:16px">📄</span> Deloitte — Oncology Platform Proposal (April 2026) ↗
+    </a>
+    <a href="Deloitte_Rare_Diseases_Apr2026.pdf" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(139,26,74,.08);border:1.5px solid rgba(139,26,74,.3);border-radius:8px;color:#8B1A4A;font-weight:600;font-size:13px;text-decoration:none;transition:all .15s">
+      <span style="font-size:16px">📄</span> Deloitte — Rare Diseases Proposal (April 2026) ↗
+    </a>
   </div>
 
 </section>
@@ -2181,7 +2262,67 @@ var DEPTS = {
           if (maps['mapKK']) maps['mapKK'].invalidateSize();
         }, 200);
       }
+      if (this.dataset.tab === '6') {
+        setTimeout(function() {
+          initDelhi();
+          if (maps['mapDelhi']) maps['mapDelhi'].invalidateSize();
+        }, 200);
+      }
     });
+  });
+
+})();
+
+
+/* ═══════════════════════════════════════
+   TAB 6: DELHI QUTUB MAP
+   ═══════════════════════════════════════ */
+(function() {
+  var delhinited = false;
+  window.initDelhi = function() {
+    if (delhinited) return;
+    delhinited = true;
+
+    var m = L.map('mapDelhi', { zoomControl: true, scrollWheelZoom: true })
+              .setView([28.54, 77.15], 12);
+    L.tileLayer(TILE_URL, { attribution: TILE_ATTR, maxZoom: 18 }).addTo(m);
+    maps['mapDelhi'] = m;
+
+    /* VPS Qutub proposed site — maroon */
+    L.circleMarker([28.5274, 77.1850], {
+      radius: 15, fillColor: '#8B1A4A', color: '#fff', weight: 2.5, fillOpacity: 1
+    }).addTo(m).bindPopup('<strong style="color:#8B1A4A">VPS Qutub — Proposed Site</strong><div class="sub">Qutub Institutional Area, Delhi<br>150-bed precision medicine &amp; cancer centre<br>Haem-Onc, BMT, Rare Disease, Transplant</div>').openPopup();
+    L.circleMarker([28.5274, 77.1850], {
+      radius: 40, fillColor: '#8B1A4A', color: '#8B1A4A', weight: 1, fillOpacity: 0.07, dashArray: '6 4'
+    }).addTo(m);
+
+    /* Nearby hospitals — competitor markers in red */
+    var hospitals = [
+      { n:'Sitaram Bhartia Institute', lat:28.5320, lon:77.1845, b:'~250 beds' },
+      { n:'Max Super Speciality, Saket', lat:28.5275, lon:77.2100, b:'~500 beds' },
+      { n:'Fortis Escorts Heart Institute', lat:28.5510, lon:77.2215, b:'~310 beds' },
+      { n:'AIIMS Delhi', lat:28.5672, lon:77.2100, b:'~2400 beds' },
+      { n:'Medanta Gurugram', lat:28.4395, lon:77.0425, b:'~1600 beds' },
+      { n:'BLK-Max', lat:28.6415, lon:77.1855, b:'~650 beds' },
+      { n:'Rajiv Gandhi Cancer Institute', lat:28.7145, lon:77.1200, b:'~300 beds' }
+    ];
+    hospitals.forEach(function(h) {
+      L.circleMarker([h.lat, h.lon], {
+        radius: 8, fillColor: '#C0392B', color: '#fff', weight: 2, fillOpacity: 0.85
+      }).addTo(m).bindPopup('<strong style="color:#C0392B">'+h.n+'</strong><div class="sub">'+h.b+' · Competitor/Reference</div>');
+    });
+  };
+
+  /* Auto-init on page load if tab 6 becomes active */
+  document.querySelectorAll('.nav-btn').forEach(function(btn) {
+    if (btn.dataset.tab === '6') {
+      btn.addEventListener('click', function() {
+        setTimeout(function() {
+          initDelhi();
+          if (maps['mapDelhi']) maps['mapDelhi'].invalidateSize();
+        }, 200);
+      });
+    }
   });
 
 })();
