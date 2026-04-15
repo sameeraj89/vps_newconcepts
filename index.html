@@ -1,0 +1,2014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VPS Lakeshore | Patient Flow Intelligence — FY25 Chairman's Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%230072BC'/><rect x='14' y='6' width='4' height='20' rx='2' fill='white'/><rect x='6' y='14' width='20' height='4' rx='2' fill='white'/></svg>">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+:root{
+  /* VPS Lakeshore brand — Chairman Dashboard palette (light theme) */
+  --teal:#0072BC;--teal-l:#0072BC;--teal-d:#005a96;
+  --navy:#0A1628;--navy-m:#0F1F38;--navy-l:#e8f4fb;
+  --white:#ffffff;--gray:#5a7a8a;--gray-d:#7a95a5;
+  --gold:#b87800;--coral:#C8103E;--blue:#0072BC;--green:#1a8a5a;--purple:#7B4FC8;
+  --vps-crimson:#C8103E;--vps-sky:#5BB8E8;--vps-blue:#0072BC;
+  --border:#cddeed;--surf:#ffffff;
+  /* Light theme tokens */
+  --bg:#f0f6fb;--text:#0d2535;--muted:#5a7a8a;
+  /* Mobile layout — updated dynamically by adjustPanels() */
+  --hdr-h: 80px;
+  --tab-h: 48px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+#cvs{position:absolute;inset:0;cursor:grab;background:transparent;z-index:1;touch-action:none}#cvs:active{cursor:grabbing}
+
+/* ── Header ── */
+
+/* VPS logo — white PNG shown on VPS-blue badge so it stays clearly visible */
+.vps-logo-wrap{background:#fff;border-radius:7px;padding:4px 10px;display:flex;align-items:center;flex-shrink:0;border:1.5px solid #cddeed}
+.vps-logo-img{height:38px;width:auto;display:block}
+.hdr-divider{width:1px;height:44px;background:rgba(0,114,188,.2);flex-shrink:0}
+.hdr-gradient-rule{position:absolute;bottom:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,#C8103E 0%,#5BB8E8 100%);}
+
+.hdr{position:fixed;top:0;left:0;right:0;z-index:100;padding:11px 18px 8px;
+  background:#ffffff;border-bottom:1px solid #cddeed;
+  pointer-events:auto;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.hdr-top{display:flex;align-items:flex-start;gap:12px}
+
+.hdr-txt h1{font-size:17px;font-weight:600;letter-spacing:-.3px;color:#0072BC}
+.hdr-txt h1 span{color:#0072BC;font-weight:700}
+.hdr-txt .sub{font-size:10.5px;color:var(--muted);margin-top:1px;font-weight:400}
+.tags{display:flex;gap:3px;margin-top:4px;flex-wrap:wrap}
+.tag{font-family:'JetBrains Mono',monospace;font-size:7px;padding:2px 5px;border-radius:2px;
+  background:#e8f4fb;border:1px solid #c2dff0;color:#005a96;text-transform:uppercase;letter-spacing:.3px}
+
+/* KPI strip */
+.kpi-row{display:flex;gap:4px;margin-top:6px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;
+  scrollbar-width:thin;scrollbar-color:#cddeed transparent;-webkit-overflow-scrolling:touch}
+.kpi-row::-webkit-scrollbar{height:3px}
+.kpi-row::-webkit-scrollbar-thumb{background:#cddeed;border-radius:2px}
+.kc{background:#fff;border:1px solid var(--border);border-radius:5px;padding:4px 8px;min-width:75px;box-shadow:0 1px 3px rgba(0,0,0,.05);flex-shrink:0}
+.kc.warn{border-color:#f5c842;background:#fffbee}
+.kc.danger{border-color:#f0a0b0;background:#fff5f7}
+.kc.pos{border-color:#aad4ef;background:#f0f8ff}
+.kv{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#0072BC;display:block}
+.kv.amber{color:#b87800}.kv.red{color:#C8103E}.kv.grn{color:#1a7a50}
+.kl{font-size:7px;color:#5a7a8a;text-transform:uppercase;letter-spacing:.4px;display:block;margin-top:1px}
+.ks{font-size:7px;color:#8aabb8;font-style:italic;display:block}
+.ksrc{font-size:6.5px;color:#aac4d8;display:block;margin-top:2px;border-top:1px solid #e0eaf3;padding-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ksrc::before{content:'⊙ ';opacity:.6}
+/* Search + Reset */
+.origin-search{width:100%;padding:5px 8px 5px 26px;border:1px solid #cddeed;border-radius:5px;
+  font-size:11px;font-family:inherit;color:#0d2535;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%235a7a8a' stroke-width='2.5'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat 7px center;outline:none;box-sizing:border-box;transition:border-color .15s}
+.origin-search:focus{border-color:#0072BC}
+.origin-search-wrap{position:relative;margin-bottom:6px}
+.origin-clear{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:none;border:none;color:#8aabb8;cursor:pointer;font-size:13px;line-height:1;padding:0;display:none}
+.origin-clear.vis{display:block}
+.bars-sort{display:flex;gap:4px;margin-bottom:6px}
+.sort-btn{font-size:8px;padding:2px 7px;border-radius:3px;border:1px solid #cddeed;background:#f5f9fc;color:#5a7a8a;cursor:pointer;font-family:inherit;transition:all .12s}
+.sort-btn.on{background:#0072BC;color:#fff;border-color:#0072BC}
+.reset-btn{display:flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid #cddeed;border-radius:4px;background:#fff;color:#0072BC;font-size:9px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.reset-btn:hover{background:#e8f4fb;border-color:#0072BC}
+.reset-btn svg{flex-shrink:0}
+.data-ts{font-size:7.5px;color:#8aabb8;padding:8px 12px 4px;text-align:center;border-top:1px solid #e8f0f6;margin-top:4px}
+.data-ts span{color:#5a7a8a;font-weight:600}
+
+/* ── Shared panel ── */
+.pnl{position:fixed;z-index:90;background:#ffffff;
+  border:1px solid #cddeed;border-radius:10px;overflow-y:auto;
+  scrollbar-width:thin;scrollbar-color:#9bb8d0 transparent;
+  box-shadow:0 2px 12px rgba(0,60,120,.08);
+  -webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.pnl::-webkit-scrollbar{width:6px}
+.pnl::-webkit-scrollbar-thumb{background:#9bb8d0;border-radius:3px}
+.pnl::-webkit-scrollbar-thumb:hover{background:#6a9ab8}
+.sec{padding:12px;border-bottom:1px solid #e0eaf3}
+.sec:last-child{border-bottom:none}
+.sec-t{font-family:'JetBrains Mono',monospace;font-size:8.5px;text-transform:uppercase;
+  letter-spacing:1.1px;color:#5a7a8a;margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.sec-t .badge{padding:1px 5px;border-radius:2px;font-size:7px;font-weight:600}
+.badge-warn{background:rgba(200,130,0,.12);color:#a06000}
+.badge-danger{background:rgba(200,16,62,.1);color:#C8103E}
+.badge-pos{background:rgba(0,114,188,.1);color:#0072BC}
+
+/* Hospital buttons */
+.hb{display:flex;align-items:center;gap:6px;width:100%;padding:6px 8px;border:1px solid #cddeed;
+  border-radius:5px;background:#f8fafb;color:#4a6070;cursor:pointer;font-family:inherit;
+  font-size:10.5px;text-align:left;margin-bottom:3px;transition:all .1s}
+.hb:hover{border-color:#0072BC;background:#e8f4fb;color:#0d2535}
+.hb.on{border-color:#0072BC;background:#e8f4fb;color:#0072BC;font-weight:500}
+.hb .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.hb .beds{font-family:'JetBrains Mono',monospace;font-size:8px;color:#8aabb8;margin-left:auto}
+
+/* Specialty tabs */
+.spec-tabs{display:flex;flex-wrap:wrap;gap:3px}
+.stab{font-size:8.5px;padding:3px 6px;border-radius:3px;border:1px solid #cddeed;
+  background:#f8fafb;color:#5a7a8a;cursor:pointer;font-family:inherit;transition:all .1s}
+.stab:hover{border-color:#0072BC;color:#0072BC}
+.stab.on{border-color:#0072BC;background:#e8f4fb;color:#0072BC;font-weight:600}
+
+/* Toggles */
+.tgl{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:10.5px;cursor:pointer;padding:2px 0;color:#4a6070}
+.tgl input{display:none}
+.tbox{width:13px;height:13px;border-radius:3px;border:1.5px solid #aac4d8;
+  display:flex;align-items:center;justify-content:center;transition:all .1s;flex-shrink:0;background:#fff}
+.tbox::after{content:'✓';font-size:8px;opacity:0;color:#ffffff}
+.tgl input:checked+.tbox{border-color:#0072BC;background:#0072BC}
+.tgl input:checked+.tbox::after{opacity:1}
+
+/* Stats grid */
+.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+.sb{background:#f0f8ff;border:1px solid #c2dff0;border-radius:5px;padding:7px;text-align:center}
+.sb .v{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;color:#0072BC}
+.sb .l{font-size:8px;color:#5a7a8a;margin-top:1px}
+.sb .yoy{font-size:7.5px;margin-top:2px}
+.yoy-up{color:#1a7a50}.yoy-dn{color:#C8103E}.yoy-neu{color:#8aabb8}
+
+/* Bars */
+.oi{margin-bottom:4px}
+.oh{display:flex;justify-content:space-between;align-items:center;font-size:9.5px;margin-bottom:2px}
+.oh .n{color:#2a4a60}
+.oh-right{display:flex;align-items:center;gap:4px}
+.oh .p{font-family:'JetBrains Mono',monospace;color:#0072BC;font-size:8.5px;font-weight:600}
+.trnd{font-size:8px;font-weight:600}
+.trnd.up{color:#1a7a50}.trnd.dn{color:#C8103E}.trnd.warn{color:#b87800}.trnd.neu{color:#8aabb8}
+.ob{height:4px;background:#e8f0f8;border-radius:2px;overflow:hidden}
+.of{height:100%;border-radius:2px;transition:width .35s ease}
+
+/* Alert items */
+.al{padding:7px 8px;border-radius:5px;margin-bottom:5px;font-size:8.5px;line-height:1.55;border-left:3px solid}
+.al.high{background:#fff5f7;border-color:#C8103E}
+.al.med{background:#fffbee;border-color:#b87800}
+.al.good{background:#f0f8ff;border-color:#0072BC}
+.al .ah{font-weight:600;font-size:9.5px;margin-bottom:2px}
+.al.high .ah{color:#C8103E}.al.med .ah{color:#a06000}.al.good .ah{color:#0072BC}
+.al p{color:#4a6070}
+
+/* Hospital comparison */
+.hc{display:flex;align-items:center;gap:5px;margin-bottom:4px;font-size:8.5px}
+.hc-name{width:88px;color:#4a6070;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hc-bg{flex:1;height:5px;background:#e8f0f8;border-radius:3px;overflow:hidden}
+.hc-bar{height:100%;border-radius:3px}
+.hc-val{font-family:'JetBrains Mono',monospace;font-size:7.5px;color:#5a7a8a;width:32px;text-align:right}
+
+/* Arc legend */
+.lr{display:flex;align-items:center;gap:6px;margin-bottom:3px;font-size:9.5px;color:#4a6070}
+.ll{width:16px;height:3px;border-radius:2px;flex-shrink:0}
+
+/* ── Tooltip ── */
+#tip{position:fixed;z-index:200;pointer-events:none;
+  background:#ffffff;border:1px solid #c2dff0;border-radius:8px;
+  padding:10px 12px;max-width:215px;
+  box-shadow:0 4px 20px rgba(0,60,120,.15);transition:opacity .1s;opacity:0}
+#tip.vis{opacity:1}
+.tip-name{font-size:11px;font-weight:600;color:#0d2535;margin-bottom:3px}
+.tip-pct{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;color:#0072BC;line-height:1}
+.tip-pct-lbl{font-size:8px;color:#5a7a8a;margin-bottom:5px}
+.tip-d{font-size:8.5px;color:#4a6070;line-height:1.5;margin-bottom:5px}
+.tip-specs{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:5px}
+.tip-sp{font-size:7.5px;padding:1px 5px;border-radius:2px;background:#e8f4fb;
+  border:1px solid #aad4ef;color:#0072BC}
+.tip-t{font-size:8px;padding:2px 6px;border-radius:3px;font-family:'JetBrains Mono',monospace;display:inline-block;margin-top:2px}
+.tip-t.up{background:#e8f8f0;color:#1a7a50}
+.tip-t.dn{background:#fff0f3;color:#C8103E}
+.tip-t.warn{background:#fffbee;color:#a06000}
+.tip-t.neu{background:#f0f4f8;color:#5a7a8a}
+
+/* Source note */
+.nb{font-size:8px;color:#5a7a8a;line-height:1.55;padding:7px;background:#f0f8ff;border-radius:5px;border:1px solid #c2dff0}
+.nb b{color:#2a4a60;font-weight:500}
+
+/* Strategy overview items in left panel */
+.so-item{display:flex;align-items:center;gap:5px;padding:4px 6px;margin-bottom:2px;border-radius:4px;
+  cursor:pointer;font-size:9px;color:#2a4a60;transition:all .1s;border:1px solid transparent}
+.so-item:hover{background:#e8f4fb;border-color:#c2dff0}
+.so-item .so-pri{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.so-item .so-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.so-item .so-pot{font-family:'JetBrains Mono',monospace;font-size:7px;color:#1a7a50;flex-shrink:0}
+.so-filter{display:flex;gap:3px;margin-bottom:6px;flex-wrap:wrap}
+.so-fbtn{font-size:7.5px;padding:2px 6px;border-radius:3px;border:1px solid #cddeed;
+  background:#f8fafb;color:#5a7a8a;cursor:pointer;font-family:inherit;transition:all .1s}
+.so-fbtn:hover{border-color:#0072BC;color:#0072BC}
+.so-fbtn.on{font-weight:600}
+.so-fbtn.on[data-pf="critical"]{border-color:#C8103E;background:#fff5f7;color:#C8103E}
+.so-fbtn.on[data-pf="high"]{border-color:#b87800;background:#fffbee;color:#b87800}
+.so-fbtn.on[data-pf="medium"]{border-color:#0072BC;background:#e8f4fb;color:#0072BC}
+.so-fbtn.on[data-pf="low"]{border-color:#8aabb8;background:#f0f4f8;color:#5a7a8a}
+.so-fbtn.on[data-pf="all"]{border-color:#0072BC;background:#e8f4fb;color:#0072BC}
+
+/* Strategy Panel (bottom center overlay) */
+#stratPanel{position:fixed;z-index:95;bottom:14px;left:50%;transform:translateX(-50%);
+  width:min(680px,calc(100vw - 310px));max-height:280px;overflow-y:auto;
+  background:#ffffff;border:1.5px solid #0072BC;border-radius:12px;
+  box-shadow:0 -4px 24px rgba(0,60,120,.15);display:none;
+  scrollbar-width:thin;scrollbar-color:#9bb8d0 transparent;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+#stratPanel::-webkit-scrollbar{width:5px}
+#stratPanel::-webkit-scrollbar-thumb{background:#9bb8d0;border-radius:3px}
+#stratPanel.open{display:block}
+.strat-hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 8px;
+  border-bottom:1px solid #e0eaf3;position:sticky;top:0;background:#fff;z-index:1;border-radius:12px 12px 0 0}
+.strat-hdr h3{font-size:12px;font-weight:700;color:#0072BC;display:flex;align-items:center;gap:6px}
+.strat-hdr h3 .pri{font-size:7px;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.pri-critical{background:#C8103E;color:#fff}
+.pri-high{background:#b87800;color:#fff}
+.pri-medium{background:#0072BC;color:#fff}
+.pri-low{background:#8aabb8;color:#fff}
+.strat-close{background:none;border:none;cursor:pointer;font-size:18px;color:#5a7a8a;padding:2px 6px;border-radius:4px}
+.strat-close:hover{background:#e8f4fb;color:#C8103E}
+.strat-body{padding:10px 14px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.strat-col h4{font-family:'JetBrains Mono',monospace;font-size:7.5px;text-transform:uppercase;
+  letter-spacing:.8px;color:#5a7a8a;margin-bottom:5px;display:flex;align-items:center;gap:4px}
+.strat-col h4::before{content:'';width:3px;height:10px;border-radius:1px;display:inline-block}
+.strat-col.channels h4::before{background:#0072BC}
+.strat-col.actions h4::before{background:#1a8a5a}
+.strat-col.bridge h4::before{background:#b87800}
+.strat-col.compete h4::before{background:#C8103E}
+.strat-item{font-size:9px;color:#2a4a60;line-height:1.55;padding:3px 0 3px 10px;border-left:2px solid #e0eaf3;margin-bottom:3px}
+.strat-item.action{border-left-color:#1a8a5a;background:#f6fcf8;padding:4px 8px;border-radius:0 4px 4px 0}
+.strat-bridge{font-size:9px;color:#6a5000;background:#fffbee;padding:6px 8px;border-radius:5px;border:1px solid #f0e0a0;line-height:1.5;margin-top:2px}
+.strat-compete{font-size:9px;color:#8a2030;background:#fff5f7;padding:6px 8px;border-radius:5px;border:1px solid #f0c0c8;line-height:1.5;margin-top:2px}
+.strat-pot{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#1a7a50;margin-top:4px}
+
+/* ── Mobile Tab Bar ── */
+.mob-tabs{display:none;position:fixed;bottom:0;left:0;right:0;z-index:110;
+  background:#fff;border-top:2px solid #0072BC;padding:0;
+  box-shadow:0 -2px 12px rgba(0,60,120,.12)}
+.mob-tabs-row{display:flex}
+.mob-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:8px 4px 6px;border:none;background:none;cursor:pointer;font-family:inherit;
+  font-size:8px;color:#5a7a8a;letter-spacing:.3px;transition:all .15s;gap:2px;
+  border-right:1px solid #e0eaf3}
+.mob-tab:last-child{border-right:none}
+.mob-tab .mob-ico{font-size:16px;line-height:1}
+.mob-tab.on{color:#0072BC;background:#e8f4fb;font-weight:600}
+.mob-tab.on .mob-ico{transform:scale(1.1)}
+
+/* Mobile panel (full-screen overlay) */
+.mob-pnl{display:none;position:fixed;z-index:105;top:0;left:0;right:0;bottom:48px;
+  background:#fff;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:#9bb8d0 transparent}
+.mob-pnl.open{display:block}
+.mob-pnl-hdr{position:sticky;top:0;z-index:2;background:#fff;padding:14px 16px 10px;
+  border-bottom:2px solid #e0eaf3;display:flex;align-items:center;gap:10px}
+.mob-pnl-hdr .vps-logo-img{height:28px}
+.mob-pnl-hdr h2{font-size:14px;font-weight:700;color:#0072BC;flex:1}
+.mob-pnl-body{padding:12px 14px 20px}
+.mob-pnl-body .sec{padding:14px 0;border-bottom:1px solid #e0eaf3}
+.mob-pnl-body .sec:last-child{border-bottom:none}
+.mob-pnl-body .sec-t{font-size:10px;margin-bottom:10px}
+.mob-pnl-body .kc{min-width:120px;padding:8px 12px}
+.mob-pnl-body .kv{font-size:16px}
+.mob-pnl-body .kl{font-size:9px;margin-top:2px}
+.mob-pnl-body .ks{font-size:8.5px}
+.mob-pnl-body .hb{padding:10px 12px;font-size:12px;margin-bottom:5px}
+.mob-pnl-body .hb .beds{font-size:10px}
+.mob-pnl-body .stab{font-size:10px;padding:6px 10px}
+.mob-pnl-body .tgl{font-size:12px;padding:4px 0}
+.mob-pnl-body .tbox{width:16px;height:16px}
+.mob-pnl-body .sg{gap:8px}
+.mob-pnl-body .sb{padding:10px}
+.mob-pnl-body .sb .v{font-size:16px}
+.mob-pnl-body .sb .l{font-size:9.5px}
+.mob-pnl-body .oh .n{font-size:11px}
+.mob-pnl-body .oh .p{font-size:10px}
+.mob-pnl-body .ob{height:6px}
+.mob-pnl-body .al{padding:10px 12px;font-size:10px;line-height:1.6}
+.mob-pnl-body .al .ah{font-size:11px}
+.mob-pnl-body .nb{font-size:9.5px;padding:10px;line-height:1.6}
+.mob-pnl-body .so-item{padding:8px 10px;font-size:11px;margin-bottom:3px}
+.mob-pnl-body .so-fbtn{font-size:9px;padding:4px 8px}
+.mob-pnl-body .so-pot{font-size:9px}
+.mob-pnl-body .hc{font-size:10px;margin-bottom:6px}
+.mob-pnl-body .hc-name{width:100px;font-size:10px}
+.mob-pnl-body .hc-val{font-size:9px}
+.mob-pnl-body .lr{font-size:11px;margin-bottom:5px}
+
+@media(max-width:900px){
+  body{overflow:hidden}
+  .pnl{display:none !important}
+  .hdr{padding:8px 12px 6px}
+  .hdr-top{gap:8px}
+  .hdr-txt h1{font-size:13px}
+  .hdr-txt .sub{font-size:9px}
+  .tags{display:none}
+  .kpi-row{gap:6px;margin-top:4px}
+  .kc{padding:5px 8px;min-width:90px}
+  .kv{font-size:13px}
+  .ks,.ksrc{display:none}
+  .mob-tabs{display:block;height:var(--tab-h)}
+  /* Canvas and SVG map sit in visible area between header and tab bar */
+  #cvs{top:var(--hdr-h) !important;bottom:var(--tab-h) !important;height:auto !important}
+  #mapSvg{top:var(--hdr-h) !important;bottom:var(--tab-h) !important;height:auto !important}
+  /* Mobile content panels start below header */
+  .mob-pnl{top:var(--hdr-h) !important}
+  #stratPanel{width:calc(100vw - 16px);left:8px;transform:none;max-height:45vh;bottom:56px;
+    border-radius:10px}
+  .strat-body{grid-template-columns:1fr}
+  .strat-hdr h3{font-size:11px;flex-wrap:wrap}
+  .strat-item{font-size:10px}
+  .strat-bridge,.strat-compete{font-size:10px}
+  #tip{max-width:70vw;font-size:9px}
+}
+/* Extra compact for small phones */
+@media(max-width:480px){
+  .hdr{padding:5px 10px 4px}
+  .hdr-top{gap:6px;align-items:center}
+  .hdr-txt h1{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+  .hdr-txt .sub{display:none}
+  .vps-logo-img{height:24px}
+  .hdr-divider{height:28px}
+  .kpi-row{margin-top:3px;gap:3px;padding-bottom:2px}
+  .kc{min-width:68px;padding:3px 6px;border-radius:4px}
+  .kv{font-size:11px;line-height:1.2}
+  .kl{font-size:6px}
+  .ks,.ksrc{display:none}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+</head>
+<body>
+<svg id="mapSvg" style="position:absolute;inset:0;pointer-events:none"></svg>
+<canvas id="cvs" style="background:transparent"></canvas>
+
+<!-- Header -->
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="vps-logo-wrap">
+    <img class="vps-logo-img" src="https://tukuz.com/wp-content/uploads/2020/09/vps-lakeshore-hospital-logo-vector.png" alt="VPS Lakeshore">
+    </div>
+    <div class="hdr-divider"></div>
+    <div class="hdr-txt">
+      <h1><span>VPS Lakeshore</span> — Patient Flow Intelligence</h1>
+      <div class="sub">Patient origin flows to Kochi super-specialty hospitals · FY25 data + 2025–26 market intelligence</div>
+      <div class="tags">
+        <span class="tag">VPS 29th Annual Report FY25</span>
+        <span class="tag">Aster DM Integrated AR FY25</span>
+        <span class="tag">Grant Thornton Kerala MVT</span>
+        <span class="tag">KPMG MVT Vision 2030</span>
+        <span class="tag">Kerala DHS Statistics</span>
+        <span class="tag">ET/ICRIER 2025</span>
+        <span class="tag">BusinessToday Mar 2025</span>
+      </div>
+    </div>
+  </div>
+  <div class="kpi-row" id="kpiRow"></div>
+  <div class="hdr-gradient-rule"></div>
+</div>
+
+<!-- Left Panel -->
+<div class="pnl" id="panL" style="top:8px;left:14px;width:275px;max-height:calc(100vh - 16px)">
+  <div class="sec">
+    <div class="sec-t">Select Hospital</div>
+    <div id="hospBtns"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Specialty Filter</div>
+    <div class="spec-tabs" id="specTabs"></div>
+  </div>
+  <div class="sec">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="sec-t" style="margin-bottom:0">Layer Controls</div>
+      <button class="reset-btn" onclick="resetAllFilters()" title="Reset all filters">
+        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        Reset All
+      </button>
+    </div>
+    <label class="tgl"><input type="checkbox" data-lyr="local" checked><div class="tbox"></div> Local (Ernakulam)</label>
+    <label class="tgl"><input type="checkbox" data-lyr="kerala" checked><div class="tbox"></div> Kerala Districts</label>
+    <label class="tgl"><input type="checkbox" data-lyr="domestic" checked><div class="tbox"></div> Other Indian States</label>
+    <label class="tgl"><input type="checkbox" data-lyr="international" checked><div class="tbox"></div> International</label>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Key Metrics <span class="badge" id="metricBadge"></span></div>
+    <div id="stats"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Top Origins by Volume</div>
+    <div class="origin-search-wrap">
+      <input class="origin-search" id="originSearch" type="search" placeholder="Search origins…" oninput="onOriginSearch(this.value)">
+      <button class="origin-clear" id="originClear" onclick="clearOriginSearch()" title="Clear search">✕</button>
+    </div>
+    <div class="bars-sort">
+      <button class="sort-btn on" id="sortVol" onclick="setBarsSort('vol')">Volume</button>
+      <button class="sort-btn" id="sortTrend" onclick="setBarsSort('trend')">Trend ↑↓</button>
+      <button class="sort-btn" id="sortAlpha" onclick="setBarsSort('alpha')">A–Z</button>
+    </div>
+    <div id="bars"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">📋 Strategy Priorities <span class="badge badge-pos">Click to open</span></div>
+    <div id="stratOverview"></div>
+  </div>
+  <div class="data-ts">Data refreshed: <span>March 2026</span> · VPS 29th AR FY25 (audited)</div>
+</div>
+
+<!-- Right Panel -->
+<div class="pnl" id="panR" style="top:8px;right:14px;width:255px;max-height:calc(100vh - 16px)">
+  <div class="sec">
+    <div class="sec-t">Arc Legend</div>
+    <div class="lr"><div class="ll" style="background:#0072BC"></div>Local / Ernakulam</div>
+    <div class="lr"><div class="ll" style="background:#005AA0"></div>Kerala Districts</div>
+    <div class="lr"><div class="ll" style="background:#a06000"></div>Other Indian States</div>
+    <div class="lr"><div class="ll" style="background:#B41432"></div>International (Gulf / Global)</div>
+    <div class="lr" style="margin-top:4px"><div class="ll" style="background:#aac4d8;height:1px"></div><span style="font-size:8px;color:#5a7a8a">Arc width ∝ patient % · Hover for details</span></div>
+    <div class="lr" style="margin-top:3px"><div class="ll" style="background:rgba(200,16,62,.3);border:1px dashed #C8103E"></div><span style="font-size:8px;color:#C8103E">⚠ At-risk / disrupted corridor</span></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">⚠ Market Intelligence <span class="badge badge-danger">2025–26</span></div>
+    <div id="alerts"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">International Corridors</div>
+    <div id="intlBars"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Kochi Hospital Landscape</div>
+    <div id="hospComp"></div>
+  </div>
+  <div class="sec">
+    <div class="sec-t">Data & Sources</div>
+    <div class="nb">
+      <b>Data Sources</b><br>
+      <b style="color:#0072BC">VPS stats:</b> VPS Lakeshore 29th Annual Report FY2024–25 (audited) &amp; Lakeshore Hospital AR FY25.<br>
+      <b style="color:#0072BC">Aster stats:</b> Aster DM Healthcare Integrated Annual Report FY2024–25 (audited). Medcity Kochi = 862 beds.<br>
+      <b style="color:#0072BC">Competitor stats:</b> Industry estimates; not independently verified.<br>
+      <b style="color:#0072BC">Bangladesh FTA ↓67%:</b> Ministry of Tourism (MoTA) data, reported BusinessToday &amp; Economic Times, Mar 2025.<br>
+      <b style="color:#0072BC">Gulf conflict impact:</b> KIMSHEALTH Kerala press statements; ET Mar 2025.<br>
+      <b style="color:#0072BC">Origin flow %:</b> Grant Thornton India Medical Tourism Report 2015; ICRIER Working Paper 2025; VPS AR FY25 (int'l corridors).<br>
+      <b style="color:#0072BC">Kerala district beds:</b> Kerala Health Atlas 2022 (Govt of Kerala).<br>
+      <b style="color:#0072BC">Market intel:</b> ICRIER 2025; Manipal / KIMSHEALTH statements; ASSOCHAM 2024.
+    </div>
+  </div>
+</div>
+
+<!-- Strategy Panel (Chairman's briefing) -->
+<div id="stratPanel">
+  <div class="strat-hdr">
+    <h3 id="stratTitle">Select an origin point</h3>
+    <button class="strat-close" onclick="closeStrat()">✕</button>
+  </div>
+  <div class="strat-body" id="stratBody"></div>
+</div>
+
+<!-- Mobile Panels (tab content) -->
+<div class="mob-pnl" id="mobMap"></div>
+<div class="mob-pnl" id="mobControls">
+  <div class="mob-pnl-hdr"><h2>Controls & Metrics</h2></div>
+  <div class="mob-pnl-body" id="mobControlsBody"></div>
+</div>
+<div class="mob-pnl" id="mobIntel">
+  <div class="mob-pnl-hdr"><h2>Market Intelligence</h2></div>
+  <div class="mob-pnl-body" id="mobIntelBody"></div>
+</div>
+<div class="mob-pnl" id="mobStrategy">
+  <div class="mob-pnl-hdr"><h2>Strategy Playbook</h2></div>
+  <div class="mob-pnl-body" id="mobStrategyBody"></div>
+</div>
+<div class="mob-pnl" id="mobBrief">
+  <div class="mob-pnl-hdr"><h2>Leadership Brief</h2></div>
+  <div class="mob-pnl-body" id="mobBriefBody"></div>
+</div>
+
+<!-- Mobile Tab Bar -->
+<div class="mob-tabs">
+  <div class="mob-tabs-row">
+    <button class="mob-tab on" data-mob="map" onclick="switchMobTab('map')">
+      <span class="mob-ico">🗺</span>Map
+    </button>
+    <button class="mob-tab" data-mob="controls" onclick="switchMobTab('controls')">
+      <span class="mob-ico">⚙</span>Filter
+    </button>
+    <button class="mob-tab" data-mob="intel" onclick="switchMobTab('intel')">
+      <span class="mob-ico">⚠</span>Intel
+    </button>
+    <button class="mob-tab" data-mob="strategy" onclick="switchMobTab('strategy')">
+      <span class="mob-ico">🎯</span>Play
+    </button>
+    <button class="mob-tab" data-mob="brief" onclick="switchMobTab('brief')">
+      <span class="mob-ico">📊</span>Brief
+    </button>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div id="tip"></div>
+
+<script>
+// ════════════════════════════════════════════════════════
+// DATA
+// ════════════════════════════════════════════════════════
+
+const SPECS = [
+  {id:'all',    label:'All Flows',    color:'#5a7a8a'},
+  {id:'transplant', label:'Transplant', color:'#7040C0'},
+  {id:'oncology',   label:'Oncology',   color:'#C8103E'},
+  {id:'cardiac',    label:'Cardiac',    color:'#a0185a'},
+  {id:'nephro',     label:'Nephrology', color:'#0072BC'},
+  {id:'neuro',      label:'Neurology',  color:'#0055a0'},
+  {id:'ortho',      label:'Orthopaedics',color:'#a06000'},
+];
+
+const HOSPS = [
+  {id:'vps',  name:'VPS Lakeshore',  color:'#0072BC', beds:470,  lat:9.9312, lng:76.3176,
+   founded:2003, accred:'NABH · ISO 9001 · NABL', jci:false,
+   stats:{opd:'3,38,651',ipd:'21,022',intl:'19,193',rev:'₹416 Cr',transplant:'250+'},
+   yoy: {opd:'−1%',ipd:'+0.4%',intl:'−4%',rev:'+3%',transplant:'~Stable'},
+   highlight:'Nephrology #1 · Maldives clinics launching (Malé & Mahibadhoo) · New OPDs: Malappuram, Edappal, Fort Kochi · Robotic surgery expansion · Projected FY26 turnover ₹504 Cr'},
+  {id:'aster',name:'Aster Medcity',  color:'#0055B8', beds:862, lat:9.9536, lng:76.2920,
+   founded:2014, accred:'JCI · NABH · NABL', jci:true,
+   stats:{opd:'~6,00,000',ipd:'~40,000',intl:'~30,000',rev:'₹4,138 Cr (co-wide)',transplant:'575+'},
+   yoy: {opd:'~+9%',ipd:'~+5%',intl:'+7%',rev:'+12% (co-wide)',transplant:'+15%'},
+   highlight:'JCI: 1st quaternary Kerala · 1,865+ robotic surgeries · 100-bed new tower (10th anniv.) · 65% occupancy · Bed capacity to ~950 planned · QCIL-Blackstone merger → 10,301 beds combined'},
+  {id:'aims', name:'AIMS Kochi',     color:'#7040C0', beds:1300, lat:10.0375,lng:76.2918,
+   founded:1998, accred:'NABH · NABL', jci:false,
+   stats:{opd:'~8,00,000',ipd:'~55,000',intl:'~15,000',rev:'Est. ₹1,200+ Cr',transplant:'500+'},
+   yoy: {opd:'~+8%',ipd:'~+8%',intl:'+10%',rev:'N/A',transplant:'+15%'},
+   highlight:'Largest private hospital Kerala · 125-acre campus · 28 OTs · 275 ICU beds'},
+  {id:'rajagiri', name:'Rajagiri Hospital', color:'#a06000', beds:550, lat:10.0770,lng:76.3535,
+   founded:2000, accred:'NABH', jci:false,
+   stats:{opd:'~3,00,000',ipd:'~18,000',intl:'~5,000',rev:'Est. ₹350 Cr',transplant:'200+'},
+   yoy: {opd:'~+7%',ipd:'~+7%',intl:'+8%',rev:'N/A',transplant:'+10%'},
+   highlight:'Aluva catchment · Strong orthopaedics · Cardiac centre'},
+  {id:'lisie', name:'Lisie Hospital', color:'#c04820', beds:600, lat:9.9850, lng:76.2945,
+   founded:1956, accred:'NABH', jci:false,
+   stats:{opd:'~4,00,000',ipd:'~22,000',intl:'~3,000',rev:'Est. ₹400 Cr',transplant:'100+'},
+   yoy: {opd:'~+5%',ipd:'~+5%',intl:'+5%',rev:'N/A',transplant:'+8%'},
+   highlight:'Oldest Kochi hospital (1956) · City-centre location · Archdiocese trust'},
+  {id:'medical_trust', name:'Medical Trust', color:'#a01870', beds:450, lat:9.9700, lng:76.2860,
+   founded:1973, accred:'NABH', jci:false,
+   stats:{opd:'~2,50,000',ipd:'~15,000',intl:'~4,000',rev:'Est. ₹280 Cr',transplant:'50+'},
+   yoy: {opd:'~+5%',ipd:'~+5%',intl:'+5%',rev:'N/A',transplant:'+5%'},
+   highlight:'MG Road location · Medical tourism packages · Multi-specialty'},
+];
+
+// trend: +ve = growing, -ve = declining (range -1 to 1)
+// trendDir: 'up','dn','warn','neu'
+// alert: true = active market disruption
+// spec: which specialties patients primarily seek from this origin
+const O = [
+  // ── LOCAL ──
+  {n:"Kochi City",lat:9.931,lng:76.267,t:"local",d:"Urban core & islands — catchment for all Kochi hospitals",
+   spec:['all'],trend:0.05,trendDir:'neu',trendLabel:"Stable",
+   vps:18,aster:16,aims:15,rajagiri:12,lisie:20,medical_trust:22},
+  {n:"Maradu/Nettoor",lat:9.940,lng:76.323,t:"local",d:"VPS immediate vicinity — direct hospital catchment area",
+   spec:['all'],trend:0.08,trendDir:'up',trendLabel:"↑ Growing",
+   vps:6,aster:2,aims:1,rajagiri:1,lisie:1,medical_trust:1},
+  {n:"Edappally",lat:10.025,lng:76.308,t:"local",d:"Metro-connected hub — AIMS Kochi's core local catchment",
+   spec:['all'],trend:0.05,trendDir:'neu',trendLabel:"Stable",
+   vps:3,aster:5,aims:6,rajagiri:4,lisie:5,medical_trust:4},
+  {n:"Tripunithura",lat:9.950,lng:76.348,t:"local",d:"Historical suburb SE of Kochi",
+   spec:['all'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:4,aster:3,aims:2,rajagiri:3,lisie:3,medical_trust:3},
+  {n:"Aluva",lat:10.100,lng:76.357,t:"local",d:"Northern gateway — rail junction, Cochin Airport proximity. Rajagiri stronghold.",
+   spec:['all'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing",
+   vps:3,aster:3,aims:4,rajagiri:8,lisie:2,medical_trust:2},
+  {n:"Perumbavoor",lat:10.107,lng:76.474,t:"local",d:"Eastern Ernakulam — growing industrial area",
+   spec:['all'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:3,aster:2,aims:3,rajagiri:5,lisie:2,medical_trust:2},
+  {n:"Angamaly",lat:10.196,lng:76.386,t:"local",d:"Near CIAL (Cochin Int'l Airport) — gateway for outstation patients",
+   spec:['all'],trend:0.04,trendDir:'up',trendLabel:"↑ Growing",
+   vps:2,aster:2,aims:3,rajagiri:4,lisie:1,medical_trust:1},
+  {n:"Kakkanad",lat:10.015,lng:76.344,t:"local",d:"IT hub — Infopark, SmartCity. Young professional demographic.",
+   spec:['all','cardiac','ortho'],trend:0.10,trendDir:'up',trendLabel:"↑ Fast growing",
+   vps:2,aster:3,aims:4,rajagiri:3,lisie:2,medical_trust:2},
+  {n:"Muvattupuzha",lat:9.980,lng:76.579,t:"local",d:"Eastern commercial centre, Ernakulam district",
+   spec:['all'],trend:0.02,trendDir:'neu',trendLabel:"Stable",
+   vps:2,aster:2,aims:2,rajagiri:3,lisie:2,medical_trust:2},
+  {n:"Vypin/Cherai",lat:10.013,lng:76.186,t:"local",d:"Island communities — traditional fishing industry",
+   spec:['all'],trend:0.01,trendDir:'neu',trendLabel:"Stable",
+   vps:1,aster:1,aims:1,rajagiri:.5,lisie:2,medical_trust:2},
+
+  // ── KERALA DISTRICTS ──
+  {n:"Thrissur",lat:10.528,lng:76.214,t:"kerala",d:"Cultural capital — 80km N. 3,519 govt beds. Strong local hospital scene, tertiary cases refer to Kochi.",
+   spec:['all','cardiac','neuro'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing",
+   vps:5,aster:5,aims:5,rajagiri:4,lisie:4,medical_trust:3},
+  {n:"Alappuzha",lat:9.498,lng:76.339,t:"kerala",d:"Backwaters district — 55km S. 3,424 beds. Oncology and nephrology cases refer to Kochi.",
+   spec:['all','oncology','nephro'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:4,aster:4,aims:3,rajagiri:2,lisie:4,medical_trust:4},
+  {n:"Kottayam",lat:9.592,lng:76.522,t:"kerala",d:"Rubber capital — 60km SE. 2,817 beds. Good primary care; complex cases refer.",
+   spec:['all','cardiac','transplant'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:4,aster:3,aims:4,rajagiri:3,lisie:3,medical_trust:3},
+  {n:"Idukki",lat:9.849,lng:76.972,t:"kerala",d:"⚠ Highland district — only 1,096 govt beds (LOWEST in Kerala). Strong referral driver for all specialties.",
+   spec:['all','transplant','oncology','neuro'],trend:0.15,trendDir:'up',trendLabel:"↑ Growing (bed shortage)",
+   vps:3,aster:3,aims:4,rajagiri:3,lisie:2,medical_trust:2},
+  {n:"Pathanamthitta",lat:9.265,lng:76.787,t:"kerala",d:"Sabarimala district — high Gulf diaspora, NRI remittance economy",
+   spec:['all','cardiac'],trend:0.04,trendDir:'neu',trendLabel:"Stable",
+   vps:2,aster:2,aims:2,rajagiri:1.5,lisie:2,medical_trust:2},
+  {n:"Palakkad",lat:10.787,lng:76.655,t:"kerala",d:"Tamil Nadu gateway — 150km. Catchment split between Kochi and Coimbatore hospitals.",
+   spec:['cardiac','ortho','nephro'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:2,aster:2,aims:2,rajagiri:2,lisie:1.5,medical_trust:1},
+  {n:"Malappuram",lat:11.051,lng:76.071,t:"kerala",d:"Most populous district — high Gulf diaspora. KIMSHEALTH Al-Shifa competitor (reports 10-15% Gulf revenue risk).",
+   spec:['all','transplant','cardiac'],trend:0.04,trendDir:'neu',trendLabel:"Stable",
+   vps:2,aster:3,aims:2,rajagiri:1.5,lisie:1,medical_trust:1},
+  {n:"Kozhikode",lat:11.259,lng:75.780,t:"kerala",d:"VPS has medical centre here — quaternary cases refer to Kochi. High NRI population.",
+   spec:['transplant','oncology','neuro'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing (VPS Kozhikode feeds Kochi)",
+   vps:2,aster:2,aims:1.5,rajagiri:1,lisie:1,medical_trust:.5},
+  {n:"Kollam",lat:8.893,lng:76.614,t:"kerala",d:"Southern Kerala — 160km. TVPM closer but Kochi preferred for specific tertiary brands.",
+   spec:['all','transplant'],trend:0.02,trendDir:'neu',trendLabel:"Stable",
+   vps:1.5,aster:1.5,aims:1.5,rajagiri:1,lisie:1.5,medical_trust:1.5},
+  {n:"Trivandrum",lat:8.524,lng:76.937,t:"kerala",d:"State capital — own strong tertiary centres (SCTIMST, GMC). Only exceptional quaternary cases refer to Kochi.",
+   spec:['transplant','oncology'],trend:0.01,trendDir:'neu',trendLabel:"Stable",
+   vps:1,aster:1,aims:1,rajagiri:.5,lisie:.5,medical_trust:.5},
+  {n:"Kannur",lat:11.875,lng:75.370,t:"kerala",d:"Far north — 400km. High Gulf diaspora. Manipal closer for some cases.",
+   spec:['all','cardiac'],trend:0.02,trendDir:'neu',trendLabel:"Stable",
+   vps:.8,aster:1,aims:.8,rajagiri:.5,lisie:.5,medical_trust:.3},
+  {n:"Wayanad",lat:11.685,lng:76.132,t:"kerala",d:"⚠ Tribal highland — 1,367 beds (near-lowest). Limited access, strong referral driver. High NRI diaspora.",
+   spec:['all','transplant'],trend:0.10,trendDir:'up',trendLabel:"↑ Growing (underserved)",
+   vps:.5,aster:.8,aims:.6,rajagiri:.5,lisie:.3,medical_trust:.2},
+  {n:"Kasaragod",lat:12.500,lng:74.987,t:"kerala",d:"⚠ Northernmost — 1,087 beds (2nd lowest). Tulu/Beary community. High Gulf diaspora. 400km from Kochi.",
+   spec:['all'],trend:0.07,trendDir:'up',trendLabel:"↑ Growing (underserved)",
+   vps:.3,aster:.3,aims:.3,rajagiri:.2,lisie:.2,medical_trust:.1},
+
+  // ── DOMESTIC ──
+  {n:"Lakshadweep",lat:10.567,lng:72.637,t:"domestic",d:"No tertiary care — Kochi is the default referral destination. Govt-funded medical evacuations.",
+   spec:['all','cardiac','neuro','transplant'],trend:0.08,trendDir:'up',trendLabel:"↑ Growing (no local alternatives)",
+   vps:2.5,aster:2.5,aims:3,rajagiri:1,lisie:1,medical_trust:.5},
+  {n:"TN (Coimbatore)",lat:10.997,lng:76.954,t:"domestic",d:"Palakkad Gap corridor. Cross-referrals for transplant & oncology. Cost + wait-time advantage.",
+   spec:['transplant','oncology','cardiac'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:2,aster:2,aims:3,rajagiri:2,lisie:1,medical_trust:1},
+  {n:"TN (Madurai)",lat:9.925,lng:78.120,t:"domestic",d:"Specific transplant and oncology referrals. Long distance but brand recognition.",
+   spec:['transplant','oncology'],trend:0.02,trendDir:'neu',trendLabel:"Stable",
+   vps:.8,aster:.5,aims:1,rajagiri:.3,lisie:.3,medical_trust:.2},
+  {n:"Karnataka (Mangalore)",lat:12.872,lng:74.843,t:"domestic",d:"Coastal Karnataka corridor — Tulu/Nair community links. 300km.",
+   spec:['all','ortho','cardiac'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:1,aster:1,aims:1,rajagiri:.5,lisie:.5,medical_trust:.3},
+  {n:"Bengaluru",lat:12.972,lng:77.595,t:"domestic",d:"NRI families, IT corridor, corporate referrals. Aster has presence here.",
+   spec:['all','cardiac','neuro','oncology'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing",
+   vps:1,aster:1.5,aims:1.5,rajagiri:.5,lisie:.3,medical_trust:.2},
+  {n:"Mumbai",lat:19.076,lng:72.878,t:"domestic",d:"Keralite diaspora — especially transplant tourism. Corporate referrals.",
+   spec:['transplant','oncology','cardiac'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:1,aster:1,aims:.8,rajagiri:.3,lisie:.2,medical_trust:.2},
+  {n:"Delhi NCR",lat:28.614,lng:77.209,t:"domestic",d:"CGHS beneficiaries, Keralite civil servants, NRI stopovers from Gulf.",
+   spec:['all'],trend:0.02,trendDir:'neu',trendLabel:"Stable",
+   vps:.5,aster:.5,aims:.5,rajagiri:.2,lisie:.1,medical_trust:.1},
+  {n:"Andaman & Nicobar",lat:11.740,lng:92.659,t:"domestic",d:"Medical evacuations — no cardiac/transplant/neuro locally. Kochi is nearest referral.",
+   spec:['cardiac','transplant','neuro','oncology'],trend:0.06,trendDir:'up',trendLabel:"↑ Growing",
+   vps:.3,aster:.3,aims:.5,rajagiri:.1,lisie:.1,medical_trust:.1},
+  {n:"NE India",lat:26.201,lng:92.938,t:"domestic",d:"Transplant & oncology referrals via air. Kolkata competition but Kochi preferred for some specialties.",
+   spec:['transplant','oncology'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing",
+   vps:.3,aster:.2,aims:.3,rajagiri:.1,lisie:.1,medical_trust:.1},
+
+  // ── INTERNATIONAL ──
+  {n:"UAE (Dubai)",lat:25.205,lng:55.271,t:"international",d:"VPS parent HQ region. Direct Kochi-Dubai flights 3h. Large Keralite expat community. High-value segment.",
+   spec:['all','transplant','cardiac','oncology'],trend:0.10,trendDir:'up',trendLabel:"↑ Growing (VPS connection)",
+   vps:3,aster:3,aims:1.5,rajagiri:.5,lisie:.3,medical_trust:.3},
+  {n:"UAE (Abu Dhabi)",lat:24.454,lng:54.377,t:"international",d:"VPS Healthcare HQ — corporate health schemes, direct patient pipeline. Abu Dhabi ruler connection.",
+   spec:['all','transplant','cardiac'],trend:0.15,trendDir:'up',trendLabel:"↑ Strong growth (VPS HQ)",
+   vps:2,aster:1.5,aims:.8,rajagiri:.3,lisie:.2,medical_trust:.2},
+  {n:"Saudi Arabia (Riyadh)",lat:24.714,lng:46.675,t:"international",d:"Largest Keralite expat community. Gulf-based VPS network. Premium segment.",
+   spec:['all','cardiac','oncology','nephro'],trend:0.05,trendDir:'neu',trendLabel:"Stable",
+   vps:1.5,aster:2,aims:1,rajagiri:.3,lisie:.2,medical_trust:.2},
+  {n:"Saudi Arabia (Jeddah)",lat:21.543,lng:39.173,t:"international",d:"Western province Kerala workers. Hajj corridor — medical cases.",
+   spec:['all','cardiac','ortho'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:.5,aster:.5,aims:.3,rajagiri:.1,lisie:.1,medical_trust:.1},
+  {n:"Qatar (Doha)",lat:25.285,lng:51.531,t:"international",d:"Aster DM and VPS presence. Construction workers + expat professionals.",
+   spec:['all','cardiac','ortho','nephro'],trend:0.05,trendDir:'neu',trendLabel:"Stable",
+   vps:1,aster:1.5,aims:.5,rajagiri:.2,lisie:.1,medical_trust:.1},
+  {n:"Kuwait",lat:29.376,lng:47.977,t:"international",d:"Established Malayali community since 1960s. Government referral schemes.",
+   spec:['all','nephro','cardiac','transplant'],trend:0.04,trendDir:'neu',trendLabel:"Stable",
+   vps:.8,aster:.8,aims:.4,rajagiri:.1,lisie:.1,medical_trust:.1},
+  {n:"Oman (Muscat)",lat:23.588,lng:58.383,t:"international",d:"Historical Kerala trading ties. Govt bilateral arrangements. CIAL direct flight.",
+   spec:['all','cardiac','transplant','nephro'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing",
+   vps:.8,aster:.8,aims:.5,rajagiri:.2,lisie:.1,medical_trust:.1},
+  {n:"Bahrain",lat:26.067,lng:50.558,t:"international",d:"Smaller Gulf state. Confirmed via VPS testimonials. High-value segment.",
+   spec:['all','cardiac'],trend:0.03,trendDir:'neu',trendLabel:"Stable",
+   vps:.5,aster:.5,aims:.3,rajagiri:.1,lisie:0,medical_trust:0},
+  {n:"Maldives",lat:3.203,lng:73.221,t:"international",d:"Government referral agreements. No tertiary care locally — Kochi is the default. Stable inflow.",
+   spec:['all','cardiac','transplant','oncology'],trend:0.10,trendDir:'up',trendLabel:"↑ Growing (govt contracts)",
+   vps:.8,aster:.8,aims:1,rajagiri:.2,lisie:.2,medical_trust:.1},
+  {n:"Bangladesh",lat:23.810,lng:90.413,t:"international",d:"70% of India's total MVT nationally — but Kerala share is small (NE India dominant). FTA ↓67% Dec 2024 due to visa restrictions.",
+   spec:['general','ortho','nephro'],trend:-0.70,trendDir:'dn',trendLabel:"↓70% Dec 2024",alert:true,
+   vps:.3,aster:.3,aims:.5,rajagiri:.1,lisie:.1,medical_trust:0},
+  {n:"Afghanistan",lat:34.555,lng:69.208,t:"international",d:"#2 India MVT source nationally (GT 2015). Low Kerala share. Visa barriers and connectivity issues.",
+   spec:['ortho','cardiac','general'],trend:-0.20,trendDir:'dn',trendLabel:"↓ Declining (visa barriers)",alert:true,
+   vps:.1,aster:.1,aims:.2,rajagiri:0,lisie:0,medical_trust:0},
+  {n:"Yemen (Sana'a)",lat:15.369,lng:44.191,t:"international",d:"Conflict-driven MVT — oncology, cardiac surgery, organ transplants. Travel via Dubai/Muscat hubs. Accounts for significant VPS/Aster revenue.",
+   spec:['oncology','cardiac','transplant','neuro'],trend:-0.20,trendDir:'warn',trendLabel:"⚠ Conflict disruption 2025",alert:true,
+   vps:.8,aster:1,aims:.8,rajagiri:.2,lisie:.1,medical_trust:.1},
+  {n:"Yemen (Aden)",lat:12.788,lng:45.019,t:"international",d:"Southern Yemen. Flights via Gulf hubs. Complex surgical cases — high-value segment.",
+   spec:['oncology','cardiac','transplant'],trend:-0.15,trendDir:'warn',trendLabel:"⚠ Conflict disruption",alert:true,
+   vps:.4,aster:.5,aims:.4,rajagiri:.1,lisie:0,medical_trust:0},
+  {n:"Iraq (Baghdad)",lat:33.313,lng:44.366,t:"international",d:"Major medical visa source — oncology, cardiac, transplants. No e-medical visa from India. ICRIER 2025 flags visa as key barrier.",
+   spec:['oncology','cardiac','transplant','neuro'],trend:-0.15,trendDir:'warn',trendLabel:"⚠ Conflict + visa barriers",alert:true,
+   vps:.5,aster:.5,aims:.4,rajagiri:.1,lisie:0,medical_trust:0},
+  {n:"Iraq (Kurdistan/Erbil)",lat:36.191,lng:44.009,t:"international",d:"Kurdistan region medical corridor — more stable than Baghdad. Oncology focus.",
+   spec:['oncology','cardiac'],trend:-0.05,trendDir:'warn',trendLabel:"⚠ Cautious",
+   vps:.3,aster:.3,aims:.3,rajagiri:0,lisie:0,medical_trust:0},
+  {n:"Iran (Tehran)",lat:35.689,lng:51.389,t:"international",d:"Air traffic severely disrupted by regional conflict 2025. Cardiac & oncology cases. High-value segment.",
+   spec:['cardiac','oncology','nephro'],trend:-0.25,trendDir:'warn',trendLabel:"⚠ Air disruption 2025",alert:true,
+   vps:.3,aster:.4,aims:.3,rajagiri:.1,lisie:0,medical_trust:0},
+  {n:"East Africa (Nairobi)",lat:-1.292,lng:36.822,t:"international",d:"Kenya/Tanzania — Aster DM network presence. Emerging corridor for oncology and cardiac.",
+   spec:['oncology','cardiac','general'],trend:0.15,trendDir:'up',trendLabel:"↑ Growing (Aster expansion)",
+   vps:.3,aster:.5,aims:.3,rajagiri:.1,lisie:0,medical_trust:0},
+  {n:"Nigeria (Lagos)",lat:6.524,lng:3.379,t:"international",d:"GT top-5 India medical visa country. Visa barriers limit volume significantly.",
+   spec:['oncology','cardiac'],trend:-0.05,trendDir:'warn',trendLabel:"⚠ Flat (visa barriers)",
+   vps:.1,aster:.2,aims:.2,rajagiri:0,lisie:0,medical_trust:0},
+  {n:"UK (London)",lat:51.507,lng:-.128,t:"international",d:"NRI families seeking advanced transplant + oncology. Premium segment — significant cost arbitrage vs NHS waiting.",
+   spec:['transplant','oncology','cardiac'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing (NRI diaspora)",
+   vps:.2,aster:.2,aims:.1,rajagiri:0,lisie:0,medical_trust:0},
+  {n:"Canada",lat:43.653,lng:-79.383,t:"international",d:"VPS testimonial-confirmed. Dialysis + transplant cases. Cost arbitrage vs Canadian system.",
+   spec:['transplant','nephro'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing",
+   vps:.2,aster:.1,aims:.1,rajagiri:0,lisie:0,medical_trust:0},
+  {n:"USA",lat:40.713,lng:-74.006,t:"international",d:"NRI transplant & oncology tourism. 80% cost saving vs US. VPS annual report confirms.",
+   spec:['transplant','oncology','cardiac'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing",
+   vps:.2,aster:.2,aims:.2,rajagiri:0,lisie:0,medical_trust:0},
+  {n:"Australia",lat:-33.869,lng:151.209,t:"international",d:"Aster testimonial-confirmed. NRI & medical tourism segment.",
+   spec:['oncology','cardiac','ortho'],trend:0.05,trendDir:'up',trendLabel:"↑ Growing",
+   vps:.1,aster:.2,aims:.1,rajagiri:0,lisie:0,medical_trust:0},
+];
+
+const COLORS={local:[0,114,188],kerala:[0,90,160],domestic:[160,96,0],international:[180,20,50]};
+const COLHEX={local:'#0072BC',kerala:'#005AA0',domestic:'#a06000',international:'#B41432'};
+
+// ════════════════════════════════════════════════════════
+// CHAIRMAN'S STRATEGY DATA — Referral Pathways & Actions
+// ════════════════════════════════════════════════════════
+const STRATEGY = {
+  // ── KERALA DISTRICTS ──
+  "Thrissur":{priority:'high',estPotential:'500+ additional referrals/yr',
+    channels:['Thrissur GP/physician liaison program','Amala & Jubilee Hospital overflow capture','Community health camps (Thrissur Pooram season)'],
+    actions:['Deploy 2 medical reps for Thrissur-Ernakulam corridor','Offer free second-opinion teleconsults to Thrissur GPs','Partner with Thrissur IMA chapter for CME events'],
+    vpsBridge:'Kozhikode Medical Centre can serve as north feeder — dual referral path',competitor:'AIMS & Aster strong here. Rajagiri gaining via Aluva proximity.'},
+  "Alappuzha":{priority:'high',estPotential:'300+ additional referrals/yr',
+    channels:['District hospital overflow for oncology/nephro','NRI families (Gulf returnees)','Houseboat tourism corridor — wellness+checkup packages'],
+    actions:['OPD satellite clinic (like new Fort Kochi centre)','Oncology screening camps in Cherthala/Ambalapuzha','Tie-up with Alappuzha Medical College for tertiary referrals'],
+    vpsBridge:'Short 55km corridor. VPS ambulance service could be differentiator.',competitor:'Lisie & Medical Trust have legacy presence from Archdiocese network.'},
+  "Kottayam":{priority:'medium',estPotential:'250+ additional referrals/yr',
+    channels:['Medical College Kottayam overflow','Rubber plantation worker occupational health','NRI diaspora (Gulf + US)'],
+    actions:['Cardiac & transplant awareness camps','Partnership with Kottayam MC for complex case referrals','Church community outreach (Syrian Christian network)'],
+    vpsBridge:'60km SE corridor. Good road connectivity.',competitor:'AIMS strong via Ettumanoor proximity. Kottayam MC handles most cases locally.'},
+  "Idukki":{priority:'critical',estPotential:'400+ additional referrals/yr',
+    channels:['Lowest govt beds in Kerala (1,096) — massive referral need','Plantation worker health programs','Tribal health outreach (Govt partnerships)'],
+    actions:['Mobile medical van priority route (launching Nov 2025)','Tele-ICU link with Idukki District Hospital','Emergency air-ambulance partnership for highland access'],
+    vpsBridge:'Underserved = highest growth potential. First-mover advantage critical.',competitor:'All Kochi hospitals compete. AIMS leads slightly via Thodupuzha road.'},
+  "Pathanamthitta":{priority:'medium',estPotential:'200+ additional referrals/yr',
+    channels:['Sabarimala pilgrim corridor (seasonal surge)','Gulf returnee families','District Hospital overflow'],
+    actions:['Sabarimala season health desk (Nov–Jan)','GP liaison in Thiruvalla, Adoor, Pandalam','Cardiac screening camps targeting Gulf returnees'],
+    vpsBridge:'High Gulf diaspora = VPS brand recognition advantage.',competitor:'Split between Kochi & Trivandrum hospitals.'},
+  "Palakkad":{priority:'medium',estPotential:'200+ additional referrals/yr',
+    channels:['Tamil Nadu border corridor — Coimbatore competition','Palakkad Gap transport route','Govt hospital overflow'],
+    actions:['Price-competitive packages vs Coimbatore hospitals','Tamil-speaking patient coordinator at VPS','Satellite OPD in Palakkad town'],
+    vpsBridge:'Competing with Coimbatore. Price + VPS brand must win.',competitor:'Coimbatore hospitals (PSG, KMCH) dominate. AIMS & Rajagiri compete from Kochi side.'},
+  "Malappuram":{priority:'high',estPotential:'500+ additional referrals/yr',
+    channels:['Most populous district — highest Gulf diaspora density','New Edappal OPD centre (just launched)','KIMSHEALTH/Al Shifa competition response'],
+    actions:['Edappal OPD must be aggressively marketed','Arabic-speaking coordinators for Gulf families','Community health camps in Manjeri, Perinthalmanna, Tirur'],
+    vpsBridge:'New Edappal OPD is strategic entry point. Must convert to main hospital referrals.',competitor:'KIMSHEALTH Al-Shifa dominates. Aster MIMS Calicut is strong north competitor.'},
+  "Kozhikode":{priority:'high',estPotential:'300+ additional referrals/yr',
+    channels:['VPS Kozhikode Medical Centre (28,000+ patients FY25)','Quaternary case upward referral to Kochi','NRI families (high Gulf diaspora)'],
+    actions:['Strengthen Kozhikode→Kochi referral protocol','Add specialties at Kozhikode centre to build trust','Joint CMEs between Kozhikode & Kochi teams'],
+    vpsBridge:'VPS ALREADY has a feeder here. This is the #1 internal pipeline to optimize.',competitor:'Aster MIMS Calicut, Baby Memorial, KIMSHEALTH Al-Shifa.'},
+  "Kollam":{priority:'low',estPotential:'100+ additional referrals/yr',
+    channels:['Southern Kerala — TVPM closer but Kochi preferred for transplant','Cashew industry workers','NRI families'],
+    actions:['Transplant & oncology focused outreach only','Partner with Kollam MC for specific referrals'],
+    vpsBridge:'Niche opportunity for transplant/oncology only.',competitor:'Trivandrum hospitals (SCTIMST, KIMS) dominate.'},
+  "Trivandrum":{priority:'low',estPotential:'50+ additional referrals/yr',
+    channels:['Only exceptional quaternary cases','SCTIMST overflow for transplant','IT/Space corridor professionals'],
+    actions:['Focus on transplant and rare procedures only','VPS brand positioning for "2nd opinion" from TVPM patients'],
+    vpsBridge:'Very selective. Not a volume play.',competitor:'Strong local ecosystem: SCTIMST, KIMS, GMC.'},
+  "Kannur":{priority:'medium',estPotential:'150+ additional referrals/yr',
+    channels:['Far north — 400km but high Gulf diaspora','Govt hospital overflow','Airport connectivity via CIAL'],
+    actions:['Partner with Kannur airport lounge for health awareness','Gulf returnee cardiac screening camp','Teleconsult tie-up with Kannur MC'],
+    vpsBridge:'Long distance but Kozhikode centre can serve as midway feeder.',competitor:'Aster MIMS Kannur (just added 100 beds in FY25). Manipal closer.'},
+  "Wayanad":{priority:'high',estPotential:'200+ additional referrals/yr',
+    channels:['Tribal highland — near-lowest beds (1,367)','Disaster-affected area (VPS already CSR here)','NRI diaspora'],
+    actions:['Mobile medical van route priority','Tribal health partnership with Govt','Post-disaster rehabilitation follow-up care'],
+    vpsBridge:'CSR connection from Wayanad disaster relief builds trust. Convert to referrals.',competitor:'Underserved area — all hospitals compete but none dominate.'},
+  "Kasaragod":{priority:'medium',estPotential:'100+ additional referrals/yr',
+    channels:['Northernmost — 400km from Kochi','Tulu/Beary community (cross-border Karnataka)','Gulf diaspora'],
+    actions:['Teleconsult only — too far for regular referrals','Air ambulance for emergencies','Partner with Kasaragod DH for rare case referrals'],
+    vpsBridge:'Aster planning 264-bed greenfield in Kasaragod. VPS must decide: compete or concede.',competitor:'Aster MIMS Kasaragod (264 beds planned). Manipal Mangalore is closer.'},
+  // ── DOMESTIC ──
+  "Lakshadweep":{priority:'critical',estPotential:'200+ additional referrals/yr',
+    channels:['No tertiary care — Kochi is DEFAULT referral','Govt medical evacuation contracts','Navy/Coast Guard medical referrals'],
+    actions:['Bid for Govt medical evacuation contract','Establish telemedicine link with Lakshadweep hospitals','Dedicated Lakshadweep patient coordinator at VPS'],
+    vpsBridge:'Zero competition for tertiary. Lock in govt contracts.',competitor:'AIMS slightly ahead. First to secure govt contract wins.'},
+  "TN (Coimbatore)":{priority:'low',estPotential:'100+ additional referrals/yr',
+    channels:['Cross-referrals for transplant & oncology','Cost + wait-time advantage over Coimbatore','Corporate employee health schemes'],
+    actions:['Transplant outcome data marketing to CBE physicians','Tamil-language outreach materials'],
+    vpsBridge:'Palakkad Gap corridor. Niche transplant referrals.',competitor:'Coimbatore has strong local hospitals (PSG, KMCH, GEM). Tough market.'},
+  "Bengaluru":{priority:'medium',estPotential:'150+ additional referrals/yr',
+    channels:['NRI families — IT corridor','Corporate health tie-ups','Keralite diaspora in Bengaluru'],
+    actions:['Bangalore representative office for patient coordination','Corporate tie-ups with IT companies (Keralite employees)','VPS brand presence at Malayali associations'],
+    vpsBridge:'High-value segment. NRIs prefer Kochi for family proximity during recovery.',competitor:'Aster has hospitals in Bengaluru. Narayana, Manipal, Apollo strong locally.'},
+  "Mumbai":{priority:'medium',estPotential:'100+ additional referrals/yr',
+    channels:['Keralite diaspora transplant tourism','Corporate referrals','NRI stopovers from Gulf'],
+    actions:['Transplant outcome marketing to Mumbai nephrologists','Keralite association partnerships in Mumbai'],
+    vpsBridge:'Transplant is the unique draw. No one flies Mumbai→Kochi for general care.',competitor:'Mumbai has world-class hospitals. Only VPS transplant brand can pull.'},
+  // ── INTERNATIONAL ──
+  "UAE (Dubai)":{priority:'critical',estPotential:'1,000+ additional referrals/yr',
+    channels:['Burjeel/VPS network — direct internal referral pipeline','Keralite expat community health camps','Insurance tie-ups with Dubai health insurers','CIAL direct flights (3h)'],
+    actions:['Formalize Burjeel→VPS Lakeshore referral protocol for transplant/oncology','Embed VPS Lakeshore liaison at Burjeel Hospital Dubai','Health camp at Dubai Malayali associations quarterly','Negotiate with DHA/HAAD for cross-border insurance recognition'],
+    vpsBridge:'THIS IS THE #1 STRATEGIC ASSET. Chairman\'s own Burjeel network = direct pipeline. Must be systematized.',competitor:'Aster has strong Dubai presence. AIMS has NRI network.'},
+  "UAE (Abu Dhabi)":{priority:'critical',estPotential:'800+ additional referrals/yr',
+    channels:['VPS Healthcare HQ — corporate health schemes','Burjeel Medical City referral pathway','Royal family connection — premium segment','Abu Dhabi expat Malayali community'],
+    actions:['Monthly case conference between BMC oncology & VPS Lakeshore','VPS employee family health scheme → Lakeshore for tertiary','Premium suite marketing to Abu Dhabi high-value patients','Insurance portability arrangement with HAAD-approved insurers'],
+    vpsBridge:'VPS HQ in Abu Dhabi. This is an OWNED channel. Zero acquisition cost for referrals.',competitor:'Cleveland Clinic Abu Dhabi is premium competitor. Aster gaining ground.'},
+  "Saudi Arabia (Riyadh)":{priority:'high',estPotential:'500+ additional referrals/yr',
+    channels:['Largest Keralite expat community globally','Saudi Vision 2030 insurance reforms','VPS/Burjeel Saudi expansion pipeline','Kerala diaspora associations (KMCC, KMC)'],
+    actions:['Health desk at Indian Embassy Riyadh','Partner with Saudi medical tourism facilitators','Cardiac & nephrology screening camps in Riyadh Kerala community','Leverage Burjeel Saudi expansion for cross-referral'],
+    vpsBridge:'Burjeel is expanding to Saudi. Direct pipeline once established.',competitor:'Aster DM has stronger Riyadh presence currently.'},
+  "Saudi Arabia (Jeddah)":{priority:'medium',estPotential:'200+ additional referrals/yr',
+    channels:['Western province Kerala workers','Hajj medical corridor','Kerala community associations'],
+    actions:['Hajj season health screening partnership','Jeddah Malayali association outreach'],
+    vpsBridge:'Seasonal Hajj corridor creates predictable demand spikes.',competitor:'Multiple Indian hospitals market to Jeddah. Competitive.'},
+  "Qatar (Doha)":{priority:'medium',estPotential:'200+ additional referrals/yr',
+    channels:['Post-World Cup infrastructure workers','VPS/Aster presence in Qatar','Kerala expat community'],
+    actions:['Qatar Malayali association health camps','Teleconsult tie-up with Qatar primary care clinics'],
+    vpsBridge:'VPS has Qatar presence. Leverage for referrals.',competitor:'Aster has strong Qatar presence via DM Healthcare.'},
+  "Kuwait":{priority:'medium',estPotential:'200+ additional referrals/yr',
+    channels:['Established Malayali community since 1960s','Government referral schemes','Kerala school alumni networks'],
+    actions:['Kuwait Malayali Association partnership','Govt referral scheme registration'],
+    vpsBridge:'Long-established community. Brand loyalty matters.',competitor:'AIMS has strong Kuwait alumni network.'},
+  "Oman (Muscat)":{priority:'high',estPotential:'300+ additional referrals/yr',
+    channels:['Historical Kerala trading ties','Burjeel Medical Centre Oman — direct VPS network','Govt bilateral arrangements','CIAL direct flight to Muscat'],
+    actions:['Formalize BMC Oman→VPS Lakeshore referral pathway','Oman Govt medical referral scheme bid','Community health camps in Muscat, Sohar, Salalah'],
+    vpsBridge:'Burjeel already in Oman. Direct owned-channel referral. Second strongest after UAE.',competitor:'Aster has Oman presence. KIMSHEALTH competes via Calicut.'},
+  "Maldives":{priority:'critical',estPotential:'500+ additional referrals/yr',
+    channels:['VPS launching OPD clinics in Malé & Mahibadhoo (FY26)','Govt referral agreements — no local tertiary care','Aasandha national health insurance scheme','Direct CIAL–Malé flights'],
+    actions:['FAST-TRACK Malé & Mahibadhoo clinic launch','Bid for Aasandha empanelment (Maldives national insurance)','Dedicated Dhivehi-speaking coordinator at VPS','Telemedicine link with all Maldivian atolls'],
+    vpsBridge:'OWNED CHANNEL incoming. Maldives clinics = direct feeder. This is VPS\'s biggest near-term growth lever.',competitor:'AIMS currently leads in Maldives referrals. VPS clinics will disrupt.'},
+  "Yemen (Sana'a)":{priority:'medium',estPotential:'200+ (if conflict stabilizes)',
+    channels:['Conflict-driven MVT via Dubai/Muscat hubs','Oncology, cardiac, transplant cases','Aid organization medical evacuations'],
+    actions:['Maintain Dubai hub referral pathway (Burjeel)','Partner with ICRC/WHO for medical evacuation referrals','Arabic-speaking oncology coordinator'],
+    vpsBridge:'Cannot control conflict. But Burjeel Dubai is the natural transit hub.',competitor:'Aster slightly ahead in Yemen corridor.'},
+  "Iraq (Baghdad)":{priority:'medium',estPotential:'200+ (visa reform dependent)',
+    channels:['No e-medical visa from India — key barrier','Oncology, cardiac, transplant demand','Baghdad medical facilitator network'],
+    actions:['Lobby via CII/FICCI for Iraq e-medical visa inclusion','Partner with Iraqi medical facilitators in Dubai','Arabic-language website & marketing materials'],
+    vpsBridge:'Visa barrier is structural. Lobby is the strategy.',competitor:'Delhi/Chennai hospitals dominate Iraq corridor currently.'},
+  "East Africa (Nairobi)":{priority:'high',estPotential:'300+ additional referrals/yr',
+    channels:['Kenya/Tanzania/Uganda — emerging MVT corridor','20-30% annual growth in Africa→India MVT','Aster has Nairobi presence — VPS must compete','East African Indian diaspora'],
+    actions:['Appoint East Africa medical tourism representative','Partner with Nairobi facilitators (MCS, HealthcareTrips)','Transplant & oncology focused marketing','Facilitate Kenya medical visa process guidance'],
+    vpsBridge:'Africa is India\'s fastest-growing MVT source. VPS is late but can leverage Burjeel Africa connections.',competitor:'Aster ahead via Nairobi presence. Apollo, Fortis market aggressively.'},
+  "Nigeria (Lagos)":{priority:'medium',estPotential:'100+ (visa dependent)',
+    channels:['GT top-5 India medical visa country','Visa barriers limit volume','Oncology & cardiac demand'],
+    actions:['Partner with Nigerian medical facilitators','Lobby for Nigeria e-medical visa inclusion'],
+    vpsBridge:'Visa barrier. Similar strategy to Iraq.',competitor:'Chennai & Delhi hospitals dominate Nigeria corridor.'},
+  "UK (London)":{priority:'medium',estPotential:'150+ additional referrals/yr',
+    channels:['NRI families — transplant & oncology','NHS waiting list arbitrage','Keralite professional diaspora','Direct CIAL–London connectivity via Gulf hubs'],
+    actions:['UK Malayali association health awareness events','Partner with UK medical tourism facilitators (The Medical Travel Company)','Transplant outcome data marketing to UK GPs'],
+    vpsBridge:'Premium segment. 80% cost saving vs NHS private. Brand + outcomes win.',competitor:'Apollo, Fortis market to UK. Aster has recognition via DM brand.'},
+  "USA":{priority:'medium',estPotential:'200+ additional referrals/yr',
+    channels:['NRI transplant & oncology tourism','80% cost saving vs US healthcare','Keralite diaspora — FOKANA, FOMAA networks'],
+    actions:['FOKANA/FOMAA health desk at annual conventions','Transplant outcome benchmarking vs US hospitals','NRI patient concierge service (premium rooms, telefollow-up)'],
+    vpsBridge:'High-value, low-volume. Premium service is key.',competitor:'Apollo dominates US NRI corridor. VPS must differentiate on transplant/nephrology.'},
+  "Canada":{priority:'low',estPotential:'50+ additional referrals/yr',
+    channels:['VPS testimonial-confirmed — dialysis & transplant','Canadian healthcare wait-time arbitrage','Keralite diaspora'],
+    actions:['Transplant-focused outreach only','Canadian Malayali association partnership'],
+    vpsBridge:'Niche. Transplant-only positioning.',competitor:'Limited competition for Canada→Kochi corridor.'},
+  "Australia":{priority:'low',estPotential:'50+ additional referrals/yr',
+    channels:['Aster testimonial-confirmed','NRI & medical tourism segment','Direct flights via Singapore/KL'],
+    actions:['Australian Malayali association outreach','Teleconsult for pre-assessment'],
+    vpsBridge:'Niche. Similar to Canada.',competitor:'Aster ahead via testimonials. Apollo markets to Australia.'},
+  // ── LOCAL (ERNAKULAM) ──
+  "Kochi City":{priority:'high',estPotential:'1,000+ (defend share)',
+    channels:['Urban core — all hospitals compete','Walk-in/emergency catchment','Corporate employee health schemes','Kochi Metro corridor marketing'],
+    actions:['Evening OPD clinics (Chairman\'s FY26 priority)','Corporate tie-ups with Kochi MNCs & IT companies','Digital marketing: Google/Maps SEO for "hospital near me"','Emergency response time improvement vs competitors'],
+    vpsBridge:'VPS is in Maradu — slightly off-centre. Must actively pull from city core.',competitor:'Lisie & Medical Trust have city-centre legacy. Aster Medcity has scale.'},
+  "Maradu/Nettoor":{priority:'critical',estPotential:'500+ (defend home turf)',
+    channels:['VPS immediate neighbourhood — must dominate','Residential colony outreach','School & college health tie-ups','Local GP referral network'],
+    actions:['Community health camps every quarter in Maradu/Nettoor','Free health check-up cards for local residents','Local GP dinner-meetings with VPS department heads','Sponsor local events & festivals for brand visibility'],
+    vpsBridge:'THIS IS HOME. 6% of VPS patients. Must be 10%+. Any loss here is brand damage.',competitor:'No direct competitor in immediate vicinity. But Aster/AIMS pull from here.'},
+  "Edappally":{priority:'medium',estPotential:'200+ additional referrals/yr',
+    channels:['Metro-connected hub — Lulu Mall corridor','AIMS Kochi core catchment (tough to penetrate)','IT professionals (Kakkanad overflow)'],
+    actions:['Billboard/Metro advertising Edappally-Maradu corridor','Tie-up with Lulu Mall for health awareness stalls','GP liaison in Edappally, Palarivattom area'],
+    vpsBridge:'AIMS dominates here. VPS must differentiate on specialty — transplant & nephrology.',competitor:'AIMS is walking distance. Aster Medcity nearby. Very competitive zone.'},
+  "Aluva":{priority:'medium',estPotential:'200+ additional referrals/yr',
+    channels:['Northern gateway — rail junction','Cochin Airport proximity (international patient entry point)','Rajagiri\'s stronghold — tough market'],
+    actions:['Airport advertising for incoming international patients','Aluva rail station branding','Compete on tertiary specialties Rajagiri doesn\'t offer (transplant, advanced oncology)'],
+    vpsBridge:'Rajagiri dominates Aluva (8% vs VPS 3%). Focus on specialties they lack.',competitor:'Rajagiri Hospital is literally in Aluva. AIMS also strong.'},
+  "Kakkanad":{priority:'high',estPotential:'300+ additional referrals/yr',
+    channels:['IT hub — Infopark, SmartCity','Young professional demographic — ortho, cardiac screening','Corporate health packages','Fastest-growing local zone'],
+    actions:['Corporate health tie-ups with Infopark companies','Executive health check-up packages for IT professionals','Ortho & sports medicine marketing to young professionals','Shuttle service from Kakkanad to VPS'],
+    vpsBridge:'Fast-growing IT population = future patient base. Invest now, harvest for 20 years.',competitor:'AIMS closest. Aster strong. Rajagiri gains via proximity. VPS must actively push.'},
+  "Perumbavoor":{priority:'low',estPotential:'100+ additional referrals/yr',
+    channels:['Eastern Ernakulam — growing industrial area','Migrant worker health services','Rajagiri stronghold'],
+    actions:['Industrial health camp partnerships','Migrant worker health outreach (corporate CSR angle)'],
+    vpsBridge:'Rajagiri dominates eastern corridor. Niche effort only.',competitor:'Rajagiri (5%) vs VPS (3%). Hard to displace.'},
+  "Angamaly":{priority:'medium',estPotential:'150+ additional referrals/yr',
+    channels:['CIAL Airport gateway — first touchpoint for international patients','Growing residential area','Kalady pilgrimage corridor'],
+    actions:['Airport lounge advertising + VPS information desk','Angamaly GP network liaison','International patient airport pickup service branding'],
+    vpsBridge:'Airport = international patient gateway. VPS branding here catches Gulf arrivals.',competitor:'Rajagiri closest hospital. AIMS accessible. All compete for airport corridor.'},
+  "Muvattupuzha":{priority:'low',estPotential:'80+ additional referrals/yr',
+    channels:['Eastern commercial centre','Rubber/spice industry workers','Rajagiri catchment'],
+    actions:['Specialty-only outreach (transplant, oncology)','Muvattupuzha MC overflow capture'],
+    vpsBridge:'Too far east for routine care. Focus on complex cases only.',competitor:'Rajagiri leads. AIMS competes. Local hospitals handle most cases.'},
+  "Tripunithura":{priority:'medium',estPotential:'150+ additional referrals/yr',
+    channels:['Historical suburb — affluent residential areas','Tripunithura temple festival corridor','Proximity to VPS (short drive)'],
+    actions:['Community health camps during Onam & temple festival','Door-to-door screening drives in residential colonies','GP liaison in Tripunithura, Thrikkakara area'],
+    vpsBridge:'Close to VPS. Should be a stronghold but share is split evenly. Room to grow.',competitor:'Even competition — all Kochi hospitals draw from here.'},
+  "Vypin/Cherai":{priority:'low',estPotential:'50+ additional referrals/yr',
+    channels:['Island communities — fishing industry','Limited local healthcare','Tourism corridor (Cherai Beach)'],
+    actions:['Fishermen community health camps','Mobile medical van stop'],
+    vpsBridge:'Underserved islands. Low volume but community goodwill value.',competitor:'Lisie & Medical Trust have traditional presence here.'},
+  // ── REMAINING DOMESTIC ──
+  "Delhi NCR":{priority:'low',estPotential:'50+ additional referrals/yr',
+    channels:['CGHS beneficiaries','Keralite civil servants','NRI Gulf stopovers'],
+    actions:['CGHS empanelment maintenance','Delhi Malayali association outreach'],
+    vpsBridge:'Very niche. Delhi has its own world-class hospitals.',competitor:'Apollo, Fortis, Max, Medanta dominate. Only brand loyalty pulls to VPS.'},
+  "Andaman & Nicobar":{priority:'medium',estPotential:'100+ additional referrals/yr',
+    channels:['Medical evacuations — no cardiac/transplant locally','Navy medical referrals','Govt contract opportunity'],
+    actions:['Bid for A&N medical evacuation contract','Telemedicine link with Port Blair hospital'],
+    vpsBridge:'Similar to Lakshadweep. No local tertiary = captive referral.',competitor:'Chennai hospitals (Apollo, SIMS) compete. VPS must offer Kochi as alternative.'},
+  "NE India":{priority:'low',estPotential:'50+ additional referrals/yr',
+    channels:['Transplant & oncology referrals via air','Kolkata competition dominant'],
+    actions:['Transplant outcome marketing to NE nephrologists','Guwahati Keralite association partnership'],
+    vpsBridge:'Long shot. Kolkata is closer. Only VPS transplant brand can pull.',competitor:'Kolkata hospitals dominate NE India corridor.'},
+  "Bangladesh":{priority:'low',estPotential:'Minimal (visa barriers)',
+    channels:['FTA ↓67% — structurally disrupted','Kerala share already tiny (NE India dominant)'],
+    actions:['No active investment recommended','Monitor visa policy changes'],
+    vpsBridge:'Not a VPS opportunity. Kolkata/Chennai handle Bangladesh MVT.',competitor:'N/A — structural barrier.'},
+  "Afghanistan":{priority:'low',estPotential:'Minimal (visa + security)',
+    channels:['Visa barriers','Security/connectivity issues','Low Kerala share'],
+    actions:['No active investment recommended'],
+    vpsBridge:'Not addressable from Kochi.',competitor:'Delhi hospitals dominate Afghanistan corridor.'},
+  "Iran (Tehran)":{priority:'low',estPotential:'Minimal (conflict disruption)',
+    channels:['Air traffic disrupted 2025','Cardiac & oncology demand exists','Via Dubai hub only'],
+    actions:['Maintain Burjeel Dubai as indirect channel','Monitor air route restoration'],
+    vpsBridge:'If air routes restore, Burjeel Dubai is the natural conduit.',competitor:'Turkey is the dominant competitor for Iranian MVT.'},
+  "Yemen (Aden)":{priority:'medium',estPotential:'100+ (conflict dependent)',
+    channels:['Southern Yemen — via Gulf hubs','Complex surgical cases'],
+    actions:['Same as Sana\'a — Burjeel Dubai hub strategy'],
+    vpsBridge:'Burjeel Dubai is the transit hub for all Yemen MVT.',competitor:'Aster slightly ahead. Chennai hospitals compete.'},
+  "Iraq (Kurdistan/Erbil)":{priority:'medium',estPotential:'100+ additional referrals/yr',
+    channels:['More stable than Baghdad','Oncology focus','Kurdish diaspora in UAE'],
+    actions:['Partner with Erbil medical facilitators via Dubai','Kurdish-language outreach via Burjeel network'],
+    vpsBridge:'Kurdistan more stable. Burjeel can serve as referral bridge.',competitor:'Delhi & Chennai hospitals dominate.'},
+  "Bahrain":{priority:'low',estPotential:'50+ additional referrals/yr',
+    channels:['Small Gulf state','VPS testimonial-confirmed','Kerala community'],
+    actions:['Bahrain Keralite association partnership','Teleconsult tie-up'],
+    vpsBridge:'Small volume. Maintain relationship.',competitor:'Limited competition.'},
+};
+
+// ════════════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════════════
+let sel='vps', activeSpec='all';
+let lyrs={local:true,kerala:true,domestic:true,international:true};
+let mapX=0,mapY=0,zoom=1,dragging=false,dragSX=0,dragSY=0,dragMX=0,dragMY=0;
+let animTime=0,animId,hoveredOrigin=null;
+let selectedOrigin=null; // for strategy panel
+
+// ════════════════════════════════════════════════════════
+// CANVAS
+// ════════════════════════════════════════════════════════
+const cvs=document.getElementById('cvs');
+const ctx=cvs.getContext('2d');
+let W,H;
+
+// ════════════════════════════════════════════════════════
+// D3 PROJECTION — single source of truth for all coordinates
+// ════════════════════════════════════════════════════════
+const mapSvgEl = document.getElementById('mapSvg');
+const mapSvgD3 = d3.select('#mapSvg');
+let d3Proj = d3.geoMercator();
+let worldGeoData = null;
+let indiaGeoData = null; // Official India boundary (Highcharts map collection)
+
+function updateProjection(){
+  // Mirror the Mercator math to D3: D3 scale = pixels/degree * (180/π)
+  d3Proj = d3.geoMercator()
+    .scale(zoom * 3.8 * 180 / Math.PI)
+    .center([76.3 + mapX, 15 + mapY])
+    .translate([W/2, H/2]);
+}
+
+function proj(lat,lng){
+  const pt = d3Proj([lng, lat]);
+  return pt || [0, 0];
+}
+
+function resize(){
+  // NOTE: never use cvs.offsetWidth/Height — canvas default intrinsic
+  // size is 300×150 which is truthy and breaks the || fallback.
+  // Always compute from window dimensions directly.
+  const isMob = window.innerWidth <= 900;
+  const hdrH = isMob
+    ? (parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hdr-h')) || 80)
+    : 0;
+  const tabH = isMob ? 48 : 0;
+  W = window.innerWidth;
+  H = window.innerHeight - hdrH - tabH;
+  cvs.width = W;
+  cvs.height = H;
+  mapSvgEl.setAttribute('width', W);
+  mapSvgEl.setAttribute('height', H);
+  renderMap();
+}
+window.addEventListener('resize', ()=>{resize(); draw()});
+resize();
+
+// ════════════════════════════════════════════════════════
+// D3 MAP RENDERING
+// ════════════════════════════════════════════════════════
+// Kerala state outline (TopoJSON only has country level)
+const KERALA_PTS=[
+  [8.3,76.9],[8.5,77.0],[8.8,76.9],[9.0,76.7],[9.5,76.5],
+  [10.0,76.3],[10.5,76.3],[10.8,76.2],[11.2,76.1],[11.7,75.9],
+  [12.0,75.7],[12.2,75.5],[12.5,75.2],[12.2,75.0],[12.0,74.9],
+  [11.5,75.2],[11.0,75.6],[10.5,75.9],[10.0,76.0],[9.5,76.1],
+  [9.0,76.2],[8.5,76.5],[8.3,76.9]
+];
+
+function renderMap(){
+  updateProjection();
+  const pathGen = d3.geoPath().projection(d3Proj);
+
+  mapSvgD3.selectAll('*').remove();
+  // Ocean background
+  mapSvgD3.append('rect').attr('width',W).attr('height',H).attr('fill','#c8dff0');
+  // Subtle graticule
+  const grat = d3.geoGraticule().step([5,5]);
+  mapSvgD3.append('path').datum(grat()).attr('fill','none')
+    .attr('stroke','rgba(0,60,140,.06)').attr('stroke-width',0.5).attr('d',pathGen);
+
+  if(!worldGeoData){return;}
+
+  const countries = topojson.feature(worldGeoData, worldGeoData.objects.countries);
+
+  // Highlight countries in the patient-flow region with a slightly warmer tone
+  const highlightIds = new Set(['356','586','144','784','682','512','887','368','364','414','634','048','462','004','706','404','566','826','124','840','036','050','760','760']);
+  
+  // All land — beige
+  mapSvgD3.append('g').selectAll('path')
+    .data(countries.features)
+    .join('path')
+    .attr('fill', d => highlightIds.has(String(d.id)) ? '#f0e8d5' : '#ede8de')
+    .attr('stroke','#a0b8c8')
+    .attr('stroke-width', d => String(d.id)==='356' ? 1.5 : 0.5)
+    .attr('d', pathGen);
+
+  // India — prefer official boundary from Highcharts map collection (Survey of India claim)
+  // Falls back to world-atlas if the official source failed to load
+  if(indiaGeoData){
+    try{
+      const objKey=Object.keys(indiaGeoData.objects)[0];
+      const geoms=indiaGeoData.objects[objKey].geometries;
+      const mergedGeom=topojson.merge(indiaGeoData, geoms);
+      mapSvgD3.append('path')
+        .datum({type:'Feature',geometry:mergedGeom})
+        .attr('fill','#ede8d8').attr('stroke','#7a9aac').attr('stroke-width',1.5)
+        .attr('d',pathGen);
+    }catch(e){
+      console.warn('India official render failed',e);
+      const india=countries.features.find(f=>String(f.id)==='356');
+      if(india) mapSvgD3.append('path').datum(india)
+        .attr('fill','#ede8d8').attr('stroke','#7a9aac').attr('stroke-width',1.5).attr('d',pathGen);
+    }
+  } else {
+    const india=countries.features.find(f=>String(f.id)==='356');
+    if(india) mapSvgD3.append('path').datum(india)
+      .attr('fill','#ede8d8').attr('stroke','#7a9aac').attr('stroke-width',1.5).attr('d',pathGen);
+  }
+
+  // Kerala green overlay (state level from custom polygon)
+  if(zoom>=0.5){
+    const keralaPts = KERALA_PTS.map(([la,ln])=>d3Proj([ln,la])).filter(Boolean);
+    if(keralaPts.length){
+      const kPath = 'M'+keralaPts.map(p=>p.join(',')).join('L')+'Z';
+      mapSvgD3.append('path').attr('d',kPath)
+        .attr('fill','#d5eac8').attr('stroke','#5a9a40').attr('stroke-width',1.8);
+    }
+  }
+
+  // Country borders (internal borders only)
+  const borders = topojson.mesh(worldGeoData, worldGeoData.objects.countries, (a,b)=>a!==b);
+  mapSvgD3.append('path').datum(borders)
+    .attr('fill','none').attr('stroke','#a0b8c8').attr('stroke-width',0.4).attr('d',pathGen);
+}
+
+async function initMap(){
+  // Load world atlas and official India boundary in parallel
+  const worldP = d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json')
+    .catch(()=>null);
+  // Highcharts map-collection: India all states — Survey of India official claim
+  // Includes J&K, Ladakh, Aksai Chin, and all territories per GoI
+  const indiaP = d3.json('https://cdn.jsdelivr.net/npm/@highcharts/map-collection@2.2.0/countries/in/in-all.topo.json')
+    .catch(()=>null);
+  [worldGeoData, indiaGeoData] = await Promise.all([worldP, indiaP]);
+  renderMap();
+}
+
+// Pan & zoom — update both SVG map and canvas
+cvs.addEventListener('mousedown',e=>{
+  // Only start drag if clicking on canvas itself, not on panels/header
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  if(el && (el.closest('.pnl') || el.closest('.hdr'))){return;}
+  dragging=true;dragSX=e.clientX;dragSY=e.clientY;dragMX=mapX;dragMY=mapY;
+});
+window.addEventListener('mousemove',e=>{
+  if(dragging){
+    mapX=dragMX+(e.clientX-dragSX)/(zoom*3.8);
+    mapY=dragMY-(e.clientY-dragSY)/(zoom*3.8);
+    renderMap(); draw();
+  }
+  handleHover(e.clientX,e.clientY);
+});
+window.addEventListener('mouseup',()=>{dragging=false});
+cvs.addEventListener('wheel',e=>{
+  // Only zoom the map if the wheel event is over the canvas (not a panel)
+  const el = document.elementFromPoint(e.clientX, e.clientY);
+  if(el && el.closest('.pnl')){return;} // let panels scroll naturally
+  if(el && el.closest('.hdr')){return;} // let header scroll naturally
+  e.preventDefault();
+  const d=e.deltaY>0?.92:1.08;
+  zoom=Math.max(.3,Math.min(14,zoom*d));
+  renderMap(); draw();
+},{passive:false});
+let lastTD=0;
+let touchOnPanel=false;
+cvs.addEventListener('touchstart',e=>{
+  const el=document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY);
+  touchOnPanel=!!(el&&(el.closest('.pnl')||el.closest('.hdr')||el.closest('.mob-pnl')||el.closest('.mob-tabs')));
+  if(touchOnPanel)return;
+  if(e.touches.length===1){
+    dragging=true;
+    dragSX=e.touches[0].clientX;dragSY=e.touches[0].clientY;
+    dragMX=mapX;dragMY=mapY;
+  }
+  if(e.touches.length===2){
+    dragging=false; // stop single-finger pan when pinch begins
+    lastTD=Math.hypot(
+      e.touches[0].clientX-e.touches[1].clientX,
+      e.touches[0].clientY-e.touches[1].clientY
+    );
+  }
+},{passive:true});
+cvs.addEventListener('touchmove',e=>{
+  if(touchOnPanel)return;
+  if(e.touches.length===1&&dragging){
+    mapX=dragMX-(e.touches[0].clientX-dragSX)/(zoom*3.8);
+    mapY=dragMY+(e.touches[0].clientY-dragSY)/(zoom*3.8);
+    renderMap();draw();
+  }
+  if(e.touches.length===2&&lastTD>0){
+    const d=Math.hypot(
+      e.touches[0].clientX-e.touches[1].clientX,
+      e.touches[0].clientY-e.touches[1].clientY
+    );
+    if(d>10){
+      const factor=d/lastTD;
+      if(factor>0.8&&factor<1.25){
+        zoom=Math.max(.3,Math.min(14,zoom*factor));
+        renderMap();draw();
+      }
+      lastTD=d;
+    }
+  }
+},{passive:true});
+cvs.addEventListener('touchend',e=>{
+  touchOnPanel=false;
+  if(e.touches.length===0){
+    dragging=false;
+    lastTD=0;
+  } else if(e.touches.length===1){
+    // one finger left after pinch — restart single-finger pan from current position
+    dragging=true;
+    dragSX=e.touches[0].clientX;dragSY=e.touches[0].clientY;
+    dragMX=mapX;dragMY=mapY;
+    lastTD=0;
+  }
+});
+
+// ════════════════════════════════════════════════════════
+// CANVAS ARC & DOT RENDERING
+// ════════════════════════════════════════════════════════
+function drawArc(x1,y1,x2,y2,color,width,alpha,progress,dashed=false){
+  const mx=(x1+x2)/2,my=(y1+y2)/2;
+  const dx=x2-x1,dy=y2-y1;
+  const dist=Math.sqrt(dx*dx+dy*dy);
+  const curve=Math.min(dist*.38,140);
+  const cx=mx-dy/dist*curve,cy=my+dx/dist*curve;
+  ctx.save();
+  ctx.globalAlpha=alpha;
+  ctx.strokeStyle=`rgb(${color[0]},${color[1]},${color[2]})`;
+  ctx.lineWidth=width;
+  ctx.lineCap='round';
+  if(dashed)ctx.setLineDash([4,6]);
+  ctx.beginPath();
+  const steps=60,end=Math.floor(steps*progress);
+  for(let i=0;i<=end;i++){
+    const t=i/steps;
+    const px=(1-t)*(1-t)*x1+2*(1-t)*t*cx+t*t*x2;
+    const py=(1-t)*(1-t)*y1+2*(1-t)*t*cy+t*t*y2;
+    i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.globalAlpha=alpha*.14;
+  ctx.lineWidth=width+3;
+  ctx.filter='blur(3px)';
+  ctx.stroke();
+  ctx.filter='none';
+  ctx.restore();
+}
+
+function specMatch(origin){
+  if(activeSpec==='all')return true;
+  return origin.spec&&(origin.spec.includes(activeSpec)||origin.spec.includes('all'));
+}
+
+function draw(){
+  updateProjection(); // Keep D3 projection in sync
+  ctx.clearRect(0,0,W,H);
+  // Canvas is transparent — SVG layer handles map background & geography
+  // Kerala label on canvas (rendered after SVG)
+  if(zoom>=0.6){
+    const[kx,ky]=proj(10.2,76.1);
+    ctx.font='700 9px Inter';ctx.fillStyle='rgba(50,120,30,.9)';
+    // Halo
+    ctx.fillStyle='rgba(255,255,255,.7)';
+    [-1,1,0,0].forEach((dx,i)=>{const dy=[0,0,-1,1][i];ctx.fillText('KERALA',kx-10+dx,ky+dy)});
+    ctx.fillStyle='rgba(50,110,25,.85)';
+    ctx.fillText('KERALA',kx-10,ky);
+  }
+  if(zoom>=0.7){
+    const[gx,gy]=proj(25,52);
+    ctx.font='500 8px Inter';ctx.fillStyle='rgba(0,70,120,.5)';
+    ctx.fillText('Arabian Sea',gx-22,gy);
+  }
+
+  const hosp=HOSPS.find(h=>h.id===sel);
+  const[hx,hy]=proj(hosp.lat,hosp.lng);
+  const progress=Math.min(1,animTime/70);
+
+  // Arcs
+  O.forEach(o=>{
+    const pct=o[sel]||0;
+    if(pct<=0||!lyrs[o.t])return;
+    const matched=specMatch(o);
+    const[ox,oy]=proj(o.lat,o.lng);
+    const w=Math.max(.5,pct*.65);
+    let a=Math.min(.88,.18+pct/10);
+    if(!matched)a*=.08;
+    const isAlert=!!o.alert;
+    const c=isAlert&&matched?[184,120,0]:COLORS[o.t];
+    drawArc(ox,oy,hx,hy,c,w,a,progress,isAlert&&matched);
+  });
+
+  // Origin dots
+  O.forEach(o=>{
+    const pct=o[sel]||0;
+    if(pct<=0||!lyrs[o.t])return;
+    const matched=specMatch(o);
+    const[ox,oy]=proj(o.lat,o.lng);
+    const r=Math.max(2,Math.min(9,pct*.85));
+    const isAlert=!!o.alert;
+    const isHovered=o===hoveredOrigin;
+    let c=COLORS[o.t];
+    if(!matched){
+      // Dim unmatched
+      ctx.globalAlpha=.15;
+      ctx.beginPath();ctx.arc(ox,oy,r,0,Math.PI*2);
+      ctx.fillStyle=`rgb(${c[0]},${c[1]},${c[2]})`;ctx.fill();
+      ctx.globalAlpha=1;return;
+    }
+    // Alert pulse
+    if(isAlert){
+      const pulse=.4+.4*Math.sin(animTime*.12+o.lat);
+      ctx.save();ctx.globalAlpha=.25+pulse*.2;
+      ctx.beginPath();ctx.arc(ox,oy,r+6+pulse*4,0,Math.PI*2);
+      ctx.strokeStyle='#C8103E';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.restore();
+    }
+    // Hover highlight
+    if(isHovered){
+      ctx.save();ctx.globalAlpha=.3;
+      ctx.beginPath();ctx.arc(ox,oy,r+8,0,Math.PI*2);
+      ctx.fillStyle=`rgb(${c[0]},${c[1]},${c[2]})`;
+      ctx.filter='blur(6px)';ctx.fill();ctx.filter='none';
+      ctx.restore();
+    }
+    // Subtle glow (toned down for light bg)
+    ctx.save();ctx.globalAlpha=matched?.15:.04;
+    ctx.beginPath();ctx.arc(ox,oy,r+3,0,Math.PI*2);
+    ctx.fillStyle=`rgb(${c[0]},${c[1]},${c[2]})`;
+    ctx.filter='blur(3px)';ctx.fill();ctx.filter='none';ctx.restore();
+    // Main dot with white outline for clarity
+    ctx.beginPath();ctx.arc(ox,oy,r+1.5,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.7)';ctx.fill();
+    ctx.beginPath();ctx.arc(ox,oy,r,0,Math.PI*2);
+    const dotColor=isAlert?'#C8103E':`rgb(${c[0]},${c[1]},${c[2]})`;
+    ctx.fillStyle=dotColor;ctx.fill();
+    // Labels — dark on light background
+    if((pct>=2.5||isHovered)&&zoom>=.75){
+      const lbl=o.n;
+      const fs=isHovered?10:8.5;
+      ctx.font=`${isHovered?'600':'500'} ${fs}px Inter,sans-serif`;
+      // White text shadow for readability
+      ctx.fillStyle='rgba(255,255,255,.85)';
+      ctx.fillText(lbl,ox+r+4,oy+3.5);ctx.fillText(lbl,ox+r+2,oy+3.5);
+      ctx.fillText(lbl,ox+r+3,oy+2.5);ctx.fillText(lbl,ox+r+3,oy+4.5);
+      ctx.fillStyle=isAlert?'#9a3000':`rgba(${Math.max(0,c[0]-50)},${Math.max(0,c[1]-50)},${Math.max(0,c[2]-50)},1)`;
+      ctx.fillText(lbl,ox+r+3,oy+3.5);
+    }
+    // District bed shortage labels
+    if(o.t==='kerala'&&zoom>=1.5){
+      const bedShortage={'Idukki':1096,'Wayanad':1367,'Kasaragod':1087};
+      if(bedShortage[o.n]){
+        ctx.font='500 7.5px Inter,sans-serif';
+        ctx.fillStyle='rgba(160,96,0,.8)';
+        ctx.fillText(`${bedShortage[o.n]} beds`,ox+r+3,oy+14);
+      }
+    }
+  });
+
+  // Other hospitals (greyed)
+  HOSPS.forEach(h=>{
+    if(h.id===sel)return;
+    const[x,y]=proj(h.lat,h.lng);
+    ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);
+    ctx.fillStyle='rgba(255,255,255,.8)';ctx.fill();
+    ctx.beginPath();ctx.arc(x,y,3,0,Math.PI*2);
+    ctx.fillStyle='rgba(90,130,160,.5)';ctx.fill();
+  });
+
+  // Selected hospital pulsing dot
+  const pulse=.5+.5*Math.sin(animTime*.07);
+  [[22+pulse*10,.12],[14+pulse*5,.1],[8+pulse*3,.09]].forEach(([r,a])=>{
+    ctx.save();ctx.globalAlpha=a+pulse*.06;
+    ctx.beginPath();ctx.arc(hx,hy,r,0,Math.PI*2);
+    ctx.strokeStyle='#0072BC';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.restore();
+  });
+  ctx.beginPath();ctx.arc(hx,hy,6.5,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,.9)';ctx.fill();
+  ctx.beginPath();ctx.arc(hx,hy,5,0,Math.PI*2);
+  ctx.fillStyle=hosp.color;ctx.fill();
+  // Hospital label with white halo
+  ctx.font='700 12px Inter,sans-serif';
+  ['rgba(255,255,255,.9)','rgba(255,255,255,.9)','rgba(255,255,255,.9)','rgba(255,255,255,.9)'].forEach((_,i)=>{
+    const dx=[-1,1,0,0][i],dy=[0,0,-1,1][i];
+    ctx.fillStyle='rgba(255,255,255,.9)';ctx.fillText(hosp.name,hx+10+dx,hy-8+dy);
+  });
+  ctx.fillStyle=hosp.color;
+  ctx.fillText(hosp.name,hx+10,hy-8);
+  ctx.font='400 8.5px Inter,sans-serif';
+  ctx.fillStyle='rgba(255,255,255,.8)';ctx.fillText(`${hosp.beds} beds · Kochi`,hx+11,hy+4);ctx.fillText(`${hosp.beds} beds · Kochi`,hx+9,hy+4);
+  ctx.fillStyle='#2a4a60';ctx.fillText(`${hosp.beds} beds · Kochi`,hx+10,hy+4);
+}
+
+function animate(){animTime++;draw();animId=requestAnimationFrame(animate)}
+
+// ════════════════════════════════════════════════════════
+// TOOLTIP
+// ════════════════════════════════════════════════════════
+const tip=document.getElementById('tip');
+function hitTest(mx,my){
+  let found=null,minDist=24;
+  O.forEach(o=>{
+    const pct=o[sel]||0;
+    if(pct<=0||!lyrs[o.t])return;
+    const[ox,oy]=proj(o.lat,o.lng);
+    const dist=Math.sqrt((mx-ox)**2+(my-oy)**2);
+    if(dist<minDist){minDist=dist;found=o}
+  });
+  return found;
+}
+
+function handleHover(mx,my){
+  const o=hitTest(mx,my);
+  if(o!==hoveredOrigin){hoveredOrigin=o}
+  if(!o){tip.classList.remove('vis');return}
+  const pct=o[sel]||0;
+  const specLabels=(o.spec&&o.spec[0]!=='all')?o.spec.map(s=>SPECS.find(x=>x.id===s)?.label||s):['All specialties'];
+  const tClass=o.trendDir||'neu';
+  const c=COLORS[o.t];
+  const dotClr=o.alert?'#E8A838':`rgb(${c[0]},${c[1]},${c[2]})`;
+  // Source logic per origin type
+  let tipSrc;
+  if(o.alert){tipSrc='Economic Times Mar 2025 · ICRIER 2025'}
+  else if(o.n.includes('UAE')||o.n.includes('Abu Dhabi')){tipSrc='VPS Annual Report FY25 · VPS/Burjeel corporate pipeline'}
+  else if(o.t==='international'&&(o.n.includes('Maldives')||o.n.includes('Gulf')||o.n.includes('Oman')||o.n.includes('Kuwait'))){tipSrc='VPS AR FY25 · ICRIER 2025 · Grant Thornton Medical Tourism 2015'}
+  else if(o.t==='international'){tipSrc='Grant Thornton India Medical Tourism Report 2015 · ICRIER 2025'}
+  else if(o.t==='domestic'){tipSrc='ICRIER 2025 · National Health Systems Resource Centre (NHSRC)'}
+  else if(o.t==='kerala'){tipSrc='Kerala Health Atlas 2022 · VPS Lakeshore operational data FY25'}
+  else{tipSrc='VPS Lakeshore catchment analysis · Field data FY25'}
+  tip.innerHTML=`
+    <div class="tip-name" style="color:${dotClr}">${o.n}</div>
+    <div class="tip-pct">${pct}%</div>
+    <div class="tip-pct-lbl">of ${HOSPS.find(h=>h.id===sel).name} patients</div>
+    <div class="tip-d">${o.d}</div>
+    <div class="tip-specs">${specLabels.map(s=>`<span class="tip-sp">${s}</span>`).join('')}</div>
+    <span class="tip-t ${tClass}">${o.trendLabel||'Stable'}</span>
+    <div style="margin-top:6px;padding-top:5px;border-top:1px solid #e0eaf3;font-size:7px;color:#8aabb8;line-height:1.5">
+      <span style="opacity:.6">⊙ </span>${tipSrc}
+    </div>
+    ${STRATEGY[o.n]?'<div style="margin-top:4px;font-size:8px;color:#0072BC;font-weight:600;cursor:pointer">▸ Click for Chairman\'s Strategy Brief</div>':''}`;
+  const tx=Math.min(mx+16,window.innerWidth-230);
+  const ty=Math.min(my-10,window.innerHeight-220);
+  tip.style.left=tx+'px';tip.style.top=ty+'px';
+  tip.classList.add('vis');
+}
+
+// ════════════════════════════════════════════════════════
+// STRATEGY PANEL — Chairman's Referral Playbook
+// ════════════════════════════════════════════════════════
+function openStrat(origin){
+  const s=STRATEGY[origin.n];
+  if(!s)return;
+  selectedOrigin=origin;
+  const panel=document.getElementById('stratPanel');
+  const priCls='pri-'+(s.priority||'medium');
+  document.getElementById('stratTitle').innerHTML=
+    `<span style="color:${COLHEX[origin.t]||'#0072BC'}">⬤</span> ${origin.n} — Referral Strategy `+
+    `<span class="pri ${priCls}">${s.priority} priority</span>`;
+  const pct=origin[sel]||0;
+  let html=`
+    <div class="strat-col channels">
+      <h4>Referral Channels</h4>
+      ${(s.channels||[]).map(c=>`<div class="strat-item">${c}</div>`).join('')}
+      <div class="strat-pot">Est. Potential: ${s.estPotential||'N/A'}</div>
+    </div>
+    <div class="strat-col actions">
+      <h4>Recommended Actions</h4>
+      ${(s.actions||[]).map(a=>`<div class="strat-item action">▸ ${a}</div>`).join('')}
+    </div>
+    <div class="strat-col bridge" style="grid-column:1/-1">
+      <h4>VPS Strategic Advantage</h4>
+      <div class="strat-bridge">${s.vpsBridge||'No specific VPS advantage identified.'}</div>
+    </div>`;
+  if(s.competitor){
+    html+=`<div class="strat-col compete" style="grid-column:1/-1">
+      <h4>Competitive Landscape</h4>
+      <div class="strat-compete">${s.competitor}</div>
+    </div>`;
+  }
+  document.getElementById('stratBody').innerHTML=html;
+  panel.classList.add('open');
+}
+
+function closeStrat(){
+  document.getElementById('stratPanel').classList.remove('open');
+  selectedOrigin=null;
+}
+
+// Click on canvas to open strategy for hovered origin
+cvs.addEventListener('click',e=>{
+  const el=document.elementFromPoint(e.clientX,e.clientY);
+  if(el && (el.closest('.pnl')||el.closest('.hdr')||el.closest('#stratPanel')))return;
+  const o=hitTest(e.clientX,e.clientY);
+  if(o && STRATEGY[o.n]){
+    openStrat(o);
+    tip.classList.remove('vis');
+  } else {
+    closeStrat();
+  }
+});
+
+// ════════════════════════════════════════════════════════
+// UI RENDERS
+// ════════════════════════════════════════════════════════
+function renderKPIs(){
+  const h=HOSPS.find(h=>h.id===sel);
+  const confirmed=h.id==='vps'||h.id==='aster';
+  const estSrc='Industry estimate (not audited)';
+  const cards=[
+    {v:h.stats.opd,l:'OPD / year',s:h.yoy.opd+' YoY',cls:'pos',
+     src:confirmed?(h.id==='vps'?'VPS Lakeshore 29th AR FY25 (Audited)':'Aster DM Integrated AR FY25'):estSrc},
+    {v:h.stats.ipd,l:'Inpatients',s:h.yoy.ipd+' YoY',cls:'pos',
+     src:confirmed?(h.id==='vps'?'VPS Lakeshore 29th AR FY25 (Audited)':'Aster DM Integrated AR FY25'):estSrc},
+    {v:h.stats.intl,l:"Int'l Patients",s:h.yoy.intl+' YoY',cls:h.id==='vps'?'warn':'pos',vCls:h.id==='vps'?'amber':'grn',
+     src:confirmed?(h.id==='vps'?'VPS AR FY25: 18,820 OP + 373 IP (↓4% YoY)':'Aster DM AR FY25 (3.6 Mn+ patients co-wide)'):estSrc},
+    {v:h.stats.rev,l:'Revenue FY25',s:h.yoy.rev+' YoY',cls:'',
+     src:confirmed?(h.id==='vps'?'VPS AR FY25 (₹416 Cr, +3% YoY)':'Aster DM AR FY25 (₹4,138 Cr standalone, +12%)'):estSrc},
+    {v:h.stats.transplant,l:'Transplants',s:h.yoy.transplant+' YoY',cls:'pos',
+     src:confirmed?(h.id==='vps'?'VPS AR FY25: Nephrology, Renal & Liver':'Aster DM AR FY25: 575+ co-wide'):estSrc},
+    {v:confirmed&&h.id==='vps'?'₹39 Cr':'—',l:'Net Profit FY25',s:h.id==='vps'?'-11% vs FY24':'',cls:h.id==='vps'?'warn':'',vCls:h.id==='vps'?'amber':'',
+     src:h.id==='vps'?'VPS AR FY25: ₹39.08 Cr PAT (vs ₹43.89 Cr FY24). Revenue ₹504 Cr projected FY26.':estSrc},
+    {v:'↓67%',l:'Bangladesh FTA',s:'Nov–Dec 2024',cls:'warn',vCls:'amber',
+     src:'BusinessToday Mar 2025 · Ministry of Tourism (MoTA) data'},
+    {v:'↓25%',l:'Gulf MVT Revenue',s:'2025 conflict impact',cls:'danger',vCls:'red',
+     src:'Economic Times Mar 2025 · KIMSHEALTH Kerala forecast'},
+  ];
+  document.getElementById('kpiRow').innerHTML=cards.map(c=>
+    `<div class="kc ${c.cls}" title="${c.src}">
+      <span class="kv ${c.vCls||''}">${c.v}</span>
+      <span class="kl">${c.l}</span>
+      <span class="ks">${c.s}</span>
+      <span class="ksrc">${c.src}</span>
+    </div>`
+  ).join('');
+}
+
+function renderBtns(){
+  document.getElementById('hospBtns').innerHTML=HOSPS.map(h=>
+    `<button class="hb ${h.id===sel?'on':''}" data-id="${h.id}">
+      <span class="dot" style="background:${h.color}"></span>${h.name}<span class="beds">${h.beds}b</span>
+    </button>`).join('');
+  document.querySelectorAll('.hb').forEach(b=>b.onclick=()=>{
+    sel=b.dataset.id;animTime=0;
+    renderBtns();renderKPIs();updStats();updBars();updIntl();
+  });
+}
+
+function renderSpecTabs(){
+  document.getElementById('specTabs').innerHTML=SPECS.map(s=>
+    `<button class="stab ${s.id===activeSpec?'on':''}" data-spec="${s.id}" style="${s.id===activeSpec?`border-color:${s.color};color:${s.color}`:''}">${s.label}</button>`
+  ).join('');
+  document.querySelectorAll('.stab').forEach(b=>b.onclick=()=>{
+    activeSpec=b.dataset.spec;renderSpecTabs();updBars();draw();
+  });
+}
+
+function resetAllFilters(){
+  // Hospital → VPS
+  sel='vps';
+  // Specialty → all
+  activeSpec='all';
+  // Layers → all on
+  Object.keys(lyrs).forEach(k=>lyrs[k]=true);
+  document.querySelectorAll('[data-lyr]').forEach(cb=>cb.checked=true);
+  // Search → clear
+  clearOriginSearch();
+  // Sort → volume
+  barsSort='vol';
+  setBarsSort('vol');
+  // Re-render everything
+  renderKPIs();renderBtns();renderSpecTabs();updStats();updBars();updIntl();draw();
+}
+
+function renderAlerts(){
+  const alerts=[
+    {cls:'high',title:'VPS Int\'l Patients ↓4% FY25',
+     body:'International patients declined from 20,074 (FY24) to 19,193 (FY25). Gulf conflict & Bangladesh visa restrictions likely drivers. VPS launching Maldives OPD clinics (Malé & Mahibadhoo) to counter. (VPS 29th AR FY25)'},
+    {cls:'high',title:'Bangladesh FTA ↓67% Dec 2024',
+     body:'Visa restrictions caused ↓44% in Nov, ↓67% in Dec 2024. Bangladesh was 70% of India\'s MVT nationally. Kerala share already small — Kolkata most impacted. (BusinessToday Mar 2025)'},
+    {cls:'high',title:'Gulf Conflict — Yemen, Iraq, Iran',
+     body:'Middle East = ~25% India int\'l MVT revenue. Yemen/Iraq/Iran air routes disrupted. KIMSHEALTH Kerala expects 10–15% revenue decline. Manipal: \'many patients from Yemen & Oman\'. (ET Mar 2025)'},
+    {cls:'med',title:'Visa Barriers — Iraq, Yemen, Nigeria',
+     body:'ICRIER 2025: Iraq, Yemen & Nigeria lack access to India\'s e-medical visa, significantly limiting volumes despite high demand for oncology, cardiac & transplant care.'},
+    {cls:'good',title:'Aster–QCIL Blackstone Merger',
+     body:'Aster DM merging with Blackstone-backed QCIL (KIMSHEALTH, Evercare). Combined entity: 10,301 beds, top-3 hospital chain in India. Plans 3,300+ new beds. Aster Medcity adding 100 beds → ~950 total. (Aster DM AR FY25)'},
+    {cls:'good',title:'VPS FY26 Outlook: ₹504 Cr Revenue Target',
+     body:'VPS projects ₹504 Cr turnover and ₹98 Cr PBT for FY26. New OPD centres in Malappuram, Edappal & Fort Kochi. Mobile medical van launching Nov 2025. Robotic surgery expansion planned. (VPS AR FY25)'},
+  ];
+  document.getElementById('alerts').innerHTML=alerts.map(a=>
+    `<div class="al ${a.cls}"><div class="ah">${a.title}</div><p>${a.body}</p></div>`).join('');
+}
+
+function updStats(){
+  const h=HOSPS.find(h=>h.id===sel);
+  const badge=document.getElementById('metricBadge');
+  if(h.id==='vps'){badge.textContent='Confirmed FY25';badge.className='badge badge-pos'}
+  else if(h.id==='aster'){badge.textContent='Confirmed FY25';badge.className='badge badge-pos'}
+  else{badge.textContent='Estimated';badge.className='badge badge-warn'}
+  const statSrc = h.id==='vps'
+    ? '⊙ Source: VPS Lakeshore 29th Annual Report FY2024–25 (Audited)'
+    : h.id==='aster'
+    ? '⊙ Source: Aster DM Healthcare Integrated Annual Report FY2024–25 (Audited). Medcity-specific where available.'
+    : '⊙ Competitor figures are estimates. Not independently verified.';
+  document.getElementById('stats').innerHTML=`
+    <div class="sg">
+      <div class="sb"><div class="v">${h.stats.opd}</div><div class="l">OPD/yr</div><div class="yoy yoy-up">${h.yoy.opd}</div></div>
+      <div class="sb"><div class="v">${h.stats.ipd}</div><div class="l">IPD/yr</div><div class="yoy yoy-up">${h.yoy.ipd}</div></div>
+      <div class="sb"><div class="v">${h.stats.intl}</div><div class="l">Int'l Pts</div><div class="yoy yoy-up">${h.yoy.intl}</div></div>
+    </div>
+    <div style="margin-top:7px;padding:6px 7px;background:#f0f8ff;border-radius:4px;border:1px solid #c2dff0;font-size:8px;color:#4a6070;line-height:1.5">
+      ${h.highlight}
+    </div>
+    <div style="margin-top:5px;font-size:7px;color:#8aabb8;line-height:1.6;padding:4px 0">${statSrc}</div>`;
+}
+
+let barsSort='vol';     // 'vol' | 'trend' | 'alpha'
+let originQuery='';    // live search text
+
+function onOriginSearch(v){
+  originQuery=v.trim().toLowerCase();
+  document.getElementById('originClear').classList.toggle('vis',originQuery.length>0);
+  updBars();
+}
+function clearOriginSearch(){
+  originQuery='';
+  const inp=document.getElementById('originSearch');
+  if(inp){inp.value='';}
+  document.getElementById('originClear').classList.remove('vis');
+  updBars();
+}
+function setBarsSort(mode){
+  barsSort=mode;
+  ['Vol','Trend','Alpha'].forEach(m=>
+    document.getElementById('sort'+m)?.classList.toggle('on',m.toLowerCase()===mode));
+  updBars();
+}
+
+function updBars(){
+  let items=[...O].map(o=>({...o,pct:o[sel]||0}))
+    .filter(o=>o.pct>0&&lyrs[o.t]&&(activeSpec==='all'||specMatch(o)));
+  // Apply search filter
+  if(originQuery){
+    items=items.filter(o=>o.n.toLowerCase().includes(originQuery)||
+      (o.d&&o.d.toLowerCase().includes(originQuery)));
+  }
+  // Sort
+  if(barsSort==='vol')   items.sort((a,b)=>b.pct-a.pct);
+  else if(barsSort==='trend') items.sort((a,b)=>b.trend-a.trend);
+  else if(barsSort==='alpha') items.sort((a,b)=>a.n.localeCompare(b.n));
+  items=items.slice(0,18);
+  const mx=items[0]?.pct||1;
+  document.getElementById('bars').innerHTML=items.length
+    ? items.map(o=>{
+        const tc=o.trendDir||'neu';
+        const tl=o.trend>0.05?'↑':o.trend<-0.1?'↓':'↔';
+        return`<div class="oi">
+          <div class="oh"><span class="n">${o.n}</span>
+            <span class="oh-right">
+              <span class="trnd ${tc}">${tl}</span>
+              <span class="p">${o.pct}%</span>
+            </span>
+          </div>
+          <div class="ob"><div class="of" style="width:${o.pct/mx*100}%;background:${o.alert?'#E8A838':COLHEX[o.t]}"></div></div>
+        </div>`;}).join('')
+    : `<div style="font-size:10px;color:#8aabb8;padding:8px 0">No origins match "${originQuery}"</div>`;
+}
+
+function updIntl(){
+  const intl=O.filter(o=>o.t==='international').map(o=>({...o,p:o[sel]||0}))
+    .filter(o=>o.p>0).sort((a,b)=>b.p-a.p);
+  const mx=intl[0]?.p||1;
+  document.getElementById('intlBars').innerHTML=intl.map(o=>{
+    const tc=o.trendDir||'neu';
+    const tl=o.trend>0.05?'↑':o.trend<-0.1?'↓':'↔';
+    return`<div class="oi">
+      <div class="oh"><span class="n">${o.n}</span>
+        <span class="oh-right"><span class="trnd ${tc}">${tl}</span><span class="p">${o.p}%</span></span>
+      </div>
+      <div class="ob"><div class="of" style="width:${o.p/mx*100}%;background:${o.alert?'#E8A838':'#E85D5D'}"></div></div>
+    </div>`;}).join('');
+}
+
+function renderHospComp(){
+  const maxBeds=Math.max(...HOSPS.map(h=>h.beds));
+  document.getElementById('hospComp').innerHTML=HOSPS.map(h=>
+    `<div class="hc">
+      <div class="hc-name" style="color:${h.id===sel?h.color:'var(--gray)'}">${h.name}</div>
+      <div class="hc-bg"><div class="hc-bar" style="width:${h.beds/maxBeds*100}%;background:${h.color};opacity:${h.id===sel?1:.5}"></div></div>
+      <div class="hc-val">${h.beds.toLocaleString()}</div>
+    </div>`).join('');
+}
+
+// ════════════════════════════════════════════════════════
+// STRATEGY OVERVIEW — priority-ranked corridor list
+// ════════════════════════════════════════════════════════
+let stratFilter='all';
+const PRI_ORDER={critical:0,high:1,medium:2,low:3};
+const PRI_COLORS={critical:'#C8103E',high:'#b87800',medium:'#0072BC',low:'#8aabb8'};
+
+function renderStratOverview(){
+  const entries=Object.entries(STRATEGY)
+    .map(([name,s])=>{const origin=O.find(o=>o.n===name);return{name,origin,...s}})
+    .filter(e=>stratFilter==='all'||e.priority===stratFilter)
+    .sort((a,b)=>(PRI_ORDER[a.priority]||3)-(PRI_ORDER[b.priority]||3));
+  
+  const filters=['all','critical','high','medium','low'];
+  const counts={all:Object.keys(STRATEGY).length};
+  Object.values(STRATEGY).forEach(s=>{counts[s.priority]=(counts[s.priority]||0)+1});
+  
+  let html=`<div class="so-filter">${filters.map(f=>
+    `<button class="so-fbtn ${f===stratFilter?'on':''}" data-pf="${f}" onclick="stratFilter='${f}';renderStratOverview()">${f==='all'?'All':f.charAt(0).toUpperCase()+f.slice(1)} (${counts[f]||0})</button>`
+  ).join('')}</div>`;
+  
+  html+=entries.map(e=>{
+    const pct=e.origin?(e.origin[sel]||0):0;
+    return `<div class="so-item" onclick="openStratByName('${e.name.replace(/'/g,"\\'")}')">
+      <span class="so-pri" style="background:${PRI_COLORS[e.priority]||'#8aabb8'}"></span>
+      <span class="so-name">${e.name}</span>
+      <span class="so-pot">${e.estPotential?e.estPotential.split(' ')[0]:''}</span>
+    </div>`;
+  }).join('');
+  
+  document.getElementById('stratOverview').innerHTML=html;
+}
+
+function openStratByName(name){
+  const origin=O.find(o=>o.n===name);
+  if(origin && STRATEGY[name]){
+    openStrat(origin);
+  }
+}
+
+// Layer toggles
+document.querySelectorAll('[data-lyr]').forEach(cb=>{
+  cb.addEventListener('change',()=>{lyrs[cb.dataset.lyr]=cb.checked;updBars();updIntl();draw()});
+});
+
+// Adjust panel tops dynamically after header renders
+function adjustPanels(){
+  const hdrH=Math.round(document.querySelector('.hdr').getBoundingClientRect().height);
+  // Update CSS variable — drives canvas/SVG/mob-pnl top on mobile
+  document.documentElement.style.setProperty('--hdr-h', hdrH+'px');
+  // Desktop panels
+  const top=hdrH+6;
+  document.getElementById('panL').style.top=top+'px';
+  document.getElementById('panL').style.maxHeight=`calc(100vh - ${top+10}px)`;
+  document.getElementById('panR').style.top=top+'px';
+  document.getElementById('panR').style.maxHeight=`calc(100vh - ${top+10}px)`;
+  // Mobile: recalculate canvas now that --hdr-h is set
+  if(window.innerWidth<=900){ resize(); draw(); }
+}
+
+// ════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════
+renderKPIs();
+renderBtns();
+renderSpecTabs();
+renderAlerts();
+updStats();
+updBars();
+updIntl();
+renderHospComp();
+renderStratOverview();
+animate();
+initMap(); // Load world atlas data and render D3 map layer
+setTimeout(adjustPanels,100);
+setTimeout(adjustPanels,500);
+document.fonts&&document.fonts.ready&&document.fonts.ready.then(adjustPanels);
+window.addEventListener('resize',adjustPanels);
+
+// ════════════════════════════════════════════════════════
+// MOBILE — Tab switching & panel population
+// ════════════════════════════════════════════════════════
+let activeMobTab='map';
+
+function switchMobTab(tab){
+  activeMobTab=tab;
+  // Update tab buttons
+  document.querySelectorAll('.mob-tab').forEach(t=>{
+    t.classList.toggle('on',t.dataset.mob===tab);
+  });
+  // Hide all mobile panels
+  document.querySelectorAll('.mob-pnl').forEach(p=>p.classList.remove('open'));
+  // Show selected panel (map tab = no overlay, just the map)
+  if(tab!=='map'){
+    document.getElementById('mob'+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add('open');
+    populateMobPanel(tab);
+  }
+}
+
+function populateMobPanel(tab){
+  if(tab==='controls'){
+    const h=HOSPS.find(h=>h.id===sel);
+    const badge=h.id==='vps'||h.id==='aster'?'Confirmed FY25':'Estimated';
+    document.getElementById('mobControlsBody').innerHTML=`
+      <div class="sec">
+        <div class="sec-t">Select Hospital</div>
+        <div id="mobHospBtns"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-t">Specialty Filter</div>
+        <div class="spec-tabs" id="mobSpecTabs"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-t">Layer Controls</div>
+        <label class="tgl"><input type="checkbox" data-mlyr="local" ${lyrs.local?'checked':''}><div class="tbox"></div> Local (Ernakulam)</label>
+        <label class="tgl"><input type="checkbox" data-mlyr="kerala" ${lyrs.kerala?'checked':''}><div class="tbox"></div> Kerala Districts</label>
+        <label class="tgl"><input type="checkbox" data-mlyr="domestic" ${lyrs.domestic?'checked':''}><div class="tbox"></div> Other Indian States</label>
+        <label class="tgl"><input type="checkbox" data-mlyr="international" ${lyrs.international?'checked':''}><div class="tbox"></div> International</label>
+      </div>
+      <div class="sec">
+        <div class="sec-t">Key Metrics <span class="badge badge-pos">${badge}</span></div>
+        <div class="sg">
+          <div class="sb"><div class="v">${h.stats.opd}</div><div class="l">OPD/yr</div><div class="yoy yoy-up">${h.yoy.opd}</div></div>
+          <div class="sb"><div class="v">${h.stats.ipd}</div><div class="l">IPD/yr</div><div class="yoy yoy-up">${h.yoy.ipd}</div></div>
+          <div class="sb"><div class="v">${h.stats.intl}</div><div class="l">Int'l Pts</div><div class="yoy yoy-up">${h.yoy.intl}</div></div>
+        </div>
+        <div style="margin-top:8px;padding:8px;background:#f0f8ff;border-radius:5px;border:1px solid #c2dff0;font-size:10px;color:#4a6070;line-height:1.5">${h.highlight}</div>
+      </div>
+      <div class="sec">
+        <div class="sec-t">Top Origins by Volume</div>
+        <div id="mobBars"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-t">Kochi Hospital Landscape</div>
+        <div id="mobHospComp"></div>
+      </div>`;
+    // Render hospital buttons for mobile
+    document.getElementById('mobHospBtns').innerHTML=HOSPS.map(h=>
+      `<button class="hb ${h.id===sel?'on':''}" data-mid="${h.id}">
+        <span class="dot" style="background:${h.color}"></span>${h.name}<span class="beds">${h.beds}b</span>
+      </button>`).join('');
+    document.querySelectorAll('[data-mid]').forEach(b=>b.onclick=()=>{
+      sel=b.dataset.mid;animTime=0;
+      renderBtns();renderKPIs();updStats();updBars();updIntl();
+      populateMobPanel('controls');
+    });
+    // Render spec tabs for mobile
+    document.getElementById('mobSpecTabs').innerHTML=SPECS.map(s=>
+      `<button class="stab ${s.id===activeSpec?'on':''}" data-mspec="${s.id}" style="${s.id===activeSpec?`border-color:${s.color};color:${s.color}`:''}">${s.label}</button>`
+    ).join('');
+    document.querySelectorAll('[data-mspec]').forEach(b=>b.onclick=()=>{
+      activeSpec=b.dataset.mspec;renderSpecTabs();updBars();draw();
+      populateMobPanel('controls');
+    });
+    // Mobile layer toggles
+    document.querySelectorAll('[data-mlyr]').forEach(cb=>{
+      cb.addEventListener('change',()=>{lyrs[cb.dataset.mlyr]=cb.checked;updBars();updIntl();draw()});
+    });
+    // Render bars for mobile
+    const sorted=[...O].map(o=>({...o,pct:o[sel]||0}))
+      .filter(o=>o.pct>0&&lyrs[o.t]&&(activeSpec==='all'||specMatch(o)))
+      .sort((a,b)=>b.pct-a.pct).slice(0,10);
+    const mx=sorted[0]?.pct||1;
+    document.getElementById('mobBars').innerHTML=sorted.map(o=>{
+      const tc=o.trendDir||'neu';
+      return`<div class="oi"><div class="oh"><span class="n">${o.n}</span>
+        <span class="oh-right"><span class="trnd ${tc}">${o.trend>0.05?'↑':o.trend<-0.1?'↓':'↔'}</span>
+        <span class="p">${o.pct}%</span></span></div>
+        <div class="ob"><div class="of" style="width:${o.pct/mx*100}%;background:${o.alert?'#E8A838':COLHEX[o.t]}"></div></div></div>`;
+    }).join('');
+    // Hospital comparison
+    const maxBeds=Math.max(...HOSPS.map(h=>h.beds));
+    document.getElementById('mobHospComp').innerHTML=HOSPS.map(h=>
+      `<div class="hc"><div class="hc-name" style="color:${h.id===sel?h.color:'var(--gray)'}">${h.name}</div>
+        <div class="hc-bg"><div class="hc-bar" style="width:${h.beds/maxBeds*100}%;background:${h.color};opacity:${h.id===sel?1:.5}"></div></div>
+        <div class="hc-val">${h.beds.toLocaleString()}</div></div>`).join('');
+  }
+  else if(tab==='intel'){
+    const intl=O.filter(o=>o.t==='international').map(o=>({...o,p:o[sel]||0}))
+      .filter(o=>o.p>0).sort((a,b)=>b.p-a.p);
+    const mx=intl[0]?.p||1;
+    document.getElementById('mobIntelBody').innerHTML=`
+      <div class="sec">
+        <div class="sec-t">⚠ Market Intelligence <span class="badge badge-danger">2025–26</span></div>
+        <div id="mobAlerts"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-t">International Corridors</div>
+        <div id="mobIntlBars"></div>
+      </div>
+      <div class="sec">
+        <div class="sec-t">Data & Sources</div>
+        <div class="nb">
+          <b>Data Sources</b><br>
+          <b style="color:#0072BC">VPS stats:</b> VPS Lakeshore 29th AR FY25 (audited).<br>
+          <b style="color:#0072BC">Aster stats:</b> Aster DM Integrated AR FY25 (audited).<br>
+          <b style="color:#0072BC">Market intel:</b> ICRIER 2025; ET Mar 2025; BusinessToday 2025.
+        </div>
+      </div>`;
+    // Alerts
+    const alerts=[
+      {cls:'high',title:'VPS Int\'l Patients ↓4% FY25',body:'International patients declined from 20,074 (FY24) to 19,193 (FY25). VPS launching Maldives OPD clinics to counter.'},
+      {cls:'high',title:'Bangladesh FTA ↓67% Dec 2024',body:'Visa restrictions caused ↓67% in Dec 2024. Kerala share already small.'},
+      {cls:'high',title:'Gulf Conflict — Yemen, Iraq, Iran',body:'Middle East air routes disrupted. KIMSHEALTH expects 10–15% revenue decline.'},
+      {cls:'good',title:'Aster–QCIL Blackstone Merger',body:'Combined 10,301 beds. Aster Medcity adding 100 beds → ~950 total.'},
+      {cls:'good',title:'VPS FY26: ₹504 Cr Target',body:'New OPDs in Malappuram, Edappal, Fort Kochi. Maldives clinics launching.'},
+    ];
+    document.getElementById('mobAlerts').innerHTML=alerts.map(a=>
+      `<div class="al ${a.cls}"><div class="ah">${a.title}</div><p>${a.body}</p></div>`).join('');
+    // Int'l bars
+    document.getElementById('mobIntlBars').innerHTML=intl.map(o=>{
+      return`<div class="oi"><div class="oh"><span class="n">${o.n}</span>
+        <span class="oh-right"><span class="trnd ${o.trendDir||'neu'}">${o.trend>0.05?'↑':o.trend<-0.1?'↓':'↔'}</span>
+        <span class="p">${o.p}%</span></span></div>
+        <div class="ob"><div class="of" style="width:${o.p/mx*100}%;background:${o.alert?'#E8A838':'#B41432'}"></div></div></div>`;
+    }).join('');
+  }
+  else if(tab==='strategy'){
+    const entries=Object.entries(STRATEGY)
+      .map(([name,s])=>{const origin=O.find(o=>o.n===name);return{name,origin,...s}})
+      .filter(e=>stratFilter==='all'||e.priority===stratFilter)
+      .sort((a,b)=>(PRI_ORDER[a.priority]||3)-(PRI_ORDER[b.priority]||3));
+    const counts={all:Object.keys(STRATEGY).length};
+    Object.values(STRATEGY).forEach(s=>{counts[s.priority]=(counts[s.priority]||0)+1});
+    const filters=['all','critical','high','medium','low'];
+    let html=`<div class="sec"><div class="sec-t">📋 Strategy Priorities</div>`;
+    html+=`<div class="so-filter">${filters.map(f=>
+      `<button class="so-fbtn ${f===stratFilter?'on':''}" data-pf="${f}" data-mpf="1">${f==='all'?'All':f.charAt(0).toUpperCase()+f.slice(1)} (${counts[f]||0})</button>`
+    ).join('')}</div>`;
+    html+=entries.map(e=>
+      `<div class="so-item" data-msn="${e.name.replace(/"/g,'&quot;')}">
+        <span class="so-pri" style="background:${PRI_COLORS[e.priority]||'#8aabb8'}"></span>
+        <span class="so-name">${e.name}</span>
+        <span class="so-pot">${e.estPotential?e.estPotential.split(' ')[0]:''}</span>
+      </div>`
+    ).join('');
+    html+=`</div>`;
+    document.getElementById('mobStrategyBody').innerHTML=html;
+    // Bind filter clicks
+    document.querySelectorAll('[data-mpf]').forEach(b=>b.onclick=()=>{
+      stratFilter=b.dataset.pf;populateMobPanel('strategy');
+    });
+    // Bind strategy item clicks
+    document.querySelectorAll('[data-msn]').forEach(el=>el.onclick=()=>{
+      const name=el.dataset.msn;
+      const origin=O.find(o=>o.n===name);
+      if(origin && STRATEGY[name]){openStrat(origin)}
+    });
+  }
+  else if(tab==='brief'){
+    document.getElementById('mobBriefBody').innerHTML=renderLeadershipBrief();
+  }
+}
+
+function renderLeadershipBrief(){
+  return `
+  <!-- FY25 Scorecard -->
+  <div class="sec">
+    <div class="sec-t" style="color:#0072BC;font-size:11px;font-weight:700">📊 FY2024–25 SCORECARD</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
+      ${[
+        ['OPD Visits','3,38,651','↓1% YoY','#e8f4fb'],
+        ['Inpatients','21,022','↑0.4% YoY','#e8f8f0'],
+        ['Intl Patients','19,193','↓4% YoY','#fff5f7'],
+        ['Revenue','₹416 Cr','↑3% YoY','#e8f4fb'],
+        ['Net Profit','₹39 Cr','↓11% YoY','#fff5f7'],
+        ['Transplants','257+','Nephrology #1','#e8f8f0'],
+      ].map(([l,v,t,bg])=>`
+        <div style="background:${bg};border-radius:6px;padding:8px 10px;border:1px solid #cddeed">
+          <div style="font-size:9px;color:#5a7a8a;text-transform:uppercase;letter-spacing:.3px">${l}</div>
+          <div style="font-size:16px;font-weight:700;color:#0d2535;line-height:1.2">${v}</div>
+          <div style="font-size:9px;color:#5a7a8a;margin-top:2px">${t}</div>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- Top 3 Immediate Priorities -->
+  <div class="sec">
+    <div class="sec-t" style="color:#C8103E;font-size:11px;font-weight:700">🔴 TOP PRIORITIES — ACT NOW</div>
+    ${[
+      {
+        n:'1. Systematise Burjeel→VPS referral pipeline',
+        d:'Abu Dhabi & Dubai are OWNED channels with zero acquisition cost. Formalise the Burjeel Medical City→VPS Lakeshore referral protocol for transplant, oncology and cardiac cases. Embed a dedicated VPS liaison at Burjeel Hospital Dubai. Target: +500 int\'l patients/yr from UAE alone.',
+        col:'#C8103E'
+      },
+      {
+        n:'2. Fast-track Maldives OPD clinics (FY26)',
+        d:'Malé & Mahibadhoo clinics are the most capital-efficient growth lever available. AIMS currently leads Maldives referrals — VPS clinics will flip this. Aasandha empanelment (national insurance) is the unlock. Every month of delay loses ground.',
+        col:'#C8103E'
+      },
+      {
+        n:'3. Upgrade Kozhikode Medical Centre to L2',
+        d:'28,000+ patients/yr at Kozhikode with only a fraction referred to Kochi. A structured referral protocol + shared EMR + joint CMEs can move this within 12 months. Upgrading to surgical L2 (₹80–120 Cr) captures North Kerala before Aster MIMS does.',
+        col:'#C8103E'
+      }
+    ].map(p=>`
+      <div style="border-left:3px solid ${p.col};padding:10px 12px;background:#fff8f8;border-radius:0 6px 6px 0;margin-bottom:8px">
+        <div style="font-size:11px;font-weight:700;color:#0d2535;margin-bottom:4px">${p.n}</div>
+        <div style="font-size:9.5px;color:#3a5a6a;line-height:1.6">${p.d}</div>
+      </div>`).join('')}
+  </div>
+
+  <!-- 3 High-Value Kerala Corridors -->
+  <div class="sec">
+    <div class="sec-t" style="color:#1a7a50;font-size:11px;font-weight:700">🟢 KERALA MARKET — FOCUS CORRIDORS</div>
+    ${[
+      {z:'Malappuram / Edappal',why:'Most populous district, highest Gulf diaspora density. New OPD just launched. Must convert to Kochi referrals aggressively.', pot:'500+ referrals/yr'},
+      {z:'Idukki / Wayanad',why:'Lowest hospital bed counts in Kerala. Mobile medical van + tele-ICU = first-mover advantage. VPS CSR in Wayanad builds trust.',pot:'600+ referrals/yr combined'},
+      {z:'Thrissur Corridor',why:'500+ additional referrals potential. Deploy 2 medical reps, free second-opinion teleconsults to GPs, IMA chapter CME partnership.',pot:'500+ referrals/yr'},
+    ].map(c=>`
+      <div style="background:#f0faf4;border:1px solid #b0dfc0;border-radius:6px;padding:10px 12px;margin-bottom:7px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <span style="font-size:11px;font-weight:700;color:#1a5a40">${c.z}</span>
+          <span style="font-size:9px;font-weight:700;color:#1a7a50;background:#d0f0e0;padding:2px 6px;border-radius:10px">${c.pot}</span>
+        </div>
+        <div style="font-size:9.5px;color:#2a5a40;line-height:1.5">${c.why}</div>
+      </div>`).join('')}
+  </div>
+
+  <!-- L3 Hospital Question -->
+  <div class="sec">
+    <div class="sec-t" style="color:#7B4FC8;font-size:11px;font-weight:700">🏥 L3 HOSPITAL DECISION</div>
+    <div style="background:#f5f0ff;border:1px solid #c8b0e8;border-radius:8px;padding:12px;margin-bottom:8px">
+      <div style="font-size:11px;font-weight:700;color:#4a2a90;margin-bottom:6px">Calicut — YES (upgrade, not greenfield)</div>
+      <div style="font-size:9.5px;color:#3a2a60;line-height:1.6">Existing 28,000-patient Kozhikode Medical Centre is a proven platform. Upgrade to L2 surgical capability (₹80–120 Cr) vs greenfield L3 (₹400–600 Cr). North Kerala = 10M people, high Gulf diaspora, underserved for quaternary care. Aster MIMS is incumbent — move fast.</div>
+    </div>
+    <div style="background:#fff5f0;border:1px solid #f0c8b0;border-radius:8px;padding:12px">
+      <div style="font-size:11px;font-weight:700;color:#8a3a10;margin-bottom:6px">Trivandrum — NO (for now)</div>
+      <div style="font-size:9.5px;color:#5a2a10;line-height:1.6">SCTIMST, KIMS and GMC dominate a saturated market. VPS draws &lt;50 referrals/yr from TVPM. Capital better deployed in Maldives clinics and Burjeel network optimisation — where VPS has structural competitive advantage.</div>
+    </div>
+  </div>
+
+  <!-- Watch List -->
+  <div class="sec">
+    <div class="sec-t" style="color:#b87800;font-size:11px;font-weight:700">⚠ RISKS TO MONITOR</div>
+    ${[
+      ['Aster–QCIL merger','10,301 combined beds. Aster Medcity adding 100 beds. Scale gap with VPS (470 beds) widens.'],
+      ['Gulf conflict disruption','Yemen/Iraq/Iran air routes disrupted. ~25% of India\'s int\'l MVT revenue at risk.'],
+      ['Profit margin squeeze','Net profit ↓11% despite revenue ↑3%. Cost control is critical before any new capex.'],
+      ['Maldives delay risk','Every quarter delay on clinic launch lets AIMS consolidate their referral lead.'],
+    ].map(([t,d])=>`
+      <div style="display:flex;gap:8px;padding:8px 0;border-bottom:1px solid #f0e8d0">
+        <span style="font-size:14px;flex-shrink:0">⚡</span>
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#7a5000">${t}</div>
+          <div style="font-size:9px;color:#5a4010;line-height:1.5;margin-top:2px">${d}</div>
+        </div>
+      </div>`).join('')}
+  </div>
+
+  <!-- Single ask -->
+  <div class="sec" style="border-bottom:none">
+    <div style="background:linear-gradient(135deg,#0072BC,#005a96);border-radius:8px;padding:14px 16px;color:#fff">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.5px;opacity:.8;margin-bottom:4px">CHAIRMAN'S SINGLE BIGGEST LEVER</div>
+      <div style="font-size:13px;font-weight:700;line-height:1.4">Burjeel → VPS Lakeshore referral pipeline is worth more than any new hospital build. It's an owned channel. Make it systematic in FY26.</div>
+    </div>
+  </div>`;
+}
+</script>
+</body>
+</html>
