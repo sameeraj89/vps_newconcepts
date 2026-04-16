@@ -33,7 +33,7 @@
   --bg4: #DFE3EA;
   --tx: #1B2028;
   --tx2: #505864;
-  --tx3: #8B919B;
+  --tx3: #6B7280;
   --bd: #E2E6EC;
   --bd2: #CDD3DC;
   --sh: 0 1px 3px rgba(0,0,0,.05), 0 1px 2px rgba(0,0,0,.03);
@@ -479,9 +479,9 @@ input[type=range]::-moz-range-thumb {
 .kk-fin-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(195px,1fr)); gap:1px; background:var(--bd); border-radius:var(--rl); overflow:hidden; box-shadow:var(--sh); margin-bottom:12px; }
 .kk-fin-card { background:var(--bg); padding:18px 20px; }
 .kk-fin-card--primary { background:var(--vps-blue); }
-.kk-fin-card--primary .kk-fin-label { color:rgba(255,255,255,.75); }
+.kk-fin-card--primary .kk-fin-label { color:rgba(255,255,255,.92); }
 .kk-fin-card--primary .kk-fin-val { color:#fff; }
-.kk-fin-card--primary .kk-fin-sub { color:rgba(255,255,255,.65); }
+.kk-fin-card--primary .kk-fin-sub { color:rgba(255,255,255,.85); }
 .kk-fin-label { font-size:11px; color:var(--tx3); text-transform:uppercase; letter-spacing:.5px; font-weight:600; margin-bottom:4px; }
 .kk-fin-val { font-size:21px; font-weight:800; color:var(--vps-blue); letter-spacing:-.5px; margin-bottom:4px; }
 .kk-fin-sub { font-size:11.5px; color:var(--tx3); line-height:1.5; }
@@ -496,8 +496,8 @@ input[type=range]::-moz-range-thumb {
 .kk-proj-tbl tbody tr:hover td { background:var(--bg2); }
 .kk-proj-tbl tbody td:first-child { font-weight:600; color:var(--tx2); font-size:12px; }
 .kk-td-red { color:var(--red); font-weight:700; }
-.kk-td-amber { color:var(--accent); font-weight:700; }
-.kk-td-green { color:var(--teal); font-weight:700; }
+.kk-td-amber { color:#9A7100; font-weight:700; }
+.kk-td-green { color:#167A5B; font-weight:700; }
 
 /* Two campus */
 .kk-two-col { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
@@ -585,7 +585,7 @@ input[type=range]::-moz-range-thumb {
 }
 .kk-rec-tl-head {
   font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-  color: rgba(255,255,255,.6); padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.85); padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.1);
 }
 .kk-rec-tl-row {
   display: grid; grid-template-columns: 180px 1fr; gap: 12px;
@@ -1308,8 +1308,8 @@ input[type=range]::-moz-range-thumb {
       <div style="flex:1;min-width:280px">
         <!-- Roof -->
         <div style="background:linear-gradient(135deg,#6b1835,#8B1A4A);border-radius:8px 8px 0 0;padding:6px 14px;display:flex;align-items:center;gap:8px">
-          <span style="font-size:10px;color:rgba(255,255,255,.6);font-family:var(--fm);letter-spacing:.5px">ROOF</span>
-          <span style="font-size:9px;color:rgba(255,255,255,.45)">HVAC · Solar · Water treatment · IT riser</span>
+          <span style="font-size:10px;color:rgba(255,255,255,.85);font-family:var(--fm);letter-spacing:.5px">ROOF</span>
+          <span style="font-size:10px;color:rgba(255,255,255,.75)">HVAC · Solar · Water treatment · IT riser</span>
         </div>
         <!-- F8 -->
         <div class="bld-floor" style="--fc:#f3e8f0;--bc:#d4a5c0">
@@ -1361,21 +1361,21 @@ input[type=range]::-moz-range-thumb {
         </div>
         <!-- GF -->
         <div class="bld-floor" style="--fc:#e8f4fb;--bc:#80b8d8;border-width:2px">
-          <div class="bld-fl-tag" style="background:#0072BC;font-size:8px;padding:2px 6px">GF</div>
+          <div class="bld-fl-tag" style="background:#0072BC;font-size:9px;padding:3px 7px">GF</div>
           <div class="bld-fl-nm">Reception · OPD · Diagnostics · Urgent Care</div>
           <div class="bld-fl-dt">OPD (30 rooms) · Onco urgent care (4) · Dialysis (12) · CT/MRI · Pharmacy</div>
         </div>
         <!-- Ground line -->
         <div style="height:3px;background:linear-gradient(90deg,#8B1A4A,#2B7CBE);border-radius:0 0 2px 2px"></div>
         <!-- B1-B2 -->
-        <div class="bld-floor" style="--fc:#f5f5f5;--bc:#c8c8c8;margin-top:2px;opacity:.75">
-          <div class="bld-fl-tag" style="background:#888;font-size:7px;padding:2px 5px">B1–B2</div>
+        <div class="bld-floor" style="--fc:#f5f5f5;--bc:#c8c8c8;margin-top:2px;opacity:.85">
+          <div class="bld-fl-tag" style="background:#666;font-size:9px;padding:3px 7px">B1–B2</div>
           <div class="bld-fl-nm" style="color:#888">Parking · Imaging · CSSD · Central Pharmacy</div>
           <div class="bld-fl-dt">300 cars · MRI ×2 · PET-CT · SPECT-CT · Sterile processing · Cold chain</div>
         </div>
         <!-- B3-B4 -->
-        <div class="bld-floor" style="--fc:#f0f0f0;--bc:#b8b8b8;opacity:.65;border-radius:0 0 6px 6px">
-          <div class="bld-fl-tag" style="background:#777;font-size:7px;padding:2px 5px">B3–B4</div>
+        <div class="bld-floor" style="--fc:#f0f0f0;--bc:#b8b8b8;opacity:.8;border-radius:0 0 6px 6px">
+          <div class="bld-fl-tag" style="background:#555;font-size:9px;padding:3px 7px">B3–B4</div>
           <div class="bld-fl-nm" style="color:#777">Engineering · Central Lab · Biobank</div>
           <div class="bld-fl-dt">Molecular diagnostics · NGS · Blood bank · Apheresis (4) · Data centre · DG sets</div>
         </div>
@@ -1383,14 +1383,14 @@ input[type=range]::-moz-range-thumb {
       <!-- SUMMARY SIDEBAR -->
       <div style="width:200px;flex-shrink:0">
         <div style="background:#fff;border:1px solid var(--bd);border-radius:8px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.05)">
-          <div style="font-family:var(--fm);font-size:8px;text-transform:uppercase;letter-spacing:1px;color:#8B1A4A;margin-bottom:10px">Building Summary</div>
-          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">Total licensed beds</div><div style="font-size:22px;font-weight:700;color:#8B1A4A">150</div></div>
-          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">Day care / infusion</div><div style="font-size:18px;font-weight:700;color:#0072BC">32 bays</div></div>
-          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">Operating theatres</div><div style="font-size:18px;font-weight:700;color:#1a7a40">8 OTs</div></div>
-          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">ICU / HDU beds</div><div style="font-size:18px;font-weight:700;color:#b87800">22</div></div>
-          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">BMT rooms (HEPA+)</div><div style="font-size:18px;font-weight:700;color:#8B1A4A">10</div></div>
-          <div style="margin-bottom:8px"><div style="font-size:10px;color:#8B919B">OPD rooms</div><div style="font-size:18px;font-weight:700;color:#505864">30</div></div>
-          <div><div style="font-size:10px;color:#8B919B">Floors</div><div style="font-size:18px;font-weight:700;color:#505864">G+8 + 4B</div></div>
+          <div style="font-family:var(--fm);font-size:9px;text-transform:uppercase;letter-spacing:1px;color:#8B1A4A;margin-bottom:10px">Building Summary</div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#6B7280">Total licensed beds</div><div style="font-size:22px;font-weight:700;color:#8B1A4A">150</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#6B7280">Day care / infusion</div><div style="font-size:18px;font-weight:700;color:#0072BC">32 bays</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#6B7280">Operating theatres</div><div style="font-size:18px;font-weight:700;color:#1a7a40">8 OTs</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#6B7280">ICU / HDU beds</div><div style="font-size:18px;font-weight:700;color:#b87800">22</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#6B7280">BMT rooms (HEPA+)</div><div style="font-size:18px;font-weight:700;color:#8B1A4A">10</div></div>
+          <div style="margin-bottom:8px"><div style="font-size:10px;color:#6B7280">OPD rooms</div><div style="font-size:18px;font-weight:700;color:#505864">30</div></div>
+          <div><div style="font-size:10px;color:#6B7280">Floors</div><div style="font-size:18px;font-weight:700;color:#505864">G+8 + 4B</div></div>
         </div>
       </div>
     </div>
@@ -1439,7 +1439,7 @@ input[type=range]::-moz-range-thumb {
 
       <!-- B1-B2 Basement (partially visible) -->
       <rect x="145" y="415" width="395" height="18" fill="#8a8580" rx="0"/>
-      <text x="342" y="427" text-anchor="middle" fill="rgba(255,255,255,.7)" font-size="7" font-weight="600" font-family="system-ui" letter-spacing=".5">B1–B4 · PARKING · IMAGING · CSSD · BIOBANK · LAB</text>
+      <text x="342" y="427" text-anchor="middle" fill="rgba(255,255,255,.9)" font-size="8" font-weight="600" font-family="system-ui" letter-spacing=".5">B1–B4 · PARKING · IMAGING · CSSD · BIOBANK · LAB</text>
 
       <!-- Ground Floor — large glass entrance facade -->
       <rect x="145" y="370" width="395" height="45" fill="url(#conc)" rx="0"/>
@@ -1537,39 +1537,39 @@ input[type=range]::-moz-range-thumb {
       <g font-family="system-ui" font-size="7.5" font-weight="600">
         <line x1="548" y1="58" x2="570" y2="58" stroke="#8B1A4A" stroke-width=".75"/>
         <text x="575" y="55" fill="#8B1A4A">F8 · Clinical Trials &amp; Research</text>
-        <text x="575" y="64" fill="#8B919B" font-size="6.5" font-weight="400">Phase I–III · Digital command · Academic</text>
+        <text x="575" y="64" fill="#6B7280" font-size="7.5" font-weight="400">Phase I–III · Digital command · Academic</text>
 
         <line x1="568" y1="97" x2="575" y2="97" stroke="#1a7a40" stroke-width=".75"/>
         <text x="580" y="93" fill="#1a7a40">F7 · Rare Disease &amp; Specialty IPD</text>
-        <text x="580" y="102" fill="#8B919B" font-size="6.5" font-weight="400">69 beds · Neuro · Palliative · Complex care</text>
+        <text x="580" y="102" fill="#6B7280" font-size="7.5" font-weight="400">69 beds · Neuro · Palliative · Complex care</text>
 
         <line x1="598" y1="139" x2="605" y2="139" stroke="#8B1A4A" stroke-width=".75"/>
         <text x="610" y="135" fill="#8B1A4A">F6 · BMT &amp; Cellular Therapy</text>
-        <text x="610" y="144" fill="#8B919B" font-size="6.5" font-weight="400">14 beds · HEPA+ · CAR-T lab</text>
+        <text x="610" y="144" fill="#6B7280" font-size="7.5" font-weight="400">14 beds · HEPA+ · CAR-T lab</text>
 
         <line x1="543" y1="181" x2="570" y2="181" stroke="#b87800" stroke-width=".75"/>
         <text x="575" y="177" fill="#b87800">F5 · ICU / HDU / Isolation</text>
-        <text x="575" y="186" fill="#8B919B" font-size="6.5" font-weight="400">22 beds · Post-BMT · Neutropenic sepsis</text>
+        <text x="575" y="186" fill="#6B7280" font-size="7.5" font-weight="400">22 beds · Post-BMT · Neutropenic sepsis</text>
 
         <line x1="543" y1="223" x2="570" y2="223" stroke="#2B7CBE" stroke-width=".75"/>
         <text x="575" y="219" fill="#2B7CBE">F4 · Surgical OT Suite</text>
-        <text x="575" y="228" fill="#8B919B" font-size="6.5" font-weight="400">8 theatres · Transplant · Robotic · Hybrid</text>
+        <text x="575" y="228" fill="#6B7280" font-size="7.5" font-weight="400">8 theatres · Transplant · Robotic · Hybrid</text>
 
         <line x1="543" y1="265" x2="570" y2="265" stroke="#8B1A4A" stroke-width=".75"/>
         <text x="575" y="261" fill="#8B1A4A">F3 · Haematology &amp; Blood Disorders</text>
-        <text x="575" y="270" fill="#8B919B" font-size="6.5" font-weight="400">40 beds · Haem ward · Immunocompromised</text>
+        <text x="575" y="270" fill="#6B7280" font-size="7.5" font-weight="400">40 beds · Haem ward · Immunocompromised</text>
 
         <line x1="543" y1="307" x2="570" y2="307" stroke="#7B4FC8" stroke-width=".75"/>
         <text x="575" y="303" fill="#7B4FC8">F2 · Radiation &amp; Nuclear Medicine</text>
-        <text x="575" y="312" fill="#8B919B" font-size="6.5" font-weight="400">LINAC · Brachytherapy · Lu-177 theranostics</text>
+        <text x="575" y="312" fill="#6B7280" font-size="7.5" font-weight="400">LINAC · Brachytherapy · Lu-177 theranostics</text>
 
         <line x1="543" y1="349" x2="570" y2="349" stroke="#1a7a40" stroke-width=".75"/>
         <text x="575" y="345" fill="#1a7a40">F1 · Infusion &amp; Day Care</text>
-        <text x="575" y="354" fill="#8B919B" font-size="6.5" font-weight="400">32 bays · Rare disease infusion · Genomics</text>
+        <text x="575" y="354" fill="#6B7280" font-size="7.5" font-weight="400">32 bays · Rare disease infusion · Genomics</text>
 
         <line x1="543" y1="392" x2="570" y2="392" stroke="#0072BC" stroke-width=".75"/>
         <text x="575" y="388" fill="#0072BC">GF · Reception · OPD · Diagnostics</text>
-        <text x="575" y="397" fill="#8B919B" font-size="6.5" font-weight="400">30 OPD rooms · Urgent care · Pharmacy</text>
+        <text x="575" y="397" fill="#6B7280" font-size="7.5" font-weight="400">30 OPD rooms · Urgent care · Pharmacy</text>
       </g>
 
       <!-- Trees and landscaping -->
@@ -1596,13 +1596,13 @@ input[type=range]::-moz-range-thumb {
       <!-- Height annotation -->
       <line x1="108" y1="34" x2="108" y2="415" stroke="#8B1A4A" stroke-width=".5" stroke-dasharray="3 2"/>
       <line x1="105" y1="34" x2="111" y2="34" stroke="#8B1A4A" stroke-width=".5"/><line x1="105" y1="415" x2="111" y2="415" stroke="#8B1A4A" stroke-width=".5"/>
-      <text x="102" y="224" fill="#8B1A4A" font-size="7" font-weight="600" font-family="system-ui" transform="rotate(-90,102,224)">~38m · G+8 + 4 basements</text>
+      <text x="102" y="224" fill="#8B1A4A" font-size="8" font-weight="600" font-family="system-ui" transform="rotate(-90,102,224)">~38m · G+8 + 4 basements</text>
 
       <!-- Key materials legend -->
-      <rect x="15" y="480" width="12" height="8" fill="url(#conc)" rx="1"/><text x="32" y="487" fill="#666" font-size="7" font-family="system-ui">Exposed concrete</text>
-      <rect x="130" y="480" width="12" height="8" fill="url(#warmP)" rx="1"/><text x="147" y="487" fill="#666" font-size="7" font-family="system-ui">Warm corten/wood panels</text>
-      <rect x="280" y="480" width="12" height="8" fill="url(#gl)" rx="1"/><text x="297" y="487" fill="#666" font-size="7" font-family="system-ui">Glass curtain wall</text>
-      <rect x="400" y="480" width="12" height="8" fill="url(#mrn)" rx="1"/><text x="417" y="487" fill="#666" font-size="7" font-family="system-ui">VPS maroon accent</text>
+      <rect x="15" y="480" width="12" height="8" fill="url(#conc)" rx="1"/><text x="32" y="487" fill="#555" font-size="8" font-family="system-ui">Exposed concrete</text>
+      <rect x="130" y="480" width="12" height="8" fill="url(#warmP)" rx="1"/><text x="147" y="487" fill="#555" font-size="8" font-family="system-ui">Warm corten/wood panels</text>
+      <rect x="280" y="480" width="12" height="8" fill="url(#gl)" rx="1"/><text x="297" y="487" fill="#555" font-size="8" font-family="system-ui">Glass curtain wall</text>
+      <rect x="400" y="480" width="12" height="8" fill="url(#mrn)" rx="1"/><text x="417" y="487" fill="#555" font-size="8" font-family="system-ui">VPS maroon accent</text>
     </svg>
     <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--tx3);font-style:italic">Indicative concept elevation inspired by the Netherlands Cancer Institute. Asymmetric cantilevers, exposed concrete, and warm-panel accents create a bold institutional identity. Final design subject to Clinical Architect input.</div>
   </div>
@@ -1832,12 +1832,12 @@ input[type=range]::-moz-range-thumb {
     <!-- Timeline banner -->
     <div style="background:linear-gradient(135deg,#8B1A4A,#2B7CBE);border-radius:var(--r);padding:16px 20px;margin-bottom:20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center">
       <div style="flex:1;min-width:200px">
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.5px">Key milestones</div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,.9);text-transform:uppercase;letter-spacing:.5px">Key milestones</div>
         <div style="font-size:15px;font-weight:700;color:#fff;margin-top:4px">Clinical Architect by <u>15 May 2026</u> · Study &amp; designs closed by <u>30 June 2026</u></div>
       </div>
       <div style="background:rgba(255,255,255,.15);border-radius:8px;padding:10px 16px;text-align:center">
         <div style="font-size:22px;font-weight:800;color:#fff">75</div>
-        <div style="font-size:10px;color:rgba(255,255,255,.8);font-weight:600">days to close</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.9);font-weight:600">days to close</div>
       </div>
     </div>
 
@@ -1999,8 +1999,8 @@ input[type=range]::-moz-range-thumb {
 
   <!-- ══ WORK IN PROGRESS ══ -->
   <div class="kk-section-label anim">③ Current status &amp; next steps</div>
-  <div class="kk-recommendation anim d1" style="border-color:rgba(200,146,42,.3)">
-    <div class="kk-rec-head" style="color:#a07800">Work in progress — early-stage evaluation</div>
+  <div class="kk-recommendation anim d1" style="background:#7A5F00;border-color:rgba(200,146,42,.3);box-shadow:0 4px 20px rgba(122,95,0,.25)">
+    <div class="kk-rec-head">Work in progress — early-stage evaluation</div>
 
     <div class="kk-rec-disclaimer">
       <strong>⚠ Preliminary.</strong> This concept is at an early evaluation stage. No commitments have been made. All information from the Indorama DPR is indicative and subject to independent validation by VPS Healthcare.
