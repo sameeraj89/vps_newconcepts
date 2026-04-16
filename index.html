@@ -1397,10 +1397,13 @@ input[type=range]::-moz-range-thumb {
   </div>
 
   <!-- Architecture Views: Tabbed -->
+  <script>function archTab(id){var panels=['archElevation','archFloorStack','archOverlay','archFloorPlans'];var btns=document.querySelectorAll('.arch-tab-btn');panels.forEach(function(p){var el=document.getElementById(p);if(el)el.style.display=p===id?'block':'none'});btns.forEach(function(b){var active=b.getAttribute('data-panel')===id;b.style.background=active?'#fff':'#f3f1ef';b.style.borderBottom=active?'2px solid #fff':'2px solid var(--bd)';b.style.color=active?'#8B1A4A':'var(--tx3)'})}</script>
   <div style="margin-top:20px" class="anim">
-    <div style="display:flex;gap:0;margin-bottom:0">
-      <button onclick="document.getElementById('archElevation').style.display='block';document.getElementById('archFloorStack').style.display='none';this.style.background='#fff';this.style.borderBottom='2px solid #fff';this.style.color='#8B1A4A';this.nextElementSibling.style.background='#f3f1ef';this.nextElementSibling.style.borderBottom='2px solid var(--bd)';this.nextElementSibling.style.color='var(--tx3)'" style="padding:10px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1.5px solid var(--bd);border-bottom:2px solid #fff;border-radius:var(--rl) var(--rl) 0 0;background:#fff;color:#8B1A4A;cursor:pointer;font-family:inherit">Concept Elevation</button>
-      <button onclick="document.getElementById('archFloorStack').style.display='block';document.getElementById('archElevation').style.display='none';this.style.background='#fff';this.style.borderBottom='2px solid #fff';this.style.color='#8B1A4A';this.previousElementSibling.style.background='#f3f1ef';this.previousElementSibling.style.borderBottom='2px solid var(--bd)';this.previousElementSibling.style.color='var(--tx3)'" style="padding:10px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1.5px solid var(--bd);border-bottom:2px solid var(--bd);border-radius:var(--rl) var(--rl) 0 0;background:#f3f1ef;color:var(--tx3);cursor:pointer;font-family:inherit">Functional Floor Stack</button>
+    <div style="display:flex;gap:0;margin-bottom:0;flex-wrap:wrap">
+      <button class="arch-tab-btn" data-panel="archElevation" onclick="archTab('archElevation')" style="padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border:1.5px solid var(--bd);border-bottom:2px solid #fff;border-radius:var(--rl) var(--rl) 0 0;background:#fff;color:#8B1A4A;cursor:pointer;font-family:inherit">Concept Elevation</button>
+      <button class="arch-tab-btn" data-panel="archFloorStack" onclick="archTab('archFloorStack')" style="padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border:1.5px solid var(--bd);border-bottom:2px solid var(--bd);border-radius:var(--rl) var(--rl) 0 0;background:#f3f1ef;color:var(--tx3);cursor:pointer;font-family:inherit">Floor Stack</button>
+      <button class="arch-tab-btn" data-panel="archOverlay" onclick="archTab('archOverlay')" style="padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border:1.5px solid var(--bd);border-bottom:2px solid var(--bd);border-radius:var(--rl) var(--rl) 0 0;background:#f3f1ef;color:var(--tx3);cursor:pointer;font-family:inherit">Interior Overlay</button>
+      <button class="arch-tab-btn" data-panel="archFloorPlans" onclick="archTab('archFloorPlans')" style="padding:10px 16px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;border:1.5px solid var(--bd);border-bottom:2px solid var(--bd);border-radius:var(--rl) var(--rl) 0 0;background:#f3f1ef;color:var(--tx3);cursor:pointer;font-family:inherit">Individual Floor Plans</button>
     </div>
     <div style="border:1.5px solid var(--bd);border-top:none;border-radius:0 var(--rl) var(--rl) var(--rl);background:#fff;padding:clamp(16px,2.5vw,24px);box-shadow:var(--shl);overflow:hidden">
       <div id="archElevation">
@@ -1410,6 +1413,14 @@ input[type=range]::-moz-range-thumb {
       <div id="archFloorStack" style="display:none">
         <img src="floor-stack.png" alt="Functional Floor Stack — VPS Qutub Cancer &amp; Rare Disease Centre" style="width:100%;height:auto;display:block;border-radius:4px"/>
         <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--tx3);font-style:italic">Floor-by-floor functional layout with key departmental highlights and building summary.</div>
+      </div>
+      <div id="archOverlay" style="display:none">
+        <img src="interior-overlay.png" alt="Interior Plan &amp; Elevation Overlay — VPS Qutub Cancer &amp; Rare Disease Centre" style="width:100%;height:auto;display:block;border-radius:4px"/>
+        <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--tx3);font-style:italic">Floor-by-floor interior plans with elevation overlay and building summary.</div>
+      </div>
+      <div id="archFloorPlans" style="display:none">
+        <img src="floor-plans.png" alt="Individual Floor Plan Collection — VPS Qutub Cancer &amp; Rare Disease Centre" style="width:100%;height:auto;display:block;border-radius:4px"/>
+        <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--tx3);font-style:italic">Detailed individual floor plans for each level with equipment and room layouts.</div>
       </div>
     </div>
   </div>
