@@ -1396,11 +1396,22 @@ input[type=range]::-moz-range-thumb {
     </div>
   </div>
 
-  <!-- Version B: NCI-inspired architectural concept -->
-  <div style="font-size:12px;font-weight:700;color:#8B1A4A;margin-bottom:8px;margin-top:20px;text-transform:uppercase;letter-spacing:.5px" class="anim">View B — architectural concept elevation</div>
-  <div class="anim d2" style="background:#fff;border:1.5px solid var(--bd);border-radius:var(--rl);padding:clamp(16px,2.5vw,24px);box-shadow:var(--shl);overflow:hidden">
-    <img src="elevation.png" alt="Architectural Concept Elevation — VPS Qutub Cancer &amp; Rare Disease Centre" style="width:100%;height:auto;display:block;border-radius:4px"/>
-    <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--tx3);font-style:italic">Indicative concept elevation inspired by the Netherlands Cancer Institute. Final design subject to Clinical Architect input.</div>
+  <!-- Architecture Views: Tabbed -->
+  <div style="margin-top:20px" class="anim">
+    <div style="display:flex;gap:0;margin-bottom:0">
+      <button onclick="document.getElementById('archElevation').style.display='block';document.getElementById('archFloorStack').style.display='none';this.style.background='#fff';this.style.borderBottom='2px solid #fff';this.style.color='#8B1A4A';this.nextElementSibling.style.background='#f3f1ef';this.nextElementSibling.style.borderBottom='2px solid var(--bd)';this.nextElementSibling.style.color='var(--tx3)'" style="padding:10px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1.5px solid var(--bd);border-bottom:2px solid #fff;border-radius:var(--rl) var(--rl) 0 0;background:#fff;color:#8B1A4A;cursor:pointer;font-family:inherit">Concept Elevation</button>
+      <button onclick="document.getElementById('archFloorStack').style.display='block';document.getElementById('archElevation').style.display='none';this.style.background='#fff';this.style.borderBottom='2px solid #fff';this.style.color='#8B1A4A';this.previousElementSibling.style.background='#f3f1ef';this.previousElementSibling.style.borderBottom='2px solid var(--bd)';this.previousElementSibling.style.color='var(--tx3)'" style="padding:10px 20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;border:1.5px solid var(--bd);border-bottom:2px solid var(--bd);border-radius:var(--rl) var(--rl) 0 0;background:#f3f1ef;color:var(--tx3);cursor:pointer;font-family:inherit">Functional Floor Stack</button>
+    </div>
+    <div style="border:1.5px solid var(--bd);border-top:none;border-radius:0 var(--rl) var(--rl) var(--rl);background:#fff;padding:clamp(16px,2.5vw,24px);box-shadow:var(--shl);overflow:hidden">
+      <div id="archElevation">
+        <img src="elevation.png" alt="Architectural Concept Elevation — VPS Qutub Cancer &amp; Rare Disease Centre" style="width:100%;height:auto;display:block;border-radius:4px"/>
+        <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--tx3);font-style:italic">Indicative concept elevation. Final design subject to Clinical Architect input.</div>
+      </div>
+      <div id="archFloorStack" style="display:none">
+        <img src="floor-stack.png" alt="Functional Floor Stack — VPS Qutub Cancer &amp; Rare Disease Centre" style="width:100%;height:auto;display:block;border-radius:4px"/>
+        <div style="text-align:center;margin-top:8px;font-size:11px;color:var(--tx3);font-style:italic">Floor-by-floor functional layout with key departmental highlights and building summary.</div>
+      </div>
+    </div>
   </div>
 
   <!-- ══ STAR DOCTORS & CLINICAL LEADERSHIP ══ -->
