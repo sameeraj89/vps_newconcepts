@@ -2434,7 +2434,7 @@ input[type=range]::-moz-range-thumb {
         <div class="kk-vc-label">Kerala Network</div>
         <div class="kk-vc-role">P1 + P2 + P3 + P4 + P5</div>
         <div class="kk-vc-tags">
-          <span>P1 PMC — Kochi</span><span>P2 Hospital — Kochi</span><span>P3 — Kakkanad</span><span>P4 — 10 nodes</span><span>P5 — 8 centres</span>
+          <span>P1 PMC — Kochi</span><span>P2 Hospital — Kochi</span><span>P3 — Kakkanad</span><span>P4 — 5 nodes</span><span>P5 — 3 centres</span>
         </div>
       </div>
     </div>
@@ -2471,9 +2471,9 @@ input[type=range]::-moz-range-thumb {
       <div style="font-size:12px;color:var(--tx2);line-height:1.6;margin-top:8px">The fastest-growing insured urban professional population in Kerala. TPA-covered, younger demographic with high cardiac, MSK, mental health, and OBG demand. Zero premium inpatient hospital inside SmartCity today.</div>
     </div>
     <div class="kk-comp-card">
-      <div class="kk-comp-name" style="color:#C00000">10 P4 Nodes · 8 P5 Centres</div>
+      <div class="kk-comp-name" style="color:#C00000">5 P4 Nodes · 3 P5 Centres</div>
       <div class="kk-comp-dist">Statewide distributed model of care</div>
-      <div style="font-size:12px;color:var(--tx2);line-height:1.6;margin-top:8px">P4 partner nodes across all 14 districts — Kottayam, Palakkad, Perumbavoor, Alappuzha, Kollam, Malappuram, Kasaragod and more — create a referral engine that reaches every district capital. P5 risk centres at malls, transit hubs, and IT campuses continuously feed complex episodes up the chain.</div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.6;margin-top:8px">P4 branded partner nodes at Kothamangalam, Kunnamkulam, Kozhikode, Kottayam, and Palakkad create a referral spine across all of Kerala. P5 risk centres at Ernakulam, Thrissur, and Thiruvananthapuram triage population and feed complex episodes up to Kochi P1.</div>
     </div>
     <div class="kk-comp-card">
       <div class="kk-comp-name" style="color:#C00000">Gulf Referral Corridor</div>
@@ -2506,7 +2506,7 @@ input[type=range]::-moz-range-thumb {
         <div class="kk-vc-label">Delhi + Rajasthan</div>
         <div class="kk-vc-role">P1++ · P3 · P4 · P5</div>
         <div class="kk-vc-tags">
-          <span>P1++ Delhi PMC</span><span>P3 Jaipur</span><span>P3 Kota</span><span>P4 — 10 nodes</span><span>P5 — 8 centres</span>
+          <span>P1++ Delhi PMC</span><span>P3 Jaipur</span><span>P3 Kota</span><span>P4 — 5 nodes</span><span>P5 — 3 centres</span>
         </div>
       </div>
     </div>
@@ -2552,9 +2552,9 @@ input[type=range]::-moz-range-thumb {
       <div style="font-size:12px;color:var(--tx2);line-height:1.6;margin-top:8px">India's coaching capital. 200,000+ students. Industrial base (KOTA thermal, nuclear, fertiliser). No comprehensive cancer centre — Indorama Group DPR confirms the gap. P3 with oncology focus; BMT and transplant to Delhi PMC.</div>
     </div>
     <div class="kk-comp-card">
-      <div class="kk-comp-name" style="color:#5F6B7A">10 P4 Nodes · 8 P5 Centres</div>
+      <div class="kk-comp-name" style="color:#5F6B7A">5 P4 Nodes · 3 P5 Centres</div>
       <div class="kk-comp-dist">Distributed NCR model of care</div>
-      <div style="font-size:12px;color:var(--tx2);line-height:1.6;margin-top:8px">P4 branded nodes in Gurugram, Noida, Faridabad, Dwarka, Rohini, Greater Noida, Ghaziabad, Meerut, Sohna Road, and East Delhi create complete NCR coverage. P5 risk centres at DMRC stations, DLF malls, and IT campuses across the corridor triage population and feed episodes into Delhi PMC 24 hours a day.</div>
+      <div style="font-size:12px;color:var(--tx2);line-height:1.6;margin-top:8px">P4 branded nodes in Gurugram, Noida, Faridabad, Dwarka, and Rohini cover all cardinal directions from Delhi PMC. P5 risk centres at Connaught Place, Saket, and CyberHub Gurugram triage population at peak footfall locations and feed complex episodes into Delhi PMC.</div>
     </div>
   </div>
 
@@ -3476,18 +3476,13 @@ var DEPTS = {
       'P3 — Kakkanad Urban Hub',
       'SmartCity · ~400 beds (phased) · IT corridor · Young professionals · Gut Health · MSK · Longevity');
 
-    /* P4 — Branded partner nodes (distributed care network) */
+    /* P4 — Branded partner nodes (5 nodes, state spine) */
     var KER_P4 = [
       [10.065, 76.615, 'P4 — Kothamangalam', 'MBMMH partnership · North Ernakulam / Periyar valley catchment'],
       [10.652, 76.075, 'P4 — Kunnamkulam', 'Malankara Mission Hospital · Thrissur north district'],
       [11.251, 75.782, 'P4 — Kozhikode', 'VPS Calicut · Malabar corridor referral node · Gulf return population'],
-      [9.591,  76.522, 'P4 — Kottayam', 'CSI Medical College partner · Rubber belt corporate workforce · backwater tourism'],
+      [9.591,  76.522, 'P4 — Kottayam', 'CSI Medical College partner · Rubber belt workforce · backwater tourism'],
       [10.763, 76.650, 'P4 — Palakkad', 'District hospital partnership · Gateway city · Tamil Nadu border catchment'],
-      [10.107, 76.358, 'P4 — Perumbavoor', 'Industrial town · CIAL corridor · North Ernakulam industrial labour force'],
-      [9.498,  76.339, 'P4 — Alappuzha', 'Backwater hub · Coastal district · Tourism + fisherfolk health + KSRTC worker belt'],
-      [8.891,  76.615, 'P4 — Kollam', 'Port city · Cashew industry workforce · Southern feeder into Thiruvananthapuram P3'],
-      [10.990, 75.957, 'P4 — Malappuram', 'Fastest-growing district · High NRI density · Under-served tertiary care gap'],
-      [12.298, 75.788, 'P4 — Kasaragod', 'Northernmost Kerala · Kannada-Malayalam corridor · Cross-border catchment'],
     ];
     KER_P4.forEach(function(d) {
       L.polyline([
@@ -3499,16 +3494,11 @@ var DEPTS = {
       }).addTo(m).bindPopup('<strong style="color:#5F6B7A">' + d[2] + '</strong><div class="sub">' + d[3] + '</div>');
     });
 
-    /* P5 — Risk Assessment Centres (statewide triage + screening network) */
+    /* P5 — Risk Assessment Centres (3 centres, high-footfall anchors) */
     var KER_P5 = [
       [9.990,  76.270, 'P5 — Ernakulam', 'Lulu Mall / Marina Mall · Cancer + cardiac + genomic screening · 24-hr follow-up'],
-      [10.525, 76.215, 'P5 — Thrissur City', 'Round North / Sobha City · Corporate campus + transit hub deployment'],
-      [9.591,  76.519, 'P5 — Kottayam Town', 'Baker Junction · Rubber estate owner + college corridor screening'],
-      [10.763, 76.648, 'P5 — Palakkad Town', 'Fort Maidan / Chandranagar · Industrial worker + NRI health camp anchor'],
-      [11.251, 75.787, 'P5 — Kozhikode Beachside', 'Calicut Beach / Hilite Mall · Gulf return NCD screening + genomics'],
+      [10.525, 76.215, 'P5 — Thrissur City', 'Round North / Sobha City · Corporate campus + transit hub'],
       [8.524,  76.936, 'P5 — Thiruvananthapuram', 'Technopark / LuLu Trivandrum · ISRO/VSSC workforce screening outpost'],
-      [9.498,  76.336, 'P5 — Alappuzha KSRTC Hub', 'Bus terminal + boat jetty · High footfall chronic disease triage'],
-      [10.107, 76.355, 'P5 — Perumbavoor Industrial', 'EPZ / Aluva-Perumbavoor industrial belt · Occupational health screen'],
     ];
     KER_P5.forEach(function(d) {
       L.circleMarker([d[0], d[1]], {
@@ -3560,18 +3550,13 @@ var DEPTS = {
       radius: 50, fillColor: '#C00000', color: '#C00000', weight: 1.5, fillOpacity: 0.06, dashArray: '7 5'
     }).addTo(m);
 
-    /* NCR — P4 branded partner nodes (distributed care network) */
+    /* NCR — P4 branded partner nodes (5 nodes, cardinal directions) */
     var NCR_P4 = [
-      [28.4595, 77.0266, 'P4 — Gurugram (Cyber City)', 'Medicity / Fortis Gurgaon partner · ITES workforce · ₹80k+ ARPOB corridor'],
-      [28.5355, 77.3910, 'P4 — Noida Sector 62', 'Yatharth / Kailash Hospital partner · IT hub · 1.2M tech workforce catchment'],
+      [28.4595, 77.0266, 'P4 — Gurugram', 'Medicity / Fortis Gurgaon partner · ITES workforce · ₹80k+ ARPOB corridor'],
+      [28.5355, 77.3910, 'P4 — Noida', 'Yatharth / Kailash Hospital partner · IT hub · 1.2M tech workforce catchment'],
       [28.4089, 77.3178, 'P4 — Faridabad', 'Metro Heart Institute partner · Industrial-residential belt · NH-44 corridor'],
       [28.6280, 77.0688, 'P4 — Dwarka', 'Venkateshwar Hospital partner · Fastest-growing Delhi sub-city · Airport proximity'],
       [28.7195, 77.1025, 'P4 — Rohini', 'Sanjay Gandhi Memorial partner · 2M+ residential density · North Delhi underserved'],
-      [28.4745, 77.5040, 'P4 — Greater Noida', 'Sharda Hospital partner · Yamuna Expressway corridor · Knowledge Park workforce'],
-      [28.6600, 77.4080, 'P4 — Ghaziabad (NH-58)', 'MMG District Hospital partner · West UP gateway · 2.8M city catchment'],
-      [29.0145, 77.7053, 'P4 — Meerut', 'Subharthi Hospital partnership · 1.5M city · Sugarcane belt + emerging IT park'],
-      [28.4544, 77.0266, 'P4 — Gurugram South (Sohna Rd)', 'Artemis Hospital zone · New Gurgaon townships · South NCR expansion node'],
-      [28.5355, 77.2500, 'P4 — East Delhi / Mayur Vihar', 'Max Patparganj catchment counter · Dense residential + Metro connectivity'],
     ];
     NCR_P4.forEach(function(d) {
       L.polyline([DELHI, [d[0], d[1]]], {
@@ -3582,16 +3567,11 @@ var DEPTS = {
       }).addTo(m).bindPopup('<strong style="color:#5F6B7A">' + d[2] + '</strong><div class="sub">' + d[3] + '</div>');
     });
 
-    /* P5 — Risk Assessment Centres (DMRC + malls + IT campuses) */
+    /* P5 — Risk Assessment Centres (3 centres, high-footfall anchors) */
     var NCR_P5 = [
       [28.6139, 77.2090, 'P5 — Connaught Place', 'Rajiv Chowk metro hub · Central Delhi · peak footfall NCD + cancer risk triage'],
       [28.5244, 77.1855, 'P5 — Saket', 'Select Citywalk / DLF Place · South Delhi affluent belt · genomic + cardiac screen'],
-      [28.4950, 77.0850, 'P5 — Gurugram DLF CyberHub', 'DLF Phase 3 · 80k daily IT workforce · hypertension + metabolic syndrome screen'],
-      [28.5670, 77.3220, 'P5 — Noida Expressway', 'Logix / Gardens Galleria mall · Sector 18 metro · rapid NCD screen station'],
-      [28.6340, 77.4220, 'P5 — Vaishali / Indirapuram', 'Pacific Mall / Great India Place · East NCR high-density residential belt'],
-      [28.6730, 77.0695, 'P5 — Rohini East Metro', 'Rohini East DMRC station · city-wide north Delhi transit triage node'],
-      [28.6400, 77.2850, 'P5 — Laxmi Nagar Metro', 'East Delhi DMRC interchange · serves Patparganj, Mayur Vihar, Kaushambi'],
-      [28.5200, 77.4100, 'P5 — Greater Noida Alpha', 'Alpha Commercial Belt · Knowledge Park / Expo Mart corridor'],
+      [28.4950, 77.0850, 'P5 — Gurugram CyberHub', 'DLF Phase 3 · 80k daily IT workforce · hypertension + metabolic syndrome screen'],
     ];
     NCR_P5.forEach(function(d) {
       L.circleMarker([d[0], d[1]], {
