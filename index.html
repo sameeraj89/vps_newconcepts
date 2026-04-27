@@ -2446,10 +2446,12 @@ input[type=range]::-moz-range-thumb {
     <div class="map-legend">
       <span><i style="background:#C00000"></i>P1 PMC — Kochi New Block</span>
       <span><i style="background:#1565C0"></i>P2 Hospital — Kochi Main Block</span>
-      <span><i style="background:#007070"></i>P3 Urban Multispecialty Hub</span>
-      <span><i style="background:#5F6B7A"></i>P4 Branded Partner Node</span>
+      <span><i style="background:#007070"></i>P3 Urban Hub — Kakkanad</span>
+      <span><i style="background:#5F6B7A"></i>DHCN Phase 1 — Satellite Clinic + Health Pod</span>
+      <span><i style="background:#E67E22"></i>Health Pod (NCD screening)</span>
+      <span><i style="background:#5F6B7A;opacity:0.35"></i>DHCN Phase 2 — Planned (Q3–Q4 FY27)</span>
       <span><i style="background:#8B1A4A"></i>P5 Risk Assessment Centre</span>
-      <span><i style="background:#8B1A4A;opacity:0.4"></i>P3 Future — Trivandrum / Calicut</span>
+      <span><i style="background:#007070;opacity:0.35"></i>P3 Future — Trivandrum / Calicut</span>
     </div>
   </div>
 
@@ -3458,13 +3460,18 @@ var DEPTS = {
       }).addTo(m);
     }
 
-    /* P1 + P2 — VPS Lakeshore Kochi (two overlapping large markers) */
+    /* P1 + P2 — VPS Lakeshore Kochi */
     proto(9.9190, 76.3189, '#C00000', 16,
       'P1 — Lakeshore Precision Medicine Centre',
       'Kochi New Block · Quaternary · BMT/CAR-T · Transplant · Rare Disease · Genomics');
     L.circleMarker([9.9350, 76.3189], {
       radius: 13, fillColor: '#1565C0', color: '#fff', weight: 2.5, fillOpacity: 1
     }).addTo(m).bindPopup('<strong style="color:#1565C0">P2 — Lakeshore Hospital</strong><div class="sub">Kochi Main Block · Superspecialty Referral · Cardiac · Neuro · MCH · Ortho · Emergency</div>');
+
+    /* Health Pod — Kochi campus pilot (DHCN, July 2026) */
+    L.circleMarker([9.9050, 76.3100], {
+      radius: 7, fillColor: '#E67E22', color: '#fff', weight: 2, fillOpacity: 0.95
+    }).addTo(m).bindPopup('<strong style="color:#E67E22">Health Pod — Kochi Campus</strong><div class="sub">DHCN pilot · July 2026 · NCD risk assessment · EMR protocol validation · Ernakulam outreach base</div>');
 
     /* Referral line Kochi → Kakkanad */
     L.polyline([[9.9190, 76.3189], [10.0012, 76.3714]], {
@@ -3476,28 +3483,56 @@ var DEPTS = {
       'P3 — Kakkanad Urban Hub',
       'SmartCity · ~400 beds (phased) · IT corridor · Young professionals · Gut Health · MSK · Longevity');
 
-    /* P4 — Branded partner nodes (5 nodes, state spine) */
-    var KER_P4 = [
-      [10.065, 76.615, 'P4 — Kothamangalam', 'MBMMH partnership · North Ernakulam / Periyar valley catchment'],
-      [10.652, 76.075, 'P4 — Kunnamkulam', 'Malankara Mission Hospital · Thrissur north district'],
-      [11.251, 75.782, 'P4 — Kozhikode', 'VPS Calicut · Malabar corridor referral node · Gulf return population'],
-      [9.591,  76.522, 'P4 — Kottayam', 'CSI Medical College partner · Rubber belt workforce · backwater tourism'],
-      [10.763, 76.650, 'P4 — Palakkad', 'District hospital partnership · Gateway city · Tamil Nadu border catchment'],
+    /* ── DHCN Phase 1 — Satellite Clinic + Health Pod (confirmed, Aug–Oct 2026) ── */
+    var DHCN_PHASE1 = [
+      [10.065, 76.615,
+        'DHCN Phase 1 — Kothamangalam',
+        'Partner: MBMMH · Satellite Clinic + Health Pod · August 2026 · ~50 km from Kochi · Ernakulam East / Periyar valley catchment · Cardiology, Oncology, Ortho, Neuro, Gastro, General Medicine · Node nurse team in place'],
+      [10.652, 76.075,
+        'DHCN Phase 1 — Kunnamkulam',
+        'Partner: Malankara Mission Hospital · Satellite Clinic + Health Pod · September 2026 · ~75 km · Thrissur district entry · Node nurse in place · Outreach into Thrissur north panchayaths'],
+      [11.251, 75.782,
+        'DHCN Phase 1 — Calicut',
+        'Partner: VPS Lakeshore Calicut · Satellite Clinic + Health Pod · Sep–Oct 2026 · ~200 km · Malabar hub · North Kerala catchment · Outreach into Malappuram · PET-CT + mammogram via BMH Kozhikode MoU'],
     ];
-    KER_P4.forEach(function(d) {
-      L.polyline([
-        [9.9796, 76.2724], /* Lakeshore anchor */
-        [d[0], d[1]]
-      ], { color: '#5F6B7A', weight: 1.2, dashArray: '4 5', opacity: 0.35 }).addTo(m);
+    DHCN_PHASE1.forEach(function(d) {
+      /* Referral line from Lakeshore Kochi */
+      L.polyline([[9.9796, 76.2724], [d[0], d[1]]], {
+        color: '#5F6B7A', weight: 1.8, dashArray: '5 5', opacity: 0.5
+      }).addTo(m);
+      /* Satellite Clinic marker (solid slate) */
       L.circleMarker([d[0], d[1]], {
-        radius: 9, fillColor: '#5F6B7A', color: '#fff', weight: 2, fillOpacity: 0.9
+        radius: 10, fillColor: '#5F6B7A', color: '#fff', weight: 2.5, fillOpacity: 0.95
+      }).addTo(m).bindPopup('<strong style="color:#5F6B7A">' + d[2] + '</strong><div class="sub">' + d[3] + '</div>');
+      /* Health Pod co-located (small orange) */
+      L.circleMarker([d[0] + 0.018, d[1] - 0.018], {
+        radius: 5, fillColor: '#E67E22', color: '#fff', weight: 1.5, fillOpacity: 0.9
+      }).addTo(m).bindPopup('<strong style="color:#E67E22">Health Pod — ' + d[2].replace('DHCN Phase 1 — ', '') + '</strong><div class="sub">Co-located with Satellite Clinic · NCD assessment · Cardiovascular, metabolic, cancer, genomic risk · Feeds directly into satellite OPD</div>');
+    });
+
+    /* ── DHCN Phase 2 — Planned nodes (MOU Jun 2026 → launch Q3–Q4 FY27) ── */
+    var DHCN_PHASE2 = [
+      [10.522, 76.214, 'Phase 2 — Thrissur City',   'Satellite Clinic + Health Pod · MOU target Jun 2026 · Q3 FY27 launch · City-centre catchment · 330k urban population'],
+      [9.990,  76.578, 'Phase 2 — Muvattupuzha',    'Satellite Clinic + Health Pod · MOU target Jun 2026 · Q3 FY27 · Mid-Ernakulam corridor · Feeds Kochi for tertiary'],
+      [10.101, 76.357, 'Phase 2 — Aluva',           'Satellite Clinic + Health Pod · MOU target Jun 2026 · Q3 FY27 · North Ernakulam · Airport corridor · High leakage zone'],
+      [10.107, 76.479, 'Phase 2 — Perumbavoor',     'Satellite Clinic + Health Pod · MOU target Jun 2026 · Q3 FY27 · Industrial catchment · Ernakulam east'],
+      [9.895,  76.719, 'Phase 2 — Thodupuzha',      'Satellite Clinic + Health Pod · MOU target Jun 2026 · Q3 FY27 · Idukki district gateway · Rubber belt catchment'],
+      [10.763, 76.650, 'Phase 2 — Palakkad',        'Satellite Clinic + Health Pod · Q3–Q4 FY27 · Tamil Nadu border catchment · Gateway city'],
+    ];
+    DHCN_PHASE2.forEach(function(d) {
+      L.polyline([[9.9796, 76.2724], [d[0], d[1]]], {
+        color: '#5F6B7A', weight: 1.0, dashArray: '3 8', opacity: 0.22
+      }).addTo(m);
+      L.circleMarker([d[0], d[1]], {
+        radius: 8, fillColor: '#5F6B7A', color: '#5F6B7A', weight: 2,
+        fillOpacity: 0.28, dashArray: '5 4'
       }).addTo(m).bindPopup('<strong style="color:#5F6B7A">' + d[2] + '</strong><div class="sub">' + d[3] + '</div>');
     });
 
     /* P5 — Risk Assessment Centres (3 centres, high-footfall anchors) */
     var KER_P5 = [
-      [9.990,  76.270, 'P5 — Ernakulam', 'Lulu Mall / Marina Mall · Cancer + cardiac + genomic screening · 24-hr follow-up'],
-      [10.525, 76.215, 'P5 — Thrissur City', 'Round North / Sobha City · Corporate campus + transit hub'],
+      [9.990,  76.270, 'P5 — Ernakulam', 'Lulu Mall / Marina Mall · Cancer + cardiac + genomic screening · 24-hr EMR follow-up'],
+      [10.525, 76.215, 'P5 — Thrissur City', 'Round North / Sobha City · Corporate campus + transit hub · NCD + genomic risk'],
       [8.524,  76.936, 'P5 — Thiruvananthapuram', 'Technopark / LuLu Trivandrum · ISRO/VSSC workforce screening outpost'],
     ];
     KER_P5.forEach(function(d) {
